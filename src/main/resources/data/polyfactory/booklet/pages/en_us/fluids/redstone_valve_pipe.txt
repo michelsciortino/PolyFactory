@@ -1,0 +1,17 @@
+### Section: PageInfo
+title=<item 'polyfactory:redstone_valve_pipe'>
+icon=polyfactory:redstone_valve_pipe
+category=polyfactory:fluids
+order=12
+### EndSection: PageInfo
+<yellow><item 'polyfactory:redstone_valve_pipe'></> is a block that allows you to easily disconnect pipes from each other conditionally.
+<nl2>
+By default, it will allow fluid to pass unless you power it with Redstone. When so, fluids won't be able to flow in/out of this
+pipe and any fluid flow generated with a <pageref './mechanical_pump'> or other blocks will be cut out from the other side.
+<nl>
+You can configure this block with a <pageref '/basics/wrench'>, allowing you to invert its Redstone interaction.
+<nl2>
+<item 'polyfactory:redstone_valve_pipe'> act similarly to pipes, being able to pull, push and store fluids within them.
+
+### Align: Center
+<u><blue><polydex 'polyfactory:redstone_valve_pipe'>View the <item 'polyfactory:redstone_valve_pipe'> recipe</>

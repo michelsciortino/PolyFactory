@@ -1,9 +1,6 @@
 {
 	"parent": "polyfactory:block/clutch",
 	"textures": {
-		"particle": "block/oak_log",
-		"outside_log": "block/oak_log",
-		"side": "polyfactory:block/clutch_side_on",
-		"gearbox": "polyfactory:block/gearbox"
+		"side": "polyfactory:block/redstone_locking_mechanism_side_on"
 	}
 }

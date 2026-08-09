@@ -19,6 +19,7 @@ import eu.pb4.polyfactory.other.FactorySoundEvents;
 import eu.pb4.polyfactory.recipe.*;
 import eu.pb4.polyfactory.recipe.casting.SimpleCastingRecipe;
 import eu.pb4.polyfactory.recipe.casting.SimpleCauldronCastingRecipe;
+import eu.pb4.polyfactory.recipe.drain.ContainerEmptyDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.PotionAddDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.PotionRemoveDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.SimpleDrainRecipe;
@@ -34,6 +35,7 @@ import eu.pb4.polyfactory.recipe.mixing.*;
 import eu.pb4.polyfactory.recipe.press.FillSprayCanPressRecipe;
 import eu.pb4.polyfactory.recipe.press.GenericPressRecipe;
 import eu.pb4.polyfactory.recipe.smeltery.SimpleSmelteryRecipe;
+import eu.pb4.polyfactory.recipe.spout.ContainerFillSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.PotionSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.RepairSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.SimpleSpoutRecipe;
@@ -320,14 +322,27 @@ class RecipesProvider extends FabricRecipeProvider {
                         .save(output);
 
                 this.shaped(RecipeCategory.REDSTONE, FactoryItems.REDSTONE_VALVE_PIPE, 1)
-                        .pattern("rwr")
+                        .pattern("rsr")
                         .pattern("pwp")
-                        .pattern("rwr")
+                        .pattern("rsr")
                         .define('p', FactoryItems.PIPE)
                         .define('w', FactoryItems.STEEL_PLATE)
+                        .define('s', Items.SMOOTH_STONE_SLAB)
                         .define('r', Items.REDSTONE)
                         .unlockedBy("get_copper", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.PIPE))
                         .save(output);
+
+                this.shaped(RecipeCategory.REDSTONE, FactoryItems.SMART_VALVE_PIPE, 1)
+                        .pattern(" c ")
+                        .pattern("sps")
+                        .pattern(" r ")
+                        .define('p', FactoryItems.REDSTONE_VALVE_PIPE)
+                        .define('s', FactoryItems.STEEL_PLATE)
+                        .define('c', FactoryItems.CABLE)
+                        .define('r', FactoryItems.REDSTONE_CHIP)
+                        .unlockedBy("get_copper", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.PIPE))
+                        .save(output);
+
 
 
                 this.shaped(RecipeCategory.REDSTONE, FactoryItems.DRAIN, 1)
@@ -846,7 +861,7 @@ class RecipesProvider extends FabricRecipeProvider {
                         .define('w', FactoryItems.AXLE)
                         .define('s', ItemTags.PLANKS)
                         .define('g', FactoryItems.STEEL_GEAR)
-                        .define('p', FactoryItems.STEEL_PLATE)
+                        .define('p', Items.SMOOTH_STONE_SLAB)
                         .unlockedBy("get_axle", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.AXLE))
                         .save(output);
 
@@ -1547,6 +1562,9 @@ class RecipesProvider extends FabricRecipeProvider {
                 fluidBasePotion(output, Items.SPLASH_POTION, FactoryItems.THROWABLE_GLASS_BOTTLE, FluidConstants.BOTTLE, SoundEvents.BOTTLE_FILL, SoundEvents.BOTTLE_EMPTY);
                 fluidBasePotion(output, Items.LINGERING_POTION, FactoryItems.LINGERING_THROWABLE_GLASS_BOTTLE, FluidConstants.BOTTLE, SoundEvents.BOTTLE_FILL, SoundEvents.BOTTLE_EMPTY);
                 fluidBasePotion(output, FactoryItems.BRITTLE_POTION, FactoryItems.BRITTLE_GLASS_BOTTLE, FluidConstants.BOTTLE, SoundEvents.BOTTLE_FILL, SoundEvents.BOTTLE_EMPTY);
+
+                output.accept(recipeKey("drain/container_empty"), new ContainerEmptyDrainRecipe(Ingredient.of(fakeTagList(FactoryItemTags.DYNAMIC_FLUID_INTERACTION))), null);
+                output.accept(recipeKey("spout/container_fill"), new ContainerFillSpoutRecipe(Ingredient.of(fakeTagList(FactoryItemTags.DYNAMIC_FLUID_INTERACTION))), null);
 
                 output.accept(recipeKey("spout/experience_repair"), new RepairSpoutRecipe(), null);
                 output.accept(recipeKey("spout/sticky_piston"), SimpleSpoutRecipe.toItem(Items.PISTON, FactoryFluids.SLIME.of(FluidConstants.BLOCK / 10), Items.STICKY_PISTON, SoundEvents.SLIME_BLOCK_PLACE), null);

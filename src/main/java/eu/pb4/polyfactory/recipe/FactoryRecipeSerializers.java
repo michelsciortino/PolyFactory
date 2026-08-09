@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import eu.pb4.polyfactory.ModInit;
 import eu.pb4.polyfactory.recipe.casting.SimpleCastingRecipe;
 import eu.pb4.polyfactory.recipe.casting.SimpleCauldronCastingRecipe;
+import eu.pb4.polyfactory.recipe.drain.ContainerEmptyDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.PotionAddDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.PotionRemoveDrainRecipe;
 import eu.pb4.polyfactory.recipe.drain.SimpleDrainRecipe;
@@ -56,9 +57,13 @@ public class FactoryRecipeSerializers {
     public static final RecipeSerializer<SimpleDrainRecipe> DRAIN_SIMPLE = register("drain/simple", SimpleDrainRecipe.CODEC);
     public static final RecipeSerializer<PotionAddDrainRecipe> DRAIN_POTION_ADD = register("drain/potion_add", PotionAddDrainRecipe.CODEC);
     public static final RecipeSerializer<PotionRemoveDrainRecipe> DRAIN_POTION_REMOVE = register("drain/potion_remove", PotionRemoveDrainRecipe.CODEC);
+    public static final RecipeSerializer<ContainerEmptyDrainRecipe> DRAIN_CONTAINER_EMPTY = register("drain/container_empty", ContainerEmptyDrainRecipe.CODEC);
+
     public static final RecipeSerializer<SimpleSpoutRecipe> SPOUT_SIMPLE = register("spout/simple", SimpleSpoutRecipe.CODEC);
     public static final RecipeSerializer<PotionSpoutRecipe> SPOUT_POTION = register("spout/potion", PotionSpoutRecipe.CODEC);
     public static final RecipeSerializer<RepairSpoutRecipe> SPOUT_EXPERIENCE_REPAIR = register("spout/experience_repair", RepairSpoutRecipe.CODEC);
+    public static final RecipeSerializer<ContainerFillSpoutRecipe> SPOUT_CONTAINER_FILL = register("spout/container_fill", ContainerFillSpoutRecipe.CODEC);
+
     public static final RecipeSerializer<SimpleSmelteryRecipe> SMELTERY = register("smeltery/simple", SimpleSmelteryRecipe.CODEC);
     public static final RecipeSerializer<SimpleCastingRecipe> CASTING_SIMPLE = register("casting/simple", SimpleCastingRecipe.CODEC);
     public static final RecipeSerializer<SimpleCauldronCastingRecipe> CASTING_CAULDRON_SIMPLE = register("casting/cauldron/simple", SimpleCauldronCastingRecipe.CODEC);

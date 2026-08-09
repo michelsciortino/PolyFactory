@@ -93,6 +93,11 @@ public record PotionRemoveDrainRecipe(Ingredient item, Optional<Ingredient> cata
     }
 
     @Override
+    public Holder<SoundEvent> soundEvent(DrainInput input) {
+        return this.soundEvent;
+    }
+
+    @Override
     public double time(DrainInput input) {
         return this.time;
     }

@@ -1,0 +1,6 @@
+{
+	"parent": "polyfactory:block/redstone_valve_pipe",
+	"textures": {
+		"side": "polyfactory:block/redstone_locking_mechanism_side_on"
+	}
+}

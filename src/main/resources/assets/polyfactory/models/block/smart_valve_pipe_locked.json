@@ -1,0 +1,6 @@
+{
+	"parent": "polyfactory:block/smart_valve_pipe",
+	"textures": {
+		"side": "polyfactory:block/fluids/smart_valve_pipe_side_locked"
+	}
+}

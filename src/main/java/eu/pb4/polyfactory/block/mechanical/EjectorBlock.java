@@ -69,14 +69,12 @@ public class EjectorBlock extends RotationalNetworkBlock implements FactoryBlock
     public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
     private static final List<BlockConfig<?>> WRENCH_ACTIONS = List.of(
             BlockConfig.FACING_HORIZONTAL,
-            BlockConfig.ofBlockEntity("angle", ExtraCodecs.floatRange(10, 65), EjectorBlockEntity.class,
-                    (x, world, pos, side, state) -> Component.literal(String.format(Locale.ROOT, "%.0f", x)),
-                    EjectorBlockEntity::angle, EjectorBlockEntity::setAngle,
-                    WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 5f : -5f), 10, 65))),
-            BlockConfig.ofBlockEntity("strength", ExtraCodecs.floatRange(1, 2.5f), EjectorBlockEntity.class,
-                    (x, world, pos, side, state) -> Component.literal(String.format(Locale.ROOT, "%.2f", x)),
-                    EjectorBlockEntity::strength, EjectorBlockEntity::setStrength,
-                    WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 0.25f : -0.25f), 1, 2.5f)))
+            BlockConfig.ofBlockEntityFloat("angle", EjectorBlockEntity.class, 10, 65, 0, 5, 1,
+                    (x) -> String.format(Locale.ROOT, "%.0f", x),
+                    EjectorBlockEntity::angle, EjectorBlockEntity::setAngle),
+            BlockConfig.ofBlockEntityFloat("strength", EjectorBlockEntity.class, 1, 2.5f, 0, 0.25f, 1,
+                    (x) -> String.format(Locale.ROOT, "%.2f", x),
+                    EjectorBlockEntity::strength, EjectorBlockEntity::setStrength)
     );
 
 

@@ -158,7 +158,7 @@ public final class DataMemoryBlock extends DataNetworkBlock implements EntityBlo
     @Override
     public boolean receiveData(ServerLevel world, BlockPos selfPos, BlockState selfState, int channel, DataContainer data, DataReceiverNode node, BlockPos sourcePos, @Nullable Direction sourceDir, int dataId) {
         if (node instanceof DirectionNode node1 && selfState.getValue(FACING_INPUT).direction() == node1.direction() && world.getBlockEntity(selfPos) instanceof DataCache be) {
-            be.setCachedData(data);
+            be.setCachedData(data, dataId);
             return true;
         }
         return false;

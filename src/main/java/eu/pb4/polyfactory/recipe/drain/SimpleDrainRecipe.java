@@ -52,6 +52,11 @@ public record SimpleDrainRecipe(CountedIngredient item, Optional<Ingredient> cat
     }
 
     @Override
+    public Holder<SoundEvent> soundEvent(DrainInput input) {
+        return this.soundEvent;
+    }
+
+    @Override
     public boolean matches(DrainInput input, Level world) {
         if ((requirePlayer && !input.isPlayer()) || !item.test(input.stack()) || (catalyst.isPresent() && !catalyst.get().test(input.catalyst())) ) {
             return false;

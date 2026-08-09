@@ -21,10 +21,7 @@ import eu.pb4.polyfactory.block.fluids.smeltery.CastingCauldronBlockEntity;
 import eu.pb4.polyfactory.block.fluids.smeltery.CastingTableBlockEntity;
 import eu.pb4.polyfactory.block.fluids.smeltery.IndustrialSmelteryBlockEntity;
 import eu.pb4.polyfactory.block.fluids.smeltery.PrimitiveSmelteryBlockEntity;
-import eu.pb4.polyfactory.block.fluids.transport.FilteredPipeBlockEntity;
-import eu.pb4.polyfactory.block.fluids.transport.PipeBlockEntity;
-import eu.pb4.polyfactory.block.fluids.transport.PumpBlockEntity;
-import eu.pb4.polyfactory.block.fluids.transport.RedstoneValvePipeBlockEntity;
+import eu.pb4.polyfactory.block.fluids.transport.*;
 import eu.pb4.polyfactory.block.mechanical.ChainDriveBlockEntity;
 import eu.pb4.polyfactory.block.mechanical.EjectorBlockEntity;
 import eu.pb4.polyfactory.block.mechanical.FanBlockEntity;
@@ -180,6 +177,8 @@ public class FactoryBlockEntities {
              FabricBlockEntityTypeBuilder.create(PortableFluidTankBlockEntity::new, FactoryBlocks.PORTABLE_FLUID_TANK));
     public static final BlockEntityType<RedstoneValvePipeBlockEntity> REDSTONE_VALVE_PIPE = register("redstone_valve_pipe",
              FabricBlockEntityTypeBuilder.create(RedstoneValvePipeBlockEntity::new, FactoryBlocks.REDSTONE_VALVE_PIPE));
+    public static final BlockEntityType<SmartValvePipeBlockEntity> SMART_VALVE_PIPE = register("smart_valve_pipe",
+            FabricBlockEntityTypeBuilder.create(SmartValvePipeBlockEntity::new, FactoryBlocks.SMART_VALVE_PIPE));
 
     public static final BlockEntityType<ItemPackerBlockEntity> ITEM_PACKER = register("item_packer",
             FabricBlockEntityTypeBuilder.create(ItemPackerBlockEntity::new, FactoryBlocks.ITEM_PACKER));

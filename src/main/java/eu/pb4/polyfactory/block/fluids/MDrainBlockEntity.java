@@ -201,7 +201,7 @@ public class MDrainBlockEntity extends TallItemMachineBlockEntity implements Flu
             for (var fluid : self.currentRecipe.value().fluidOutput(input)) {
                 self.fluidContainer.insert(fluid, false);
             }
-            world.playSound(null, pos, self.currentRecipe.value().soundEvent().value(), SoundSource.BLOCKS);
+            world.playSound(null, pos, self.currentRecipe.value().soundEvent(input).value(), SoundSource.BLOCKS);
             self.process = 0;
             self.visualProgress = 0;
             self.updateInputPosition();

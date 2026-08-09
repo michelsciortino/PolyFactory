@@ -61,7 +61,7 @@ public class CreativeMotorBlockEntity extends LockableBlockEntity {
             this.setTitle(GuiTextures.FILL3.apply(CreativeMotorBlockEntity.this.getName()));
             this.updateNumbers();
             this.setSlot(1, GuiTextures.MINUS_BUTTON.get().hideTooltip().unbreakable().setCallback((clickType) -> {
-                setRPM(Math.max(getRPM() - (clickType.shift ? 10 : 1), -Math.round(FactoryUtil.degreesPerTickToRPM(RotationConstants.MAX_SPEED * 50))));
+                setRPM(Math.max(getRPM() - (clickType.shift ? 10 : 1), - Math.round(FactoryUtil.degreesPerTickToRPM(RotationConstants.MAX_SPEED * 50))));
                 CreativeMotorBlockEntity.this.setChanged();
             }));
             this.setSlot(7, GuiTextures.PLUS_BUTTON.get().hideTooltip().unbreakable().setCallback((clickType) -> {
@@ -81,7 +81,7 @@ public class CreativeMotorBlockEntity extends LockableBlockEntity {
         }
 
         private void updateNumbers() {
-            GuiUtils.drawFlatNumbers(this, 2, (int) CreativeMotorBlockEntity.this.speed, 5, TextColor.DARK_GRAY.getValue(), false);
+            GuiUtils.drawFlatNumbers(this, 2, (int) Math.round(getRPM()), 5, TextColor.DARK_GRAY.getValue(), false);
             GuiUtils.drawFlatNumbers(this, 2 + 9 * 2, (int) CreativeMotorBlockEntity.this.stress, 5, CreativeMotorBlockEntity.this.stress < 0 ? TextColor.DARK_RED.getValue() : TextColor.DARK_GRAY.getValue(), false);
         }
 

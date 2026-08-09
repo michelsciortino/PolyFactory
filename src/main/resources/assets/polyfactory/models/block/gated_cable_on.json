@@ -1,6 +1,6 @@
 {
 	"parent": "polyfactory:block/gated_cable",
 	"textures": {
-		"side": "polyfactory:block/cable/cable_gate_side_on"
+		"side": "polyfactory:block/redstone_locking_mechanism_side_on"
 	}
 }

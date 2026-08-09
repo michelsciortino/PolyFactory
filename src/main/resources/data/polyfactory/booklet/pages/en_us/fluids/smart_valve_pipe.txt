@@ -1,0 +1,23 @@
+### Section: PageInfo
+title=<item 'polyfactory:smart_valve_pipe'>
+icon=polyfactory:smart_valve_pipe
+category=polyfactory:fluids
+order=12
+### EndSection: PageInfo
+<yellow><item 'polyfactory:smart_valve_pipe'></> is a block that allows you to easily disconnect pipes from each other automatically.
+<nl>
+By default, it will allow fluid to pass until certain fluid amount passes through. Once that happens, this block locks itself, presenting any flow in/out of this
+pipe and any fluid flow generated with a <pageref './mechanical_pump'> or other blocks will be cut out from the other side.
+<nl2>
+By powering this block with Redstone, the lock will reset and fluid will be counted again, repeating the cycle.
+<nl>
+This block also acts as a data receiver, allowing you to dynamically supply the amount of fluid allowed for it to pass. Once the data is received,
+the already passed amount will also reset, starting counting from 0 again.
+<nl>
+You can configure this block with a <pageref '/basics/wrench'>, allowing you to invert its Redstone interaction
+as well as set the fluid limit, its facing direction and channels. Channel/Data Receiver itself can also be disabled by setting the channel to X.
+<nl2>
+<item 'polyfactory:smart_valve_pipe'> act similarly to pipes, being able to pull, push and store fluids within them.
+
+### Align: Center
+<u><blue><polydex 'polyfactory:smart_valve_pipe'>View the <item 'polyfactory:smart_valve_pipe'> recipe</>

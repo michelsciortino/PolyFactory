@@ -19,6 +19,7 @@ public final class FluidWorldPushInteraction {
     private final Supplier<BlockPos> pos;
     private final BlockState[] pushState = new BlockState[pushOverflow.length];
     private long maxPush = 0;
+    private long pushedTotal = 0;
 
     public FluidWorldPushInteraction(FluidContainer container, Supplier<ServerLevel> world, Supplier<BlockPos> pos) {
         this.container = container;
@@ -66,10 +67,12 @@ public final class FluidWorldPushInteraction {
         if (pushedBlockState.isAir() && fluid != null && fluid.type() == FactoryFluids.EXPERIENCE && container.get(fluid) >= FluidBehaviours.EXPERIENCE_ORB_TO_FLUID && world.getRandom().nextBoolean()) {
             var max = (int) Math.min(container.get(fluid) / FluidBehaviours.EXPERIENCE_ORB_TO_FLUID, 30);
             var amount = max <= 1 ? 1 : world.getRandom().nextIntBetweenInclusive(1, max);
-            container.extract(fluid, amount * FluidBehaviours.EXPERIENCE_ORB_TO_FLUID, false);
+            var extracted = container.extract(fluid, amount * FluidBehaviours.EXPERIENCE_ORB_TO_FLUID, false);
             var x = new ExperienceOrb(world, pos.getX() + 0.5 + direction.getStepX() * 0.7,
                     pos.getY() + 0.5 + direction.getStepY() * 0.7,
                     pos.getZ() + 0.5 + direction.getStepZ() * 0.7, amount);
+
+            this.pushed(extracted);
             world.addFreshEntity(x);
         }
 
@@ -99,7 +102,8 @@ public final class FluidWorldPushInteraction {
                         this.setPushOverflow(direction, this.getPushOverflow(direction) + amount);
                         if (this.getPushOverflow(direction) >= insert.getFirst().amount()) {
                             world.setBlockAndUpdate(mut, insert.getSecond());
-                            container.extract(insert.getFirst(), false);
+                            var extracted = container.extract(insert.getFirst(), false);
+                            this.pushed(extracted);
                             this.setPushOverflow(direction, 0);
                             break;
                         }
@@ -120,8 +124,22 @@ public final class FluidWorldPushInteraction {
         this.maxPush = maxPush;
     }
 
+    public void setMaxPushAndClearTotal(long maxPush) {
+        this.setMaxPush(maxPush);
+        this.clearTotal();
+    }
+
     public long pushed(long amount) {
+        this.pushedTotal += amount;
         return this.maxPush -= amount;
+    }
+
+    public long getPushedTotal() {
+        return this.pushedTotal;
+    }
+
+    public void clearTotal() {
+        this.pushedTotal = 0;
     }
 
     public double getPushOverflow(Direction dir) {

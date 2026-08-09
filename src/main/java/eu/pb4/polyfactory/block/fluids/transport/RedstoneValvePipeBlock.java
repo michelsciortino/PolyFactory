@@ -11,6 +11,7 @@ import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -44,9 +45,14 @@ public class RedstoneValvePipeBlock extends PipeBaseBlock implements Configurabl
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty INVERTED = BlockStateProperties.INVERTED;
     private static final List<BlockConfig<?>> WRENCH_ACTIONS = List.of(BlockConfig.AXIS, BlockConfig.INVERTED);
+    private final Identifier model;
+    private final Identifier modelOn;
+
     public RedstoneValvePipeBlock(BlockBehaviour.Properties settings) {
         super(settings);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, false).setValue(INVERTED, false));
+        this.model = settings.blockIdOrThrow().identifier().withPrefix("block/");
+        this.modelOn = settings.blockIdOrThrow().identifier().withPrefix("block/").withSuffix("_on");
     }
     @Nullable
     @Override
@@ -136,10 +142,10 @@ public class RedstoneValvePipeBlock extends PipeBaseBlock implements Configurabl
         return dir == null || state.getValue(AXIS) != dir.getAxis();
     }
 
-    public static final class Model extends BlockModel {
+    private final class Model extends BlockModel {
         private final ItemDisplayElement main;
         private Model(BlockState state) {
-            this.main = ItemDisplayElementUtil.createSimple(state.getBlock().asItem());
+            this.main = ItemDisplayElementUtil.createSimple();
             this.main.setScale(new Vector3f(2f));
 
             this.updateStatePos(state);
@@ -147,6 +153,7 @@ public class RedstoneValvePipeBlock extends PipeBaseBlock implements Configurabl
         }
 
         private void updateStatePos(BlockState state) {
+            this.main.setItem(ItemDisplayElementUtil.getModel(state.getValue(POWERED) ? modelOn : model).get());
             var dir = state.getValue(AXIS);
             float p = -90;
             float y = 0;

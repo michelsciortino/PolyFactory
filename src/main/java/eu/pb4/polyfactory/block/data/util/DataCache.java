@@ -7,5 +7,5 @@ public interface DataCache {
     @Nullable
     DataContainer getCachedData();
 
-    void setCachedData(DataContainer lastData);
+    void setCachedData(DataContainer lastData, int dataId);
 }

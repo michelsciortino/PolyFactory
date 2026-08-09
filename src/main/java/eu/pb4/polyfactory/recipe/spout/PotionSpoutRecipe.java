@@ -83,6 +83,11 @@ public record PotionSpoutRecipe(Ingredient item, long amount, ItemStackTemplate 
     }
 
     @Override
+    public Holder<SoundEvent> soundEvent(SingleItemWithFluid input) {
+        return this.soundEvent;
+    }
+
+    @Override
     public double time(SingleItemWithFluid input) {
         return this.time;
     }

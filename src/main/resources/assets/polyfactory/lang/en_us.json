@@ -83,6 +83,11 @@
   "block.polyfactory.pipe": "Copper Pipe",
   "block.polyfactory.filtered_pipe": "Filtered Copper Pipe",
   "block.polyfactory.redstone_valve_pipe": "Copper Pipe with Redstone Valve",
+  "block.polyfactory.smart_valve_pipe": "Copper Pipe with Smart Valve",
+  "block.polyfactory.smart_valve_pipe.state.unlocked": "Unlocked",
+  "block.polyfactory.smart_valve_pipe.state.locked": "Locked",
+  "block.polyfactory.smart_valve_pipe.state.passthrough": "Passthrough / Reset",
+
   "block.polyfactory.wall_with_pipe": "%s with Copper Pipe",
   "block.polyfactory.nozzle": "Fluid Nozzle",
   "block.polyfactory.drain": "Fluid Drain",
@@ -272,7 +277,10 @@
   "item.polyfactory.multimeter.pipe_flow_down.title": "Pipe Flow (Down)",
   "item.polyfactory.multimeter.machine_state.title": "State",
   "item.polyfactory.multimeter.filled_amount.title": "Filled",
+  "item.polyfactory.multimeter.throughput.title": "Throughput Limit",
+  "item.polyfactory.multimeter.throughput.value": "%s / %s",
   "item.polyfactory.multimeter.potato.title": "Potato",
+  "item.polyfactory.multimeter.mode.title": "Mode",
 
   "item.polyfactory.wrench": "Wrench",
   "item.polyfactory.wrench.tooltip.1": "Use [%s] to change block's setting value",
@@ -325,6 +333,7 @@
   "item.polyfactory.wrench.action.hand_position": "Hand Position",
   "item.polyfactory.wrench.action.redstone_activation": "Redstone Activation",
   "item.polyfactory.wrench.action.engine_gear": "Gear",
+  "item.polyfactory.wrench.action.allowed_fluid_amount": "Allowed Fluid Amount",
   "item.polyfactory.wrench.action.up": "Up",
   "item.polyfactory.wrench.action.down": "Down",
   "item.polyfactory.wrench.action.north": "North",
@@ -341,6 +350,7 @@
   "item.polyfactory.wrench.action.mode.arithmetic.decimal": "Decimal",
   "item.polyfactory.wrench.action.mode.arithmetic.boolean": "Boolean",
   "item.polyfactory.wrench.action.mode.arithmetic.string": "String",
+  "item.polyfactory.wrench.action.mode.arithmetic.fluid_amount": "Fluid Amount",
 
   "item.polyfactory.wrench.action.operation.arithmetic.addition": "Addition",
   "item.polyfactory.wrench.action.operation.arithmetic.subtraction": "Subtraction",

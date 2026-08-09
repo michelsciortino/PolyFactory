@@ -1,13 +1,15 @@
 package eu.pb4.polyfactory.util;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import eu.pb4.factorytools.api.util.WorldPointer;
 import eu.pb4.polyfactory.ModInit;
 import eu.pb4.polyfactory.util.inventory.CustomInsertContainer;
-import eu.pb4.polyfactory.util.movingitem.MovingItemContainerHolder;
 import eu.pb4.polyfactory.util.movingitem.MovingItemConsumer;
+import eu.pb4.polyfactory.util.movingitem.MovingItemContainerHolder;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.sgui.api.SguiUtils;
@@ -20,11 +22,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderOwner;
-import net.minecraft.core.HolderSet;
+import net.minecraft.core.*;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -41,7 +39,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.*;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -52,9 +51,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -110,10 +107,10 @@ public class FactoryUtil {
 
 
     public static final Map<Direction.Axis, BlockState> LIGHTNING_ROD_REGULAR = Util.makeEnumMap(Direction.Axis.class,
-            x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.valueOf( "LIGHTNING_ROD_" + x.name())));
+            x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.valueOf("LIGHTNING_ROD_" + x.name())));
 
     public static final Map<Direction.Axis, BlockState> LIGHTNING_ROD_WATERLOGGED = Util.makeEnumMap(Direction.Axis.class,
-            x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.valueOf( "LIGHTNING_ROD_" + x.name() + "_WATERLOGGED")));
+            x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.valueOf("LIGHTNING_ROD_" + x.name() + "_WATERLOGGED")));
 
     private static final List<Runnable> RUN_NEXT_TICK = new ArrayList<>();
 
@@ -145,7 +142,111 @@ public class FactoryUtil {
         }
     }
 
+    public static long parseFluidText(String input) {
+        long result = 0;
+        var p = new StringReader(input.replace(" ", ""));
+
+        while (p.canRead()) {
+            double amount;
+            try {
+                amount = p.readDouble();
+            } catch (CommandSyntaxException e) {
+                throw new NumberFormatException(e.getMessage());
+            }
+            if (amount < 0) {
+                throw new NumberFormatException("Amount can't be negative");
+            }
+
+            if (p.canRead()) {
+                var ch = p.read();
+
+                double mult = switch (ch) {
+                    case 'm' -> 1d / 1000;
+                    case 'c' -> 1d / 100;
+                    case 'k' -> 1_000;
+                    case 'M' -> 1_000_000;
+                    case 'G' -> 1_000_000_000;
+                    default -> 1;
+                };
+
+                if (mult != 1) {
+                    if (p.canRead()) {
+                        ch = p.read();
+                    }
+                }
+
+                mult *= switch (ch) {
+                    case 'B', 'b' -> FluidConstants.BUCKET;
+                    case 'I', 'i' -> FluidConstants.INGOT;
+                    case 'n', 'N' -> FluidConstants.NUGGET;
+                    case 'd' -> 1;
+                    default -> throw new NumberFormatException("Incorrect symbol " + ch);
+                };
+
+                amount *= mult;
+            }
+
+            result += (long) amount;
+        }
+
+        return result;
+    }
+
+    public static String stringifyFullFluidAmount(long amount) {
+        if (amount < 0) {
+            amount = 0;
+        }
+
+        if (amount == 0) {
+            return "0";
+        }
+
+        var b = new StringBuilder();
+
+        if (amount >= FluidConstants.BLOCK * 1000) {
+            if (!b.isEmpty()) {
+                b.append(' ');
+            }
+
+            b.append(amount / (FluidConstants.BLOCK * 1000)).append(" kB");
+            amount %= FluidConstants.BLOCK;
+        }
+
+        if (amount >= FluidConstants.BLOCK) {
+            if (!b.isEmpty()) {
+                b.append(' ');
+            }
+
+            b.append(amount / FluidConstants.BLOCK).append(" B");
+            amount %= FluidConstants.BLOCK;
+        }
+
+        if (amount >= FluidConstants.BLOCK / 1000) {
+            if (!b.isEmpty()) {
+                b.append(' ');
+            }
+
+            b.append(amount / (FluidConstants.BLOCK / 1000)).append(" mB");
+            amount %= FluidConstants.BLOCK / 1000;
+        }
+
+        if (amount != 0) {
+            if (!b.isEmpty()) {
+                b.append(' ');
+            }
+
+            b.append(amount).append(" d");
+        }
+
+        return b.toString();
+    }
+
+
     public static MutableComponent fluidTextIngots(long amount) {
+        if (amount == Long.MAX_VALUE) {
+            return Component.literal("∞");
+        }
+
         if (amount >= FluidConstants.BLOCK) {
             long buckets = amount / (FluidConstants.BLOCK / 1000);
             return Component.literal((buckets / 1000) + "." + (buckets / 10 % 100) + " ").append(Component.translatable("text.polyfactory.amount.block"));
@@ -614,6 +715,7 @@ public class FactoryUtil {
 
 
     public static String recipeKeyNamespace = "polyfactory";
+
     public static ResourceKey<Recipe<?>> recipeKey(String s) {
         return ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(recipeKeyNamespace, s));
     }

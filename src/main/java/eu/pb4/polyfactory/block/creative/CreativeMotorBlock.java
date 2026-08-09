@@ -8,6 +8,7 @@ import eu.pb4.polyfactory.block.mechanical.RotationalNetworkBlock;
 import eu.pb4.polyfactory.nodes.generic.FunctionalDirectionNode;
 import eu.pb4.polyfactory.nodes.mechanical.RotationData;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
@@ -33,9 +34,11 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class CreativeMotorBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, RotationUser {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    private final Identifier model;
 
     public CreativeMotorBlock(Properties settings) {
         super(settings);
+        this.model = settings.blockIdOrThrow().identifier().withPrefix("block/");
     }
 
     @Override
@@ -74,7 +77,7 @@ public class CreativeMotorBlock extends RotationalNetworkBlock implements Factor
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
-        return new ElectricMotorBlock.Model(initialBlockState);
+        return new ElectricMotorBlock.Model(initialBlockState, this.model);
     }
 
     @Override

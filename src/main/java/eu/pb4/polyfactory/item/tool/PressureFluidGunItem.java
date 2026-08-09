@@ -1,6 +1,5 @@
 package eu.pb4.polyfactory.item.tool;
 
-import eu.pb4.factorytools.api.item.RegistryCallbackItem;
 import eu.pb4.polyfactory.advancement.FluidShootsCriterion;
 import eu.pb4.polyfactory.fluid.FluidContainer;
 import eu.pb4.polyfactory.fluid.FluidContainerFromComponent;
@@ -9,21 +8,20 @@ import eu.pb4.polyfactory.fluid.shooting.EntityShooterContext;
 import eu.pb4.polyfactory.item.FactoryDataComponents;
 import eu.pb4.polyfactory.item.FactoryItemTags;
 import eu.pb4.polyfactory.item.component.FluidComponent;
-import eu.pb4.polyfactory.models.FactoryModels;
 import eu.pb4.polyfactory.util.FactoryUtil;
+import eu.pb4.polymer.common.api.PolymerCommonUtils;
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
+import eu.pb4.polymer.core.impl.PolymerImplUtils;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Consumable;
 import org.jetbrains.annotations.Nullable;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -36,8 +34,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.Level;
 
-public class PressureFluidGun extends Item implements PolymerItem {
-    public PressureFluidGun(Properties settings) {
+public class PressureFluidGunItem extends Item implements PolymerItem {
+    public PressureFluidGunItem(Properties settings) {
         super(settings);
     }
 
@@ -190,8 +188,7 @@ public class PressureFluidGun extends Item implements PolymerItem {
     }
 
     private boolean useCrossbowModel(ItemStack itemStack) {
-        // Todo?
-        return false /*useActiveModel(itemStack) /*&& PacketContext.get().getEncodedPacket() instanceof ClientboundSetEquipmentPacket*/;
+        return useActiveModel(itemStack) && PolymerImplUtils.WRITTEN_PACKET.isBound() && PolymerImplUtils.WRITTEN_PACKET.get() instanceof ClientboundSetEquipmentPacket;
     }
 
     private boolean useActiveModel(ItemStack itemStack) {

@@ -91,6 +91,7 @@ class LootTables extends FabricBlockLootSubProvider {
         this.dropSelf(FactoryBlocks.PIPE);
         this.dropSelf(FactoryBlocks.FILTERED_PIPE);
         this.dropSelf(FactoryBlocks.REDSTONE_VALVE_PIPE);
+        this.dropSelf(FactoryBlocks.SMART_VALVE_PIPE);
         this.dropSelf(FactoryBlocks.PUMP);
         this.dropSelf(FactoryBlocks.NOZZLE);
         this.dropSelf(FactoryBlocks.DRAIN);

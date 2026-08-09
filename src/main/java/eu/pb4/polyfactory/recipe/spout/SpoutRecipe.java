@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 public interface SpoutRecipe extends Recipe<SingleItemWithFluid> {
     static double getTime(FluidInstance<?> fluidInstance, long amount) {
-        return Math.max(amount / fluidInstance.getFlowSpeedMultiplier(null) / fluidInstance.getMaxFlow(null) * 1.5d, 1);
+        return Math.max(amount / fluidInstance.getFlowSpeedMultiplier(null) / fluidInstance.getMaxFlow(null), 1);
     }
 
     static double getTime(List<FluidStack<?>> stacks) {
@@ -36,7 +36,7 @@ public interface SpoutRecipe extends Recipe<SingleItemWithFluid> {
 
     List<FluidStack<?>> fluidInput(SingleItemWithFluid input);
 
-    Holder<SoundEvent> soundEvent();
+    Holder<SoundEvent> soundEvent(SingleItemWithFluid input);
     double time(SingleItemWithFluid input);
     default double coolingTime(SingleItemWithFluid input) {
         return 0;

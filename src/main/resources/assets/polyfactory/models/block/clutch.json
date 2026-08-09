@@ -4,7 +4,7 @@
 	"textures": {
 		"particle": "block/oak_log",
 		"outside_log": "block/oak_log",
-		"side": "polyfactory:block/clutch_side",
+		"side": "polyfactory:block/redstone_locking_mechanism_side",
 		"gearbox": "polyfactory:block/gearbox"
 	},
 	"elements": [

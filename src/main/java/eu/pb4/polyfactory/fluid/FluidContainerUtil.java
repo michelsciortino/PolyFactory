@@ -252,7 +252,7 @@ public interface FluidContainerUtil {
         for (var fluid : recipeOutput) {
             container.insert(fluid, false);
         }
-        FactoryUtil.playSoundToPlayer(player, recipe.soundEvent().value(), SoundSource.BLOCKS, 0.5f, 1f);
+        FactoryUtil.playSoundToPlayer(player, recipe.soundEvent(input).value(), SoundSource.BLOCKS, 0.5f, 1f);
         return itemOut;
     }
 

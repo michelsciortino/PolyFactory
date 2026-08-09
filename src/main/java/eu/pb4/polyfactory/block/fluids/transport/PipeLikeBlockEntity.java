@@ -55,7 +55,7 @@ public abstract class PipeLikeBlockEntity extends BlockEntity implements FluidIn
     protected void loadAdditional(ValueInput view) {
         super.loadAdditional(view);
         this.container.readData(view, "fluid");
-        this.fluidPush.setMaxPush(this.container.stored());
+        this.fluidPush.setMaxPushAndClearTotal(this.container.stored());
     }
 
     @Override
@@ -89,19 +89,19 @@ public abstract class PipeLikeBlockEntity extends BlockEntity implements FluidIn
         Containers.dropItemStack(level, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, stack);
     }
 
-    public void postTick() {
-        this.fluidPush.setMaxPush(this.container.stored());
+    protected void postTick() {
+        this.fluidPush.setMaxPushAndClearTotal(this.container.stored());
     }
 
-    public final void pushFluid(Direction direction, double strength) {
+    protected final void pushFluid(Direction direction, double strength) {
         this.fluidPush.pushFluid(direction, strength);
     }
 
-    public final void pushFluid(Direction direction, double strength, long maxPush) {
+    protected final void pushFluid(Direction direction, double strength, long maxPush) {
         this.fluidPush.pushFluid(direction, strength, maxPush);
     }
 
-    public final void pullFluid(Direction direction, double strength) {
+    protected final void pullFluid(Direction direction, double strength) {
         this.fluidPull.pullFluid(direction, strength);
     }
 

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class PlantOilSplashEntity extends SplashEntity<Unit> {
     public PlantOilSplashEntity(EntityType<? extends Projectile> entityType, Level world) {
-        super(entityType, world, FactoryFluids.BIODIESEL);
+        super(entityType, world, FactoryFluids.PLANT_OIL);
     }
 
     @Override

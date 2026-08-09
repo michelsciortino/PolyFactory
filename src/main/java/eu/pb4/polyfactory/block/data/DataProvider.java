@@ -17,7 +17,7 @@ public interface DataProvider {
 
     static int sendData(@Nullable LevelReader world, BlockPos selfPos, DataContainer data) {
         if (world != null && world.getBlockEntity(selfPos) instanceof ChanneledDataCache be) {
-            be.setCachedData(data);
+            be.setCachedData(data, -1);
             return sendData(world, selfPos, be.channel(), data);
         }
         return 0;

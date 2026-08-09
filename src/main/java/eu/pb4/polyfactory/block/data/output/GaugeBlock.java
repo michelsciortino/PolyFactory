@@ -15,7 +15,6 @@ import eu.pb4.polyfactory.block.data.DataReceiver;
 import eu.pb4.polyfactory.block.data.util.ChanneledDataBlockEntity;
 import eu.pb4.polyfactory.block.data.util.DataCache;
 import eu.pb4.polyfactory.block.data.util.DataNetworkBlock;
-import eu.pb4.polyfactory.block.other.FilledStateProvider;
 import eu.pb4.polyfactory.block.property.ValueModifier;
 import eu.pb4.polyfactory.data.DataContainer;
 import eu.pb4.polyfactory.nodes.data.ChannelReceiverDirectionNode;
@@ -88,7 +87,7 @@ public class GaugeBlock extends DataNetworkBlock implements FactoryBlock, Config
     @Override
     public boolean receiveData(ServerLevel world, BlockPos selfPos, BlockState selfState, int channel, DataContainer data, @Nullable DataReceiverNode node, BlockPos sourcePos, @Nullable Direction sourceDir, int dataId) {
         if (world.getBlockEntity(selfPos) instanceof DataCache cache) {
-            cache.setCachedData(data);
+            cache.setCachedData(data, dataId);
         }
 
         final var x = BlockAwareAttachment.get(world, selfPos);

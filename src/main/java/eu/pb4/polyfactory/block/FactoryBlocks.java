@@ -151,6 +151,7 @@ public class FactoryBlocks {
     public static final PipeBlock PIPE = register(FactoryBlockIds.PIPE, BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK.weathering().unaffected()), settings -> new PipeBlock(settings.noOcclusion()));
     public static final FilteredPipeBlock FILTERED_PIPE = register(FactoryBlockIds.FILTERED_PIPE, BlockBehaviour.Properties.ofFullCopy(PIPE), settings -> new FilteredPipeBlock(settings.noOcclusion()));
     public static final RedstoneValvePipeBlock REDSTONE_VALVE_PIPE = register(FactoryBlockIds.REDSTONE_VALVE_PIPE, BlockBehaviour.Properties.ofFullCopy(PIPE), settings -> new RedstoneValvePipeBlock(settings.noOcclusion()));
+    public static final SmartValvePipeBlock SMART_VALVE_PIPE = register(FactoryBlockIds.SMART_VALVE_PIPE, BlockBehaviour.Properties.ofFullCopy(PIPE), settings -> new SmartValvePipeBlock(settings.noOcclusion()));
     public static final Map<Block, PipeInWallBlock> WALL_WITH_PIPE = PipeInWallBlock.MAP;
     public static final SmelteryCoreBlock SMELTERY_CORE = register(FactoryBlockIds.SMELTERY_CORE, BlockBehaviour.Properties.ofFullCopy(STEAM_ENGINE).sound(SoundType.DEEPSLATE_BRICKS), SmelteryCoreBlock::new);
 

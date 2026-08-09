@@ -239,6 +239,7 @@ public class FactoryItems {
     public static final Item PIPE = register(FactoryItemIds.PIPE, settings -> new PipeItem(FactoryBlocks.PIPE, settings.useBlockDescriptionPrefix()));
     public static final Item FILTERED_PIPE = register(FactoryBlocks.FILTERED_PIPE);
     public static final Item REDSTONE_VALVE_PIPE = register(FactoryBlocks.REDSTONE_VALVE_PIPE);
+    public static final Item SMART_VALVE_PIPE = register(FactoryBlocks.SMART_VALVE_PIPE);
     public static final Item PUMP = register(FactoryBlocks.PUMP);
     public static final Item NOZZLE = register(FactoryBlocks.NOZZLE);
     public static final Item DRAIN = register(FactoryBlocks.DRAIN);
@@ -249,7 +250,7 @@ public class FactoryItems {
     public static final Item PORTABLE_FLUID_TANK = register(FactoryBlocks.PORTABLE_FLUID_TANK,
             new Item.Properties().stacksTo(1).component(FactoryDataComponents.FLUID, FluidComponent.empty(PortableFluidTankBlockEntity.CAPACITY)));
 
-    public static final PressureFluidGun PRESSURE_FLUID_GUN = register(FactoryItemIds.PRESSURE_FLUID_GUN, settings -> new PressureFluidGun(
+    public static final PressureFluidGunItem PRESSURE_FLUID_GUN = register(FactoryItemIds.PRESSURE_FLUID_GUN, settings -> new PressureFluidGunItem(
             settings.stacksTo(1).enchantable(5).repairable(COPPER_PLATE).durability(800)));
 
     public static final Item CANISTER = register(FactoryItemIds.CANISTER, new Item.Properties()
@@ -369,6 +370,7 @@ public class FactoryItems {
                     entries.accept(PIPE);
                     entries.accept(FILTERED_PIPE);
                     entries.accept(REDSTONE_VALVE_PIPE);
+                    entries.accept(SMART_VALVE_PIPE);
                     entries.accept(PUMP);
                     entries.accept(DRAIN);
                     entries.accept(MECHANICAL_DRAIN);

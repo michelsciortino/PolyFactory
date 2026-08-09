@@ -58,10 +58,9 @@ import net.minecraft.world.level.material.Fluids;
 
 public class NozzleBlock extends NetworkBlock implements FactoryBlock, ConfigurableBlock, PipeConnectable, BarrierBasedWaterloggable, EntityBlock, NetworkComponent.Pipe {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
-    public static final BlockConfig SPREAD = BlockConfig.ofBlockEntity("spread", ExtraCodecs.floatRange(0, 0.8f), NozzleBlockEntity.class,
-            BlockValueFormatter.str(x -> String.format(Locale.ROOT,"%.2f", x)),
-            NozzleBlockEntity::extraSpread, NozzleBlockEntity::setExtraSpread,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 0.05f : -0.05f), 0f, 0.8f))
+    public static final BlockConfig<Float> SPREAD = BlockConfig.ofBlockEntityFloat("spread", NozzleBlockEntity.class, 0, 0.8f, 0, 0.05f, 1,
+            x -> String.format(Locale.ROOT,"%.2f", x),
+            NozzleBlockEntity::extraSpread, NozzleBlockEntity::setExtraSpread
     );
     public NozzleBlock(Properties settings) {
         super(settings);

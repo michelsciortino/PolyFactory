@@ -12,6 +12,7 @@ import eu.pb4.polyfactory.block.data.CableConnectable;
 import eu.pb4.polyfactory.block.data.DataProvider;
 import eu.pb4.polyfactory.block.data.util.DataNetworkBlock;
 import eu.pb4.polyfactory.data.StringData;
+import eu.pb4.polyfactory.item.util.MultimeterHandler;
 import eu.pb4.polyfactory.mixin.PropertiesAccessor;
 import eu.pb4.polyfactory.nodes.data.ChannelProviderDirectionNode;
 import eu.pb4.polyfactory.util.PotatoWisdom;
@@ -20,6 +21,7 @@ import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -57,7 +59,7 @@ import net.minecraft.world.phys.Vec3;
 
 import static eu.pb4.polyfactory.ModInit.id;
 
-public class TinyPotatoSpringBlock extends DataNetworkBlock implements FactoryBlock, CableConnectable, BarrierBasedWaterloggable {
+public class TinyPotatoSpringBlock extends DataNetworkBlock implements FactoryBlock, CableConnectable, BarrierBasedWaterloggable, MultimeterHandler.Provider {
     public static final Identifier STATISTIC = PolymerStat.registerStat(id("taters_clicked"), StatFormatter.DEFAULT);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -170,6 +172,11 @@ public class TinyPotatoSpringBlock extends DataNetworkBlock implements FactoryBl
     @Override
     public Collection<BlockNode> createDataNodes(BlockState state, ServerLevel world, BlockPos pos) {
         return List.of(new ChannelProviderDirectionNode(Direction.DOWN, 0));
+    }
+
+    @Override
+    public void provideMultimeterDataAtTheBeginning(MultimeterHandler.Builder b, ServerLevel level, BlockPos pos, BlockState state, @org.jspecify.annotations.Nullable BlockEntity blockEntity, ServerPlayer player) {
+        b.addLineDirect("potato", PotatoWisdom.get(RandomSource.create(level.getGameTime() / (20 * 30) + pos.hashCode())));
     }
 
     public class Model extends BlockModel {

@@ -48,7 +48,7 @@ public record RepairSpoutRecipe() implements SpoutRecipe {
     }
 
     @Override
-    public Holder<SoundEvent> soundEvent() {
+    public Holder<SoundEvent> soundEvent(SingleItemWithFluid input) {
         return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.EXPERIENCE_ORB_PICKUP);
     }
 

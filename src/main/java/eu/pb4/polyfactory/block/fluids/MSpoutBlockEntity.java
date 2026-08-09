@@ -228,7 +228,7 @@ public class MSpoutBlockEntity extends TallItemMachineBlockEntity implements Out
             for (var fluid : self.currentRecipe.value().fluidInput(input)) {
                 container.extract(fluid, false);
             }
-            world.playSound(null, pos, self.currentRecipe.value().soundEvent().value(), SoundSource.BLOCKS);
+            world.playSound(null, pos, self.currentRecipe.value().soundEvent(input).value(), SoundSource.BLOCKS);
             self.process = 0;
             self.isCooling = false;
             self.model.setProgress(false, 0, null);

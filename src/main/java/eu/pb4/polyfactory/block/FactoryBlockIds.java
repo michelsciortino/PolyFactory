@@ -100,6 +100,7 @@ public class FactoryBlockIds {
     public static final ResourceKey<Block> PIPE = of("pipe");
     public static final ResourceKey<Block> FILTERED_PIPE = of("filtered_pipe");
     public static final ResourceKey<Block> REDSTONE_VALVE_PIPE = of("redstone_valve_pipe");
+    public static final ResourceKey<Block> SMART_VALVE_PIPE = of("smart_valve_pipe");
     //public static final Map<Block, PipeInWallBlock> WALL_WITH_PIPE = PipeInWallBlock.MAP;
     public static final ResourceKey<Block> SMELTERY_CORE = of("smeltery_core");
 

@@ -1,12 +1,12 @@
 package eu.pb4.polyfactory.item.tool;
 
 import com.mojang.math.Transformation;
-import eu.pb4.polyfactory.fluid.FactoryFluids;
-import eu.pb4.polyfactory.fluid.FluidContainerFromComponent;
-import eu.pb4.polyfactory.fluid.FluidContainerUtil;
-import eu.pb4.polyfactory.fluid.FluidInstance;
+import eu.pb4.factorytools.api.block.AttackableBlock;
+import eu.pb4.polyfactory.fluid.*;
 import eu.pb4.polyfactory.item.FactoryDataComponents;
 import eu.pb4.polyfactory.item.component.FluidComponent;
+import eu.pb4.polyfactory.item.util.AttackActionItem;
+import eu.pb4.polyfactory.item.util.SwitchActionItem;
 import eu.pb4.polyfactory.models.FactoryModels;
 import eu.pb4.polyfactory.other.FactoryRegistries;
 import eu.pb4.polyfactory.other.FactorySoundEvents;
@@ -44,16 +44,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.PiercingWeapon;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.Optional;
 
-public class CanisterItem extends SimplePolymerItem {
+public class CanisterItem extends SimplePolymerItem implements SwitchActionItem, AttackActionItem {
 
     public CanisterItem(Properties settings) {
         super(settings);
@@ -79,13 +84,90 @@ public class CanisterItem extends SimplePolymerItem {
         return super.interactLivingEntity(itemStack, player, target, type);
     }
 
-    @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (rotateFluids(player.getItemInHand(hand), player)) {
-            return InteractionResult.SUCCESS_SERVER;
+    public InteractionResult use(final Level level, final Player player, final InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+
+        if (hitResult.getType() == HitResult.Type.MISS) {
+            return InteractionResult.PASS;
+        }
+        
+        var blockState = level.getBlockState(hitResult.getBlockPos());
+        var fluids = itemStack.get(FactoryDataComponents.FLUID);
+        if (fluids == null) {
+            return InteractionResult.PASS;
+        }
+
+        var inserts = FluidBehaviours.BLOCK_STATE_TO_FLUID_INSERT.get(blockState);
+        if (inserts == null && blockState.canBeReplaced()) {
+            inserts = FluidBehaviours.BLOCK_STATE_TO_FLUID_INSERT.get(Blocks.AIR.defaultBlockState());
+        }
+
+        if (inserts == null) {
+            hitResult = hitResult.withPosition(hitResult.getBlockPos().relative(hitResult.getDirection()));
+            blockState = level.getBlockState(hitResult.getBlockPos());
+            inserts = FluidBehaviours.BLOCK_STATE_TO_FLUID_INSERT.get(blockState);
+
+            if (inserts == null && blockState.canBeReplaced()) {
+                inserts = FluidBehaviours.BLOCK_STATE_TO_FLUID_INSERT.get(Blocks.AIR.defaultBlockState());
+            }
+        }
+
+        if (inserts != null) {
+            for (var insert : inserts) {
+                var res = fluids.extract(insert.getFirst().instance(), insert.getFirst().amount(), true);
+
+                if (res.fluidAmount() != 0) {
+                    itemStack.set(FactoryDataComponents.FLUID, res.component());
+                    level.setBlockAndUpdate(hitResult.getBlockPos(), insert.getSecond());
+                    level.playSound(null, hitResult.getBlockPos(), insert.getFirst().instance().insertSoundEvent(), SoundSource.BLOCKS, 1f, 1);
+                    return InteractionResult.SUCCESS_SERVER;
+                }
+            }
         }
 
         return super.use(level, player, hand);
+    }
+
+    @Override
+    public boolean onAttackAction(ServerPlayer player, ItemStack itemStack, InteractionHand hand) {
+        var level = player.level();
+        BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+
+        if (hitResult.getType() == HitResult.Type.MISS) {
+            return true;
+        }
+
+        var blockState = level.getBlockState(hitResult.getBlockPos());
+        var fluids = itemStack.get(FactoryDataComponents.FLUID);
+        if (fluids == null) {
+            return true;
+        }
+
+        var extract = FluidBehaviours.BLOCK_STATE_TO_FLUID_EXTRACT.get(blockState);
+        if (extract != null) {
+            var res = fluids.insert(extract.getFirst().instance(), extract.getFirst().amount(), true);
+
+            if (res.fluidAmount() == 0) {
+                itemStack.set(FactoryDataComponents.FLUID, res.component());
+                level.setBlockAndUpdate(hitResult.getBlockPos(), extract.getSecond());
+                level.playSound(null, hitResult.getBlockPos(), extract.getFirst().instance().extractSoundEvent(), SoundSource.BLOCKS, 1f, 1);
+                return true;
+            }
+        }
+
+        if (blockState.getBlock() instanceof AttackableBlock attackableBlock) {
+            attackableBlock.onPlayerAttack(blockState, player, level, hitResult.getBlockPos(), hitResult.getDirection());
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onSwitchAction(ServerPlayer player, ItemStack stack, InteractionHand hand) {
+        rotateFluids(stack, player);
+
+        return true;
     }
 
     private boolean rotateFluids(ItemStack stack, Player player) {
@@ -131,6 +213,8 @@ public class CanisterItem extends SimplePolymerItem {
     @Override
     public void modifyBasePolymerItemStack(ItemStack out, ItemStack stack, PacketContext context, HolderLookup.Provider lookup) {
         var fluids = stack.getOrDefault(FactoryDataComponents.FLUID, FluidComponent.DEFAULT);
+
+        out.set(DataComponents.PIERCING_WEAPON, new PiercingWeapon(false, false, Optional.empty(), Optional.empty()));
 
         if (fluids.capacity() < Integer.MAX_VALUE && fluids.isNotEmpty()) {
             out.set(DataComponents.MAX_DAMAGE, (int) fluids.capacity());

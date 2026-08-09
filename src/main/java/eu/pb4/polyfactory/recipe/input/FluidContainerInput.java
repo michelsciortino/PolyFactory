@@ -41,4 +41,8 @@ public record FluidContainerInput(ToLongFunction<FluidInstance<?>> fluidsAmount,
     public boolean isEmpty() {
         return stored == 0;
     }
+
+    public long empty() {
+        return capacity - stored;
+    }
 }

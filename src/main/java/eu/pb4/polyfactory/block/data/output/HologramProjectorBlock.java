@@ -44,7 +44,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.*;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
@@ -94,36 +93,31 @@ public class HologramProjectorBlock extends DataNetworkBlock implements FactoryB
         }
     });
 
-    public static final BlockConfig<?> SCALE = BlockConfig.ofBlockEntity("scale", ExtraCodecs.floatRange(1, 5), HologramProjectorBlockEntity.class,
-            BlockValueFormatter.str(x -> String.format(Locale.ROOT, "%.1f", x)),
-            HologramProjectorBlockEntity::scale, HologramProjectorBlockEntity::setScale,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 0.5f : -0.5f), 1, 5))
+    public static final BlockConfig<?> SCALE = BlockConfig.ofBlockEntityFloat("scale", HologramProjectorBlockEntity.class, 1, 4, 0, 0.5f, 1,
+            x -> String.format(Locale.ROOT, "%.1f", x),
+            HologramProjectorBlockEntity::scale, HologramProjectorBlockEntity::setScale
     );
 
-    public static final BlockConfig<?> OFFSET = BlockConfig.ofBlockEntity("offset", ExtraCodecs.floatRange(0.1f, 1.5f), HologramProjectorBlockEntity.class,
-            BlockValueFormatter.str(x -> String.format(Locale.ROOT,"%.1f", x)),
-            HologramProjectorBlockEntity::offset, HologramProjectorBlockEntity::setOffset,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 0.1f : -0.1f), 0.1f, 1.5f))
+    public static final BlockConfig<?> OFFSET = BlockConfig.ofBlockEntityFloat("offset", HologramProjectorBlockEntity.class, 0.1f, 1.5f, 0, 0.1f, 1,
+            x -> String.format(Locale.ROOT,"%.1f", x),
+            HologramProjectorBlockEntity::offset, HologramProjectorBlockEntity::setOffset
     );
 
-    public static final BlockConfig<?> CHANGE_PITCH = BlockConfig.ofBlockEntity("pitch", ExtraCodecs.floatRange(0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5), HologramProjectorBlockEntity.class,
-            BlockValueFormatter.str(x -> Math.round(x * Mth.RAD_TO_DEG) + "°"),
-            HologramProjectorBlockEntity::pitch, HologramProjectorBlockEntity::setPitch,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + Mth.DEG_TO_RAD * (n ? 5 : -5),
-                    0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5))
+    public static final BlockConfig<?> CHANGE_PITCH = BlockConfig.ofBlockEntityFloat("pitch", HologramProjectorBlockEntity.class,
+            0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5, 0, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD,
+            x -> Math.round(x * Mth.RAD_TO_DEG) + "°",
+            HologramProjectorBlockEntity::pitch, HologramProjectorBlockEntity::setPitch
     );
 
-    public static final BlockConfig<?> CHANGE_YAW = BlockConfig.ofBlockEntity("yaw", ExtraCodecs.floatRange(0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5), HologramProjectorBlockEntity.class,
-            BlockValueFormatter.str(x -> Math.round(x * Mth.RAD_TO_DEG) + "°"),
-            HologramProjectorBlockEntity::yaw, HologramProjectorBlockEntity::setYaw,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + Mth.DEG_TO_RAD * (n ? 5 : -5),
-                    0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5))
+    public static final BlockConfig<?> CHANGE_YAW = BlockConfig.ofBlockEntityFloat("yaw", HologramProjectorBlockEntity.class,
+            0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5, 0, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD,
+            x -> Math.round(x * Mth.RAD_TO_DEG) + "°",
+            HologramProjectorBlockEntity::yaw, HologramProjectorBlockEntity::setYaw
     );
-    public static final BlockConfig<?> CHANGE_ROLL = BlockConfig.ofBlockEntity("roll", ExtraCodecs.floatRange(0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5), HologramProjectorBlockEntity.class,
-            BlockValueFormatter.str(x -> Math.round(x * Mth.RAD_TO_DEG) + "°"),
-            HologramProjectorBlockEntity::roll, HologramProjectorBlockEntity::setRoll,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + Mth.DEG_TO_RAD * (n ? 5 : -5),
-                    0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5))
+    public static final BlockConfig<?> CHANGE_ROLL = BlockConfig.ofBlockEntityFloat("roll", HologramProjectorBlockEntity.class,
+            0, Mth.TWO_PI - Mth.DEG_TO_RAD * 5, 0, Mth.DEG_TO_RAD * 5, Mth.DEG_TO_RAD,
+            x -> Math.round(x * Mth.RAD_TO_DEG) + "°",
+            HologramProjectorBlockEntity::roll, HologramProjectorBlockEntity::setRoll
     );
 
     public static final BlockConfig<?> FORCE_TEXT = BlockConfig.ofBlockEntity("force_text", Codec.BOOL, HologramProjectorBlockEntity.class,
@@ -214,7 +208,7 @@ public class HologramProjectorBlock extends DataNetworkBlock implements FactoryB
     @Override
     public boolean receiveData(ServerLevel world, BlockPos selfPos, BlockState selfState, int channel, DataContainer data, DataReceiverNode node, BlockPos sourcePos, @Nullable Direction sourceDir, int dataId) {
         if (world.getBlockEntity(selfPos) instanceof HologramProjectorBlockEntity be) {
-            be.setCachedData(data);
+            be.setCachedData(data, dataId);
             var active = selfState.getValue(ACTIVE);
             if (data.isEmpty() == active) {
                 if (!data.isEmpty() && FactoryUtil.getClosestPlayer(world, selfPos, 32) instanceof ServerPlayer player) {

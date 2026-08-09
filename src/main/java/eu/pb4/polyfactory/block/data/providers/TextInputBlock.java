@@ -2,41 +2,49 @@ package eu.pb4.polyfactory.block.data.providers;
 
 import eu.pb4.polyfactory.block.data.DataProvider;
 import eu.pb4.polyfactory.block.data.util.ChanneledDataBlockEntity;
-import eu.pb4.polyfactory.data.BasicDataType;
+import eu.pb4.polyfactory.data.*;
 import eu.pb4.polyfactory.block.configurable.BlockConfig;
+import eu.pb4.polyfactory.item.util.MultimeterHandler;
 import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
 import it.unimi.dsi.fastutil.objects.ReferenceSortedSets;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public class TextInputBlock extends OrientableCabledDataProviderBlock {
-    public static final EnumProperty<BasicDataType> MODE = EnumProperty.create("mode", BasicDataType.class);
+public class TextInputBlock extends OrientableCabledDataProviderBlock implements MultimeterHandler.Provider {
+    public static final EnumProperty<DataType> MODE = EnumProperty.create("mode", DataType.class);
 
     public TextInputBlock(Properties settings) {
         super(settings);
-        this.registerDefaultState(this.defaultBlockState().setValue(MODE, BasicDataType.STRING));
+        this.registerDefaultState(this.defaultBlockState().setValue(MODE, DataType.STRING));
     }
 
     @Override
@@ -124,5 +132,49 @@ public class TextInputBlock extends OrientableCabledDataProviderBlock {
                 this.facingAction,
                 BlockConfig.of("mode", MODE, (basicDataType, world, pos, sidex, statex) -> basicDataType.text())
         );
+    }
+
+    @Override
+    public void provideMultimeterDataAtTheEnd(MultimeterHandler.Builder builder, ServerLevel level, BlockPos pos, BlockState state, @org.jspecify.annotations.Nullable BlockEntity blockEntity, ServerPlayer player) {
+        builder.addLineDirect("mode", state.getValue(MODE).text());
+    }
+
+    public enum DataType implements StringRepresentable {
+        STRING("string", StringData::ofLimited),
+        INTEGER("integer", x -> new LongData(Long.parseLong(x))),
+        DECIMAL("decimal", x -> new DoubleData(Double.parseDouble(x))),
+        BOOLEAN("boolean", x -> BoolData.of(Boolean.parseBoolean(x))),
+        FLUID_AMOUNT("fluid_amount", x -> new LongData(FactoryUtil.parseFluidText(x))),
+        ;
+
+        private final String name;
+        private final Function<String, DataContainer> parser;
+        private final Component text;
+
+
+        DataType(String name, Function<String, @Nullable DataContainer> parser) {
+            this.name = name;
+            this.parser = parser;
+            this.text = Component.translatable("item.polyfactory.wrench.action.mode.arithmetic." + name);
+
+        }
+
+        @Nullable
+        public DataContainer parse(String input) {
+            try {
+                return this.parser.apply(input);
+            } catch (Throwable e) {
+                return null;
+            }
+        }
+
+        @Override
+        public String getSerializedName() {
+            return this.name;
+        }
+
+        public Component text() {
+            return this.text;
+        }
     }
 }

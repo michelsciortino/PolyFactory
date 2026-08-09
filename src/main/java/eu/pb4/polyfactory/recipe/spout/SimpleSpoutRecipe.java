@@ -141,6 +141,11 @@ public record SimpleSpoutRecipe(CountedIngredient item, List<FluidStack<?>> flui
     }
 
     @Override
+    public Holder<SoundEvent> soundEvent(SingleItemWithFluid input) {
+        return this.soundEvent;
+    }
+
+    @Override
     public double time(SingleItemWithFluid input) {
         return this.time;
     }

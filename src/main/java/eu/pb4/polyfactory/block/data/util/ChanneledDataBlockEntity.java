@@ -35,7 +35,7 @@ public class ChanneledDataBlockEntity extends LockableBlockEntity implements Cha
         return this.lastData;
     }
 
-    public void setCachedData(DataContainer lastData) {
+    public void setCachedData(DataContainer lastData, int dataId) {
         this.lastData = lastData;
     }
 

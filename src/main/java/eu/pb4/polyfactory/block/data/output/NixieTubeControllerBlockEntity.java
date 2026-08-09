@@ -42,8 +42,8 @@ public class NixieTubeControllerBlockEntity extends ChanneledDataBlockEntity {
         view.putString("text", this.text);
     }
 
-    public boolean receiveData(DataContainer data) {
-        this.setCachedData(data);
+    public boolean receiveData(DataContainer data, int dataId) {
+        this.setCachedData(data, dataId);
         var dir = this.getBlockState().getValue(NixieTubeControllerBlock.FACING);
         if (this.level.getBlockEntity(this.worldPosition.relative(dir)) instanceof NixieTubeBlockEntity nixieTube && canConnect(nixieTube, dir)) {
             var length = nixieTube.connectionSize() * 2;

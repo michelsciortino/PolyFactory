@@ -1,5 +1,20 @@
+- Added Copper Pipe with Smart Valve:
+  - It's an automated version of the Redstone Valve, that closes automatically once selected amount of fluid passes through it.
+  - It can be programmed with a Wrench or by connecting Data Cable to it.
+  - The limit is reset once this block gets powered with Redstone or when new configuration is received via data network.
+  - Crafted with Copper Pipe with Redstone Valve, 2 Steel Plates, a Cable and a Redstone Chip.
 - Doubled amount of items a single Item Filter can check for (from 9 to 18)
-- You can now use the Canister to milk cows.
+- Canisters now allow for more interactions:
+  - In world fluid insertion (on use) and extraction (on attack), using same block conversion as pipes.
+  - You can now use the Canister to milk cows.
+  - Canisters can now be filled with Mechanical Spouts and emptied with Mechanical Drains.
+- Changed the look of Clutch and Copper Pipe with Redstone Valve to mirror one of Gated Cable.
+  - As such, Copper Pipe with Redstone Valve now changes it's texture when powered.
+- Changed recipes of Clutch and Copper Pipe with Redstone Valve to use Smooth Stone Slabs instead of Steel Plates.
+- Changed Mechanical Spout and Mechanical Drain recipes to take less time (30% less).
+- Updated Creative Motor item model to match the look of the in world one (same as change in previous update).
 - Fixed Golden Drill Head missing its material name translation.
 - Fixed Fermenter crafting sometimes locking up or loosing items.
+- Fixed Plant Oil Splashes using wrong fluid type internally (gave them wrong particle).
 - Fixed Fluid Drain not ticking fluid container logic.
+- Fixed Creative Motor not displaying its speed in UI correctly.

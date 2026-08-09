@@ -48,8 +48,8 @@ public class HologramProjectorBlockEntity extends ChanneledDataBlockEntity imple
     }
 
     @Override
-    public void setCachedData(DataContainer lastData) {
-        super.setCachedData(lastData);
+    public void setCachedData(DataContainer lastData, int dataId) {
+        super.setCachedData(lastData, dataId);
         if (this.model != null) {
             this.model.setData(this.lastData);
         }

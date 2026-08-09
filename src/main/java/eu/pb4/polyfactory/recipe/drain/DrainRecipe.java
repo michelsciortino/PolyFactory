@@ -20,7 +20,7 @@ public interface DrainRecipe extends Recipe<DrainInput> {
         return 1;
     }
 
-    Holder<SoundEvent> soundEvent();
+    Holder<SoundEvent> soundEvent(DrainInput input);
     double time(DrainInput input);
 
     default boolean requirePlayer() {

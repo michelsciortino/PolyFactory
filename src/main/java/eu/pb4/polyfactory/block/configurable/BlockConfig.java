@@ -3,18 +3,14 @@ package eu.pb4.polyfactory.block.configurable;
 import com.mojang.serialization.Codec;
 import eu.pb4.polyfactory.block.data.ChannelContainer;
 import eu.pb4.polyfactory.block.property.FactoryProperties;
-import eu.pb4.polyfactory.item.configuration.WrenchHandler;
 import eu.pb4.polyfactory.nodes.data.DataStorage;
-import eu.pb4.polyfactory.ui.SimpleInputGui;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,10 +18,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntFunction;
+import java.util.function.*;
 
 public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockConfigValue<T> value,
                              BlockValueFormatter<T> formatter,
@@ -48,7 +41,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
 
     public static <T extends Comparable<T>> BlockConfig<T> of(Property<T> property) {
         return of(property.getName(), property);
-    }    public static final BlockConfig<FrontAndTop> ORIENTATION = BlockConfig.of("orientation", BlockStateProperties.ORIENTATION, (dir, world, pos, side, state) ->
+    }
+
+    public static final BlockConfig<FrontAndTop> ORIENTATION = BlockConfig.of("orientation", BlockStateProperties.ORIENTATION, (dir, world, pos, side, state) ->
                     Component.empty().append(FactoryUtil.asText(dir.front())).append(" / ").append(FactoryUtil.asText(dir.top())),
             WrenchModifyBlockValue.ofProperty(BlockStateProperties.ORIENTATION),
             BlockConfigValue.ofProperty(BlockStateProperties.ORIENTATION)).withAlt(WrenchModifyBlockValue.ofAltOrientation(BlockStateProperties.ORIENTATION));
@@ -172,36 +167,39 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 get,
                 set,
                 WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 1 : -1), minInclusive, maxInclusive)));
-        var name = tmp.name;
-        return tmp.withAlt((value, next, player, world, pos, side, state) -> {
-            var be = world.getBlockEntity(pos);
-            if (player instanceof ServerPlayer serverPlayer && tClass.isInstance(be)) {
-                new SimpleInputGui(serverPlayer,
-                        Component.translatable("item.polyfactory.wrench.ui.set_to_range", name, minInclusive + displayOffset, maxInclusive + displayOffset),
-                        be::isRemoved,
-                        String.valueOf(value + displayOffset),
-                        x -> {
-                            try {
-                                var val = Integer.parseInt(x) - displayOffset;
-                                return val >= minInclusive && val <= maxInclusive;
-                            } catch (Throwable e) {
-                                // ignore
-                            }
 
-                            return false;
-                        }, x -> {
-                    try {
-                        //noinspection unchecked
-                        set.accept((BE) be, Integer.parseInt(x) - displayOffset);
-                        WrenchHandler.of(serverPlayer).forceUpdate();
-                    } catch (Throwable e) {
-                        // ignore
+        return tmp.withAlt(WrenchModifyBlockValue.ofAltIntegerInput(tmp.name(), minInclusive, maxInclusive, displayOffset,
+                (level, pos, value) -> {
+                    var be = level.getBlockEntity(pos);
+                    if (tClass.isInstance(be)) {
+                        set.accept((BE) be, value);
                     }
-                });
-                serverPlayer.swing(InteractionHand.MAIN_HAND, true);
-            }
-            return value;
-        });
+                }, (level, pos) -> {
+                    var be = level.getBlockEntity(pos);
+                    return tClass.isInstance(be) && !be.isRemoved();
+                }, display));
+    }
+
+    public static <BE> BlockConfig<Float> ofBlockEntityFloat(String id, Class<BE> tClass, float minInclusive, float maxInclusive, float displayOffset, float delta, float rawInputScale,
+                                                             DoubleFunction<String> display, Function<BE, Float> get, BiConsumer<BE, Float> set) {
+        var tmp = ofBlockEntity(id,
+                ExtraCodecs.floatRange(minInclusive, maxInclusive),
+                tClass,
+                (x, world, pos, side, state) -> Component.literal(display.apply(x + displayOffset)),
+                get,
+                set,
+                WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? delta : -delta), minInclusive, maxInclusive)));
+
+        return tmp.withAlt(WrenchModifyBlockValue.ofAltFloatInput(tmp.name(), minInclusive, maxInclusive, displayOffset, rawInputScale,
+                (level, pos, value) -> {
+                    var be = level.getBlockEntity(pos);
+                    if (tClass.isInstance(be)) {
+                        set.accept((BE) be, value);
+                    }
+                }, (level, pos) -> {
+                    var be = level.getBlockEntity(pos);
+                    return tClass.isInstance(be) && !be.isRemoved();
+                }, display));
     }
 
     public BlockConfig<T> withAlt(WrenchModifyBlockValue<T> alt) {

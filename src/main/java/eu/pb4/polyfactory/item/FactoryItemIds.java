@@ -167,6 +167,7 @@ public class FactoryItemIds {
     public static final ResourceKey<Item> PIPE = of("pipe");
     public static final ResourceKey<Item> FILTERED_PIPE = of(FactoryBlockIds.FILTERED_PIPE);
     public static final ResourceKey<Item> REDSTONE_VALVE_PIPE = of(FactoryBlockIds.REDSTONE_VALVE_PIPE);
+    public static final ResourceKey<Item> SMART_VALVE_PIPE = of(FactoryBlockIds.SMART_VALVE_PIPE);
     public static final ResourceKey<Item> PUMP = of(FactoryBlockIds.PUMP);
     public static final ResourceKey<Item> NOZZLE = of(FactoryBlockIds.NOZZLE);
     public static final ResourceKey<Item> DRAIN = of(FactoryBlockIds.DRAIN);

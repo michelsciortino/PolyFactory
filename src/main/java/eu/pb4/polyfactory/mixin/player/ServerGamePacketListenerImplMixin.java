@@ -3,6 +3,7 @@ package eu.pb4.polyfactory.mixin.player;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import eu.pb4.polyfactory.block.collection.BlockCollection;
+import eu.pb4.polyfactory.item.util.AttackActionItem;
 import eu.pb4.polyfactory.item.util.MultimeterHandler;
 import eu.pb4.polyfactory.item.util.SwitchActionItem;
 import eu.pb4.polyfactory.item.configuration.WrenchHandler;
@@ -51,6 +52,14 @@ public abstract class ServerGamePacketListenerImplMixin implements ServerPlayNet
             stack = player.getOffhandItem();
             if (stack.getItem() instanceof SwitchActionItem actionItem && actionItem.onSwitchAction(player, stack, InteractionHand.OFF_HAND)) {
                 ci.cancel();
+            }
+        }
+
+        if (packet.getAction() == ServerboundPlayerActionPacket.Action.STAB) {
+            var stack = player.getMainHandItem();
+            if (stack.getItem() instanceof AttackActionItem actionItem && actionItem.onAttackAction(player, stack, InteractionHand.MAIN_HAND)) {
+                ci.cancel();
+                return;
             }
         }
     }

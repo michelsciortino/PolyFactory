@@ -112,7 +112,7 @@ public class DataMemoryBlockEntity extends LockableBlockEntity implements DataCa
     }
 
     @Override
-    public void setCachedData(DataContainer lastData) {
+    public void setCachedData(DataContainer lastData, int dataId) {
         this.data = lastData;
         this.setChanged();
     }

@@ -19,6 +19,7 @@ import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
@@ -46,9 +47,11 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class ElectricMotorBlock extends NetworkBlock implements FactoryBlock, EntityBlock, CableConnectable, RotationUser, EnergyUser, ConfigurableBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    private final Identifier model;
 
     public ElectricMotorBlock(Properties settings) {
         super(settings);
+        this.model = settings.blockIdOrThrow().identifier();
     }
 
     @Override
@@ -105,7 +108,7 @@ public class ElectricMotorBlock extends NetworkBlock implements FactoryBlock, En
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
-        return new Model(initialBlockState);
+        return new Model(initialBlockState, this.model);
     }
 
     @Override
@@ -147,9 +150,9 @@ public class ElectricMotorBlock extends NetworkBlock implements FactoryBlock, En
         private final ItemDisplayElement axle;
         private final ItemDisplayElement base;
 
-        public Model(BlockState state) {
+        public Model(BlockState state, Identifier model) {
             this.axle = LodItemDisplayElement.createSimple(AxleBlock.Model.ITEM_MODEL_SHORT.get(), this.getUpdateRate(), 0.3f, 0.6f);
-            this.base = ItemDisplayElementUtil.createSimple(state.getBlock().asItem());
+            this.base = ItemDisplayElementUtil.createSimple(model);
             this.base.setScale(new Vector3f(2));
 
             updateStatePos(state);

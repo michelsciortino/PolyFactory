@@ -189,5 +189,6 @@ public record FluidComponent(Object2LongMap<FluidInstance<?>> map, List<FluidIns
         return new FluidComponent(this.map, list, this.stored, this.capacity);
     }
 
+    /// fluidAmount -> for extraction it's extracted amount, for insertion it's leftover amount
     public record Result(FluidComponent component, long fluidAmount) {}
 }
