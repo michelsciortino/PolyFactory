@@ -76,7 +76,13 @@ public abstract class BlockStateBaseMixin implements TypedInstance<Block> {
                 continue;
             }
 
-            time += 1 / progress;
+
+            // insta-mine bonus
+            if (progress >= 1) {
+                time += 1 / (progress * 3);
+            } else {
+                time += 1 / progress;
+            }
         }
 
         cir.setReturnValue(time != 0 ? (float) (1 / time) : Float.MAX_VALUE);

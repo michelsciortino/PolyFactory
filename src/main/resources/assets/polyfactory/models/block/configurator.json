@@ -1,0 +1,8 @@
+{
+	"parent": "polyfactory:block/nixie_tube_controller",
+	"textures": {
+		"particle": "polyfactory:block/cable/configurator_front",
+		"side": "polyfactory:block/cable/configurator_side",
+		"front": "polyfactory:block/cable/configurator_front"
+	}
+}

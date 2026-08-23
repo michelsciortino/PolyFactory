@@ -70,6 +70,7 @@ public class FactoryBlockIds {
     public static final ResourceKey<Block> NIXIE_TUBE = of("nixie_tube");
 
     public static final ResourceKey<Block> NIXIE_TUBE_CONTROLLER = of("nixie_tube_controller");
+    public static final ResourceKey<Block> CONFIGURATOR = of("configurator");
     public static final ResourceKey<Block> WIRELESS_REDSTONE_RECEIVER = of("wireless_redstone_receiver");
     public static final ResourceKey<Block> WIRELESS_REDSTONE_TRANSMITTER = of("wireless_redstone_transmitter");
 
@@ -83,13 +84,14 @@ public class FactoryBlockIds {
     public static final ResourceKey<Block> CREATIVE_MOTOR = of("creative_motor");
     public static final ResourceKey<Block> CREATIVE_CONTAINER = of("creative_container");
     public static final ResourceKey<Block> INVERTED_REDSTONE_LAMP = of("inverted_redstone_lamp");
+
     public static final ResourceKey<Block> COLORED_LAMP = of("colored_lamp");
     public static final ResourceKey<Block> INVERTED_COLORED_LAMP = of("inverted_colored_lamp");
-
     public static final ResourceKey<Block> CAGED_LAMP = of("caged_lamp");
     public static final ResourceKey<Block> INVERTED_CAGED_LAMP = of("inverted_caged_lamp");
     public static final ResourceKey<Block> FIXTURE_LAMP = of("fixture_lamp");
     public static final ResourceKey<Block> INVERTED_FIXTURE_LAMP = of("inverted_fixture_lamp");
+
     public static final ResourceKey<Block> STEEL_BUTTON = of("steel_button");
     public static final ResourceKey<Block> TINY_POTATO_SPRING = of("tiny_potato_spring");
     public static final ResourceKey<Block> GOLDEN_TINY_POTATO_SPRING = of("golden_tiny_potato_spring");

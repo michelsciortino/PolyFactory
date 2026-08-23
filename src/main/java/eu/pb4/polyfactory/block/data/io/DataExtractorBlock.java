@@ -7,9 +7,14 @@ import eu.pb4.polyfactory.block.configurable.BlockValueFormatter;
 import eu.pb4.polyfactory.block.data.InputTransformerBlock;
 import eu.pb4.polyfactory.block.data.InputTransformerBlockEntity;
 import eu.pb4.polyfactory.data.DataContainer;
+import eu.pb4.polyfactory.data.DataType;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -33,7 +38,7 @@ public class DataExtractorBlock extends InputTransformerBlock {
                             serverPlayer.swing(InteractionHand.MAIN_HAND, true);
                         }
                         return value;
-                    })
+                    }, Component.literal(Stream.concat(Stream.of(DataContainer.GENERIC_EXTRACTS), DataType.types().stream().map(DataType::fields)).flatMap(List::stream).collect(Collectors.joining(", "))))
             ).build();
 
     public DataExtractorBlock(Properties settings) {

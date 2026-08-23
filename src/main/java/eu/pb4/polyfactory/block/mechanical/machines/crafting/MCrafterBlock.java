@@ -57,7 +57,7 @@ public class MCrafterBlock extends RotationalNetworkBlock implements FactoryBloc
             BlockConfig.FACING_HORIZONTAL,
             BlockConfig.ofBlockEntity("mechanical_crafter.active_mode", MCrafterBlockEntity.ActiveMode.CODEC, MCrafterBlockEntity.class, (activeMode, world, pos, side, state) -> activeMode.asText(),
                     MCrafterBlockEntity::getActiveMode, MCrafterBlockEntity::setActiveMode,
-                    WrenchModifyBlockValue.simple((x, mode) -> FactoryUtil.nextEnum(x, MCrafterBlockEntity.ActiveMode.values(), mode)))
+                    WrenchModifyBlockValue.simple((x, mode) -> FactoryUtil.nextEnum(x, MCrafterBlockEntity.ActiveMode.values(), mode)), MCrafterBlockEntity.ActiveMode.values())
     );
 
     public MCrafterBlock(Properties settings) {

@@ -38,6 +38,7 @@
   "block.polyfactory.nixie_tube": "Nixie Tube",
   "block.polyfactory.nixie_tube_controller": "Nixie Tube Controller",
   "block.polyfactory.nixie_tube_connector": "Nixie Tube Connector",
+  "block.polyfactory.configurator": "Configurator",
   "block.polyfactory.hand_crank": "Hand Crank",
   "block.polyfactory.steam_engine": "Steam Engine",
   "block.polyfactory.diesel_engine": "Diesel Engine",
@@ -796,7 +797,12 @@
   "advancements.polyfactory.tater_1024.title": "The Potato Master",
   "advancements.polyfactory.tater_1024.description": "Click Potato on a Spring 1024 times. The End! Nothing more",
 
+  "text.polyfactory.is_not_configurable": "%s is not configurable!",
+  "text.polyfactory.not_configurable": "Not configurable!",
+
   "text.polyfactory.color_simple": "%s (%s)",
+  "text.polyfactory.range_inclusive": "<%s; %s>",
+  "text.polyfactory.range_inclusive_to_infinite": "<%s; ∞)",
   "color.polyfactory.teal": "Teal",
   "text.polyfactory.attached": "Attached: %s",
   "text.polyfactory.no_fuel": "No Fuel!",

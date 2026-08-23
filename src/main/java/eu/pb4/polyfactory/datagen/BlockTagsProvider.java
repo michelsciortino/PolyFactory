@@ -121,6 +121,7 @@ class BlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(FactoryBlockIds.RECORD_PLAYER)
                 .add(FactoryBlockIds.BLOCK_OBSERVER)
                 .add(FactoryBlockIds.NIXIE_TUBE_CONTROLLER)
+                .add(FactoryBlockIds.CONFIGURATOR)
                 .add(FactoryBlockIds.GAUGE)
                 .add(FactoryBlockIds.ELECTRIC_MOTOR)
                 .add(FactoryBlockIds.ELECTRIC_GENERATOR)

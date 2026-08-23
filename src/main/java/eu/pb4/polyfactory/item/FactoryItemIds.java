@@ -103,6 +103,7 @@ public class FactoryItemIds {
     public static final ResourceKey<Item> PROGRAMMABLE_DATA_EXTRACTOR = of(FactoryBlockIds.PROGRAMMABLE_DATA_EXTRACTOR);
     public static final ResourceKey<Item> DATA_MEMORY = of("data_memory");
     public static final ResourceKey<Item> NIXIE_TUBE_CONTROLLER = of(FactoryBlockIds.NIXIE_TUBE_CONTROLLER);
+    public static final ResourceKey<Item> CONFIGURATOR = of(FactoryBlockIds.CONFIGURATOR);
     public static final ResourceKey<Item> GAUGE = of(FactoryBlockIds.GAUGE);
     public static final ResourceKey<Item> HOLOGRAM_PROJECTOR = of(FactoryBlockIds.HOLOGRAM_PROJECTOR);
     public static final ResourceKey<Item> WIRELESS_REDSTONE_RECEIVER = of(FactoryBlockIds.WIRELESS_REDSTONE_RECEIVER);

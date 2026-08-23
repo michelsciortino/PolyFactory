@@ -1,0 +1,21 @@
+### Section: PageInfo
+title=<item 'polyfactory:configurator'>
+icon=polyfactory:configurator
+category=polyfactory:cable
+order=90
+### EndSection: PageInfo
+<yellow><item 'polyfactory:configurator'></> is a data receiver block allowing you to dynamically configure certain blocks.
+You can think of it as a <pageref '/basics/wrench'>, but controlled via received data / cables.
+<nl2>
+To set a value you need to send a string to it in correct format:
+<nl>
+<gray>  <red>\<type\></> <yellow>\<value></></*><nl>
+Where `<type>` is the id of the setting you want to change and `<value>` is the value you want it to be set to.
+Example data would look like this `roll 180` to set the `Roll` setting of <item 'polyfactory:hologram_projector'> (or any other) to 180 degrees.
+<nl2>
+To see which values are accessible, you can interact with the <item 'polyfactory:configurator'> while having an empty hand
+to see all possible settings (with their ids) with allowed values, either as list of them or as a range.
+
+### Body:
+### Align: Center
+<u><blue><polydex 'polyfactory:configurator'>View the <item 'polyfactory:configurator'> recipe</><nl>

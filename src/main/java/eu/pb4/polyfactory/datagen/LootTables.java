@@ -68,6 +68,7 @@ class LootTables extends FabricBlockLootSubProvider {
         this.dropSelf(FactoryBlocks.ITEM_OUTPUT_BUFFER);
         this.dropSelf(FactoryBlocks.TEXT_INPUT);
         this.dropSelf(FactoryBlocks.NIXIE_TUBE);
+        this.dropSelf(FactoryBlocks.CONFIGURATOR);
         this.dropSelf(FactoryBlocks.METAL_GRID);
         this.dropSelf(FactoryBlocks.DATA_COMPARATOR);
         this.dropSelf(FactoryBlocks.DATA_EXTRACTOR);

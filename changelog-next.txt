@@ -3,11 +3,18 @@
   - It can be programmed with a Wrench or by connecting Data Cable to it.
   - The limit is reset once this block gets powered with Redstone or when new configuration is received via data network.
   - Crafted with Copper Pipe with Redstone Valve, 2 Steel Plates, a Cable and a Redstone Chip.
-- Doubled amount of items a single Item Filter can check for (from 9 to 18)
+- Added Configurator:
+  - A new data receiver block that can be used to change the configuration of the block it faces.
+  - Think about it as Wrench controlled via received data.
+  - The format it takes is `type value`, where type is id of the setting and value is the value it should be set to.
+  - By interacting with it while not holding any item the ui displaying accepted setting types and their values are displayed.
+  - Crafted with 4 Steel Plates, 3 Copper Ingots, Redstone Chip and a Wrench.
 - Canisters now allow for more interactions:
   - In world fluid insertion (on use) and extraction (on attack), using same block conversion as pipes.
   - You can now use the Canister to milk cows.
   - Canisters can now be filled with Mechanical Spouts and emptied with Mechanical Drains.
+- Drills in 2x2 and 3x3 modes now get an extra mining speed bonus for blocks that would insta-mine otherwise.
+- Doubled amount of items a single Item Filter can check for (from 9 to 18).
 - Changed the look of Clutch and Copper Pipe with Redstone Valve to mirror one of Gated Cable.
   - As such, Copper Pipe with Redstone Valve now changes it's texture when powered.
 - Changed recipes of Clutch and Copper Pipe with Redstone Valve to use Smooth Stone Slabs instead of Steel Plates.

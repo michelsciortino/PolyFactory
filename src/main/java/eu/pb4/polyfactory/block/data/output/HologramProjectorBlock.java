@@ -123,7 +123,7 @@ public class HologramProjectorBlock extends DataNetworkBlock implements FactoryB
     public static final BlockConfig<?> FORCE_TEXT = BlockConfig.ofBlockEntity("force_text", Codec.BOOL, HologramProjectorBlockEntity.class,
             BlockValueFormatter.text(CommonComponents::optionStatus),
             HologramProjectorBlockEntity::forceText, HologramProjectorBlockEntity::setForceText,
-            WrenchModifyBlockValue.simple((x, n) -> !x)
+            WrenchModifyBlockValue.simple((x, n) -> !x), List.of(true, false)
     );
 
     public HologramProjectorBlock(Properties settings) {

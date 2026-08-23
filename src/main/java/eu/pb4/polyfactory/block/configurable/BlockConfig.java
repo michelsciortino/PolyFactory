@@ -5,6 +5,7 @@ import eu.pb4.polyfactory.block.data.ChannelContainer;
 import eu.pb4.polyfactory.block.property.FactoryProperties;
 import eu.pb4.polyfactory.nodes.data.DataStorage;
 import eu.pb4.polyfactory.util.FactoryUtil;
+import eu.pb4.polyfactory.util.StringOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
@@ -18,11 +19,13 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.Property;
 
+import java.util.List;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockConfigValue<T> value,
                              BlockValueFormatter<T> formatter,
-                             WrenchModifyBlockValue<T> action, WrenchModifyBlockValue<T> alt) {
+                             WrenchModifyBlockValue<T> action, WrenchModifyBlockValue<T> alt, Component configuratorAllowedDisplay) {
     public static final BlockConfig<Direction> FACING = ofDirection(BlockStateProperties.FACING);
     public static final BlockConfig<Direction.Axis> AXIS = of("axis", BlockStateProperties.AXIS);
     public static final BlockConfig<Direction.Axis> HORIZONTAL_AXIS = of("axis", BlockStateProperties.HORIZONTAL_AXIS);
@@ -53,7 +56,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 Codec.stringResolver(property::getName, x -> property.getValue(x).orElse(property.getPossibleValues().getFirst())),
                 BlockConfigValue.ofProperty(property),
                 textFunction,
-                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property));
+                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+                );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property) {
@@ -61,7 +66,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 BlockConfigValue.ofProperty(property),
                 BlockValueFormatter.getDefault(),
-                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property));
+                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BlockValueFormatter<T> textFunction) {
@@ -69,7 +76,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 Codec.stringResolver(property::getName, x -> property.getValue(x).orElse(property.getPossibleValues().getFirst())),
                 BlockConfigValue.ofProperty(property),
                 textFunction,
-                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property));
+                WrenchModifyBlockValue.ofProperty(property), WrenchModifyBlockValue.ofProperty(property),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BiFunction<T, Boolean, T> function) {
@@ -77,7 +86,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 BlockConfigValue.ofProperty(property),
                 BlockValueFormatter.getDefault(),
-                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function));
+                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BlockValueFormatter<T> textFunction, BiFunction<T, Boolean, T> function) {
@@ -85,7 +96,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 BlockConfigValue.ofProperty(property),
                 textFunction,
-                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function));
+                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BlockValueFormatter<T> textFunction, WrenchModifyBlockValue<T> function) {
@@ -93,7 +106,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 BlockConfigValue.ofProperty(property),
                 textFunction,
-                function, function);
+                function, function,
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BlockValueFormatter<T> textFunction, BiFunction<T, Boolean, T> function, BlockConfigValue<T> value) {
@@ -101,7 +116,9 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 value,
                 textFunction,
-                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function));
+                WrenchModifyBlockValue.simple(function), WrenchModifyBlockValue.simple(function),
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
     public static <T extends Comparable<T>> BlockConfig<T> of(String id, Property<T> property, BlockValueFormatter<T> textFunction, WrenchModifyBlockValue<T> function, BlockConfigValue<T> value) {
@@ -109,19 +126,19 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
                 FactoryUtil.propertyCodec(property),
                 value,
                 textFunction,
-                function, function);
+                function, function,
+                Component.literal(property.getPossibleValues().stream().map(property::getName).collect(Collectors.joining(", ")))
+        );
     }
 
-    public static <T> BlockConfig<T> of(String id, Codec<T> codec, BlockConfigValue<T> value, WrenchModifyBlockValue<T> action) {
+    public static <T> BlockConfig<T> of(String id, Codec<T> codec, BlockConfigValue<T> value, WrenchModifyBlockValue<T> action, Component configuratorAllowedDisplay) {
         return new BlockConfig<T>(id, Component.translatable("item.polyfactory.wrench.action." + id), codec,
-                value,
-                BlockValueFormatter.getDefault(), action, action);
+                value, BlockValueFormatter.getDefault(), action, action, configuratorAllowedDisplay);
     }
 
-    public static <T> BlockConfig<T> of(String id, Codec<T> codec, BlockConfigValue<T> value, BlockValueFormatter<T> formatter, WrenchModifyBlockValue<T> action) {
+    public static <T> BlockConfig<T> of(String id, Codec<T> codec, BlockConfigValue<T> value, BlockValueFormatter<T> formatter, WrenchModifyBlockValue<T> action, Component configuratorAllowedDisplay) {
         return new BlockConfig<T>(id, Component.translatable("item.polyfactory.wrench.action." + id), codec,
-                value,
-                formatter, action, action);
+                value, formatter, action, action, configuratorAllowedDisplay);
     }
 
     public static BlockConfig<Direction> ofDirection(EnumProperty<Direction> property) {
@@ -137,8 +154,20 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
 
     public static <T, BE> BlockConfig<T> ofBlockEntity(String id, Codec<T> codec, Class<BE> beClass,
                                                        BlockValueFormatter<T> formatter, Function<BE, T> getter, BiConsumer<BE, T> setter,
-                                                       WrenchModifyBlockValue<T> action) {
-        return of(id, codec, BlockConfigValue.ofBlockEntity(beClass, getter, setter), formatter, action);
+                                                       WrenchModifyBlockValue<T> action, T[] values) {
+        return ofBlockEntity(id, codec, beClass, formatter, getter, setter, action, List.of(values));
+    }
+
+    public static <T, BE> BlockConfig<T> ofBlockEntity(String id, Codec<T> codec, Class<BE> beClass,
+                                                       BlockValueFormatter<T> formatter, Function<BE, T> getter, BiConsumer<BE, T> setter,
+                                                       WrenchModifyBlockValue<T> action, List<T> values) {
+        return ofBlockEntity(id, codec, beClass, formatter, getter, setter, action, Component.literal(values.stream().flatMap(x -> codec.encodeStart(StringOps.INSTANCE, x).result().stream()).collect(Collectors.joining(", "))));
+    }
+
+    public static <T, BE> BlockConfig<T> ofBlockEntity(String id, Codec<T> codec, Class<BE> beClass,
+                                                       BlockValueFormatter<T> formatter, Function<BE, T> getter, BiConsumer<BE, T> setter,
+                                                       WrenchModifyBlockValue<T> action, Component configuratorAllowedDisplay) {
+        return of(id, codec, BlockConfigValue.ofBlockEntity(beClass, getter, setter), formatter, action, configuratorAllowedDisplay);
     }
 
     public static <BE> BlockConfig<Integer> ofChannel(String id, Class<BE> tClass, Function<BE, Integer> get, BiConsumer<BE, Integer> set) {
@@ -161,12 +190,13 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
 
     public static <BE> BlockConfig<Integer> ofBlockEntityInt(String id, Class<BE> tClass, int minInclusive, int maxInclusive, int displayOffset, IntFunction<String> display, Function<BE, Integer> get, BiConsumer<BE, Integer> set) {
         var tmp = ofBlockEntity(id,
-                ExtraCodecs.intRange(minInclusive, maxInclusive),
+                ExtraCodecs.intRange(minInclusive + displayOffset, maxInclusive + displayOffset).xmap(x -> x - displayOffset, x -> x + displayOffset),
                 tClass,
                 (x, world, pos, side, state) -> Component.literal(display.apply(x + displayOffset)),
                 get,
                 set,
-                WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 1 : -1), minInclusive, maxInclusive)));
+                WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 1 : -1), minInclusive, maxInclusive)),
+                Component.translatable("text.polyfactory.range_inclusive", minInclusive + displayOffset, maxInclusive + displayOffset));
 
         return tmp.withAlt(WrenchModifyBlockValue.ofAltIntegerInput(tmp.name(), minInclusive, maxInclusive, displayOffset,
                 (level, pos, value) -> {
@@ -183,12 +213,13 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
     public static <BE> BlockConfig<Float> ofBlockEntityFloat(String id, Class<BE> tClass, float minInclusive, float maxInclusive, float displayOffset, float delta, float rawInputScale,
                                                              DoubleFunction<String> display, Function<BE, Float> get, BiConsumer<BE, Float> set) {
         var tmp = ofBlockEntity(id,
-                ExtraCodecs.floatRange(minInclusive, maxInclusive),
+                ExtraCodecs.floatRange(minInclusive / rawInputScale + displayOffset, maxInclusive / rawInputScale + displayOffset).xmap(x -> x * rawInputScale - displayOffset, x -> x / rawInputScale + displayOffset),
                 tClass,
                 (x, world, pos, side, state) -> Component.literal(display.apply(x + displayOffset)),
                 get,
                 set,
-                WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? delta : -delta), minInclusive, maxInclusive)));
+                WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? delta : -delta), minInclusive, maxInclusive)),
+                Component.translatable("text.polyfactory.range_inclusive", minInclusive / rawInputScale + displayOffset, maxInclusive / rawInputScale + displayOffset));
 
         return tmp.withAlt(WrenchModifyBlockValue.ofAltFloatInput(tmp.name(), minInclusive, maxInclusive, displayOffset, rawInputScale,
                 (level, pos, value) -> {
@@ -203,7 +234,7 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
     }
 
     public BlockConfig<T> withAlt(WrenchModifyBlockValue<T> alt) {
-        return new BlockConfig<T>(this.id, this.name, this.codec, this.value, this.formatter, this.action, alt);
+        return new BlockConfig<T>(this.id, this.name, this.codec, this.value, this.formatter, this.action, alt, this.configuratorAllowedDisplay);
     }
 
     public Component getDisplayValue(Level world, BlockPos blockPos, Direction side, BlockState state) {
@@ -211,6 +242,6 @@ public record BlockConfig<T>(String id, Component name, Codec<T> codec, BlockCon
     }
 
     public BlockConfig<T> withValue(BlockConfigValue<T> valueSetter) {
-        return new BlockConfig<>(this.id, this.name, this.codec, valueSetter, this.formatter, this.action, alt);
+        return new BlockConfig<>(this.id, this.name, this.codec, valueSetter, this.formatter, this.action, alt, this.configuratorAllowedDisplay);
     }
 }

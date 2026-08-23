@@ -42,12 +42,12 @@ public class NixieTubeControllerBlock extends DirectionalCabledDataBlock impleme
     public static final BlockConfig<Boolean> SCROLL_LOOP = BlockConfig.ofBlockEntity("scroll_loop", Codec.BOOL, NixieTubeControllerBlockEntity.class,
             (on, world, pos, side, state) -> CommonComponents.optionStatus(on),
             NixieTubeControllerBlockEntity::scrollLoop, NixieTubeControllerBlockEntity::setScrollLoop,
-            WrenchModifyBlockValue.simple((x, n) -> !x)
+            WrenchModifyBlockValue.simple((x, n) -> !x), List.of(true, false)
     );
     public static final BlockConfig<Integer> SCROLL_SPEED = BlockConfig.ofBlockEntity("scroll_speed", ExtraCodecs.intRange(0, 80), NixieTubeControllerBlockEntity.class,
             (x, world, pos, side, state) -> Component.translatable("text.polyfactory.char_per_sec", String.format(Locale.ROOT,"%.2f", x == 0f ? 0 : (20f / x))),
             NixieTubeControllerBlockEntity::scrollSpeed, NixieTubeControllerBlockEntity::setScrollSpeed,
-            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 1 : -1), 0, 80))
+            WrenchModifyBlockValue.simple((x, n) -> FactoryUtil.wrap(x + (n ? 1 : -1), 0, 80)), Component.translatable("text.polyfactory.range_inclusive", 0, 80)
     );
 
     public NixieTubeControllerBlock(Properties settings) {

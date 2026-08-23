@@ -320,7 +320,9 @@ public interface FluidContainerUtil {
                         .setName(Component.empty().append(FactoryUtil.fluidTextGeneric(container.stored())).append(" / ").append(FactoryUtil.fluidTextGeneric(container.capacity())));
 
                 container.forEachReversed((type, amount) -> {
-                    b.addLoreLine(type.toLabeledAmount(amount).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false)));
+                    b.addLoreLine(
+                            type.toLabeledAmount(amount).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false))
+                    );
                 });
                 return b.asStack();
             }

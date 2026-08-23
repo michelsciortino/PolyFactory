@@ -161,6 +161,7 @@ public class FactoryItems {
     public static final Item PROGRAMMABLE_DATA_EXTRACTOR = register(FactoryBlocks.PROGRAMMABLE_DATA_EXTRACTOR);
     public static final Item DATA_MEMORY = register(FactoryItemIds.DATA_MEMORY, new Item.Properties().useBlockDescriptionPrefix().component(FactoryDataComponents.STORED_DATA, DataContainer.empty()), (settings) -> new DataMemoryBlockItem(FactoryBlocks.DATA_MEMORY, settings));
     public static final Item NIXIE_TUBE_CONTROLLER = register(FactoryBlocks.NIXIE_TUBE_CONTROLLER);
+    public static final Item CONFIGURATOR = register(FactoryBlocks.CONFIGURATOR);
     public static final Item GAUGE = register(FactoryBlocks.GAUGE);
     public static final Item HOLOGRAM_PROJECTOR = register(FactoryBlocks.HOLOGRAM_PROJECTOR);
     public static final Item WIRELESS_REDSTONE_RECEIVER = register(FactoryBlocks.WIRELESS_REDSTONE_RECEIVER);
@@ -406,6 +407,7 @@ public class FactoryItems {
                     entries.accept(NIXIE_TUBE);
                     entries.accept(HOLOGRAM_PROJECTOR);
                     entries.accept(SPEAKER);
+                    entries.accept(CONFIGURATOR);
                     entries.accept(DATA_MEMORY);
                     entries.accept(DATA_EXTRACTOR);
                     entries.accept(PROGRAMMABLE_DATA_EXTRACTOR);
@@ -619,6 +621,7 @@ public class FactoryItems {
                         entries.accept(ELECTRIC_MOTOR, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                         entries.accept(CLIPBOARD, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                         entries.accept(SMELTERY, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                        entries.accept(PUNCH_CARD, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                     })).build()
             );
         }

@@ -118,6 +118,8 @@ public class FactoryBlocks {
     public static final NixieTubeBlock NIXIE_TUBE = register(FactoryBlockIds.NIXIE_TUBE, BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS), settings -> new NixieTubeBlock(settings.noOcclusion()));
 
     public static final NixieTubeControllerBlock NIXIE_TUBE_CONTROLLER = register(FactoryBlockIds.NIXIE_TUBE_CONTROLLER, BlockBehaviour.Properties.ofFullCopy(ITEM_COUNTER), NixieTubeControllerBlock::new);
+    public static final ConfiguratorBlock CONFIGURATOR = register(FactoryBlockIds.CONFIGURATOR, BlockBehaviour.Properties.ofFullCopy(ITEM_COUNTER), ConfiguratorBlock::new);
+
     public static final WirelessRedstoneBlock WIRELESS_REDSTONE_RECEIVER = register(FactoryBlockIds.WIRELESS_REDSTONE_RECEIVER, BlockBehaviour.Properties.ofFullCopy(ITEM_COUNTER), WirelessRedstoneBlock.Receiver::new);
     public static final WirelessRedstoneBlock WIRELESS_REDSTONE_TRANSMITTER = register(FactoryBlockIds.WIRELESS_REDSTONE_TRANSMITTER, BlockBehaviour.Properties.ofFullCopy(ITEM_COUNTER), WirelessRedstoneBlock.Transmitter::new);
 

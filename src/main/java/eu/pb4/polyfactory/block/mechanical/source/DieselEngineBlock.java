@@ -67,7 +67,7 @@ public class DieselEngineBlock extends NetworkBlock implements FactoryBlock, Ent
 
     private static final BlockConfig<?> REDSTONE_ACTIVATION_CONFIG = BlockConfig.ofBlockEntity("redstone_activation", RedstoneActivationType.CODEC, DieselEngineBlockEntity.class,
             BlockValueFormatter.text(RedstoneActivationType::asName), DieselEngineBlockEntity::getRedstoneActivationType,
-            DieselEngineBlockEntity::setRedstoneActivationType, WrenchModifyBlockValue.enums(RedstoneActivationType.values()));
+            DieselEngineBlockEntity::setRedstoneActivationType, WrenchModifyBlockValue.enums(RedstoneActivationType.values()), RedstoneActivationType.values());
 
     private static final BlockConfig<?> ENGINE_GEAR_CONFIG = BlockConfig.ofBlockEntityInt("engine_gear", DieselEngineBlockEntity.class, 1, 5, 0,
             String::valueOf, DieselEngineBlockEntity::getGear, DieselEngineBlockEntity::setGear);
