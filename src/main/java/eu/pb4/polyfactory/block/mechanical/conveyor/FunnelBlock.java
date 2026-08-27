@@ -333,6 +333,11 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
         return List.of(BlockConfig.FACING, MODE_ACTION, MIN_STACK_SIZE_ACTION, MAX_STACK_SIZE_ACTION);
     }
 
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return state.getFluidState().isEmpty();
+    }
+
     public interface CommonBlockEntity {
         int maxStackSize();
         int minStackSize();

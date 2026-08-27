@@ -15,6 +15,7 @@ import eu.pb4.polyfactory.recipe.grinding.SimpleGrindingRecipe;
 import eu.pb4.polyfactory.recipe.grinding.StrippingGrindingRecipe;
 import eu.pb4.polyfactory.recipe.smeltery.SimpleSmelteryRecipe;
 import eu.pb4.polyfactory.recipe.spout.*;
+import eu.pb4.polyfactory.recipe.trommel.SimpleTrommelRecipe;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -30,6 +31,9 @@ import static eu.pb4.polyfactory.ModInit.id;
 public class FactoryRecipeSerializers {
     public static final RecipeSerializer<SimpleGrindingRecipe> GRINDING_SIMPLE = register("grinding/simple", SimpleGrindingRecipe.CODEC);
     public static final RecipeSerializer<StrippingGrindingRecipe> GRINDING_STRIPPING = register("grinding/stripping", StrippingGrindingRecipe.CODEC);
+
+    public static final RecipeSerializer<SimpleTrommelRecipe> TROMMEL_SIMPLE = register("trommel/simple", SimpleTrommelRecipe.CODEC);
+
     public static final RecipeSerializer<GenericPressRecipe> PRESS_GENERIC = register("press/generic", GenericPressRecipe.CODEC);
     public static final RecipeSerializer<ColoringMixingRecipe> MIXING_COLORING = register("mixing/coloring", ColoringMixingRecipe.CODEC);
 

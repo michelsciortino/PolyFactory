@@ -128,6 +128,11 @@ public class CheeseBlock extends Block implements FactoryBlock, PolymerTexturedB
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return new Model(initialBlockState);
     }

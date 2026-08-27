@@ -5,7 +5,7 @@ category=polyfactory:crafting
 order=10
 ### EndSection: PageInfo
 <yellow><item 'polyfactory:grinder'></> is an item crafting machine block. It required rotational energy to work.
-It's one of the first machines you can (and need to) make. It has one input slot and 3 output slots.
+It's one of the first machines you can (and need to) make. It has one input slot and 5 output slots.
 <nl2>
 This machine allows you to grind down certain items to different ones, which is required to do to get certain materials.
 When grinding, there might be multiple resulting items, with some of them only having a chance to appear.

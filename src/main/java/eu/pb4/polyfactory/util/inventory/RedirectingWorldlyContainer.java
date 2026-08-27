@@ -1,13 +1,52 @@
 package eu.pb4.polyfactory.util.inventory;
 
+import eu.pb4.polyfactory.block.mechanical.machines.crafting.TrommelBlockEntity;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface RedirectingWorldlyContainer extends WorldlyContainer {
-    
+    static WorldlyContainer inputOnly(WorldlyContainer container) {
+        return new RedirectingWorldlyContainer() {
+            @Override
+            public WorldlyContainer getRedirect() {
+                return container;
+            }
+
+            @Override
+            public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
+                return false;
+            }
+
+            @Override
+            public boolean canTakeItem(Container into, int slot, ItemStack itemStack) {
+                return false;
+            }
+        };
+    }
+
+    static WorldlyContainer outputOnly(WorldlyContainer container) {
+        return new RedirectingWorldlyContainer() {
+            @Override
+            public WorldlyContainer getRedirect() {
+                return container;
+            }
+
+            @Override
+            public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
+                return false;
+            }
+
+            @Override
+            public boolean canPlaceItem(int slot, ItemStack itemStack) {
+                return false;
+            }
+        };
+    }
+
     WorldlyContainer getRedirect();
 
     @Override

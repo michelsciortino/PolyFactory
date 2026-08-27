@@ -177,6 +177,11 @@ public class ContainerBlock extends Block implements FactoryBlock, EntityBlock, 
         return Blocks.OAK_PLANKS.defaultBlockState();
     }
 
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

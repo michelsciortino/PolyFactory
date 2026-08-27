@@ -1,9 +1,8 @@
 package eu.pb4.polyfactory.polydex.pages;
 
-import eu.pb4.factorytools.api.util.LazyItemStack;
 import eu.pb4.polyfactory.item.FactoryItems;
 import eu.pb4.polyfactory.polydex.PolydexTextures;
-import eu.pb4.polyfactory.recipe.GrindingRecipe;
+import eu.pb4.polyfactory.recipe.grinding.GrindingRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;

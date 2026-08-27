@@ -23,7 +23,7 @@ import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.ui.UiResourceCreator;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.CrafterLikeInsertContainer;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
@@ -63,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class FermenterBlockEntity extends TallItemMachineBlockEntity implements FluidOutput.ContainerBased, OutputContainerOwner, MinimalSidedContainer, CrafterLikeInsertContainer, BlockEntityExtraListener {
+public class FermenterBlockEntity extends TallItemMachineBlockEntity implements FluidOutput.ContainerBased, OutputContainerOwner, MinimalWorldlyContainer, CrafterLikeInsertContainer, BlockEntityExtraListener {
 
     public static final int OUTPUT_FIRST = 6;
     public static final int INPUT_FIRST = 0;

@@ -39,6 +39,7 @@ import eu.pb4.polyfactory.recipe.mixing.TransformMixingRecipe;
 import eu.pb4.polyfactory.recipe.press.GenericPressRecipe;
 import eu.pb4.polyfactory.recipe.smeltery.SimpleSmelteryRecipe;
 import eu.pb4.polyfactory.recipe.spout.SimpleSpoutRecipe;
+import eu.pb4.polyfactory.recipe.trommel.SimpleTrommelRecipe;
 import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.ui.GuiUtils;
 import eu.pb4.polyfactory.util.BlockStateNameProvider;
@@ -89,8 +90,12 @@ public class PolydexCompatImpl {
         PolydexPage.registerRecipeViewer(RatedFluidMixingMixingRecipe.class, RatedFluidMixerRecipePage::new);
         PolydexPage.registerRecipeViewer(TransformMixingRecipe.class, TransformMixerRecipePage::new);
         PolydexPage.registerRecipeViewer(BrewingMixingRecipe.class, BrewingMixerRecipePage::new);
+
         PolydexPage.registerRecipeViewer(SimpleGrindingRecipe.class, SimpleGrindingRecipePage::new);
         PolydexPage.registerRecipeViewer(StrippingGrindingRecipe.class, StrippingGrindingRecipePage::new);
+
+        PolydexPage.registerRecipeViewer(SimpleTrommelRecipe.class, SimpleTrommelRecipePage::new);
+
         PolydexPage.registerRecipeViewer(ColoringCraftingRecipe.class, ColoringCraftingRecipePage::new);
         //noinspection unchecked
         PolydexPage.registerRecipeViewer(ShapelessNbtCopyRecipe.class, (x) -> new ShapelessCraftingRecipePage((RecipeHolder<ShapelessRecipe>) (Object) x));

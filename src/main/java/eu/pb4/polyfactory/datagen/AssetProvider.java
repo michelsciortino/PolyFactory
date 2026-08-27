@@ -254,6 +254,11 @@ class AssetProvider implements DataProvider {
             )), ItemAsset.Properties.DEFAULT));
         }
 
+        fromItem.accept(FactoryItems.TROMMEL, id -> new ItemAsset(new CompositeItemModel(List.of(
+                new BasicItemModel(id.withPrefix("block/")),
+                new BasicItemModel(id.withPrefix("block/").withSuffix("_inner"))
+        )), ItemAsset.Properties.DEFAULT));
+
         for (var item : List.of(FactoryItems.DIESEL_ENGINE, FactoryItems.CREATIVE_MOTOR)) {
             fromItem.accept(item, id -> new ItemAsset(new CompositeItemModel(List.of(
                     new BasicItemModel(id.withPrefix("block/")),

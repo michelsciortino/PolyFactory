@@ -10,9 +10,8 @@ import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.ui.GuiUtils;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.RedstoneActivationType;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class SteamEngineBlockEntity extends LockableBlockEntity implements MinimalSidedContainer {
+public class SteamEngineBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer {
     private static final int[] SLOTS = new int[]{0, 1, 2};
     private final NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     public float state = 0;

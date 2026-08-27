@@ -153,6 +153,11 @@ public class WirelessRedstoneBlock extends Block implements FactoryBlock, Redsto
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public boolean canRedstoneConnect(BlockState state, @Nullable Direction dir) {
         return state.getValue(FACING).getOpposite() == dir;
     }

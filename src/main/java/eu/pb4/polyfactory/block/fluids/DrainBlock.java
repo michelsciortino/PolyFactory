@@ -168,6 +168,11 @@ public class DrainBlock extends Block implements FactoryBlock, PipeConnectable, 
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.COPPER_BLOCK.weathering().unaffected().defaultBlockState();
     }

@@ -1,10 +1,11 @@
-package eu.pb4.polyfactory.recipe;
+package eu.pb4.polyfactory.recipe.grinding;
 
+import eu.pb4.polyfactory.recipe.FactoryRecipeTypes;
 import eu.pb4.polyfactory.recipe.input.GrindingInput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import net.minecraft.core.HolderLookup;
+
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.PlacementInfo;

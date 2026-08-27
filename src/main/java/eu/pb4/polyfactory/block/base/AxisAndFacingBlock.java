@@ -63,4 +63,9 @@ public abstract class AxisAndFacingBlock extends Block implements ConfigurableBl
     public List<BlockConfig<?>> getBlockConfiguration(ServerPlayer player, BlockPos blockPos, Direction side, BlockState state) {
         return List.of(BlockConfig.FACING, FIRST_AXIS_CONFIG);
     }
+
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
 }

@@ -6,9 +6,8 @@ import eu.pb4.polyfactory.block.FactoryBlockEntities;
 import eu.pb4.polyfactory.block.mechanical.machines.crafting.MCrafterBlock;
 import eu.pb4.polyfactory.ui.WorkbenchScreenHandler;
 import eu.pb4.polyfactory.util.inventory.CrafterLikeInsertContainer;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -37,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-public class WorkbenchBlockEntity extends LockableBlockEntity implements MinimalSidedContainer, CrafterLikeInsertContainer, CraftingContainer, BlockEntityExtraListener {
+public class WorkbenchBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer, CrafterLikeInsertContainer, CraftingContainer, BlockEntityExtraListener {
 
     private static final int[] INPUT_SLOTS = IntStream.range(0, 9).toArray();
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);

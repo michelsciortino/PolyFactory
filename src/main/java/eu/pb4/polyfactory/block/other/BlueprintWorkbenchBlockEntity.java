@@ -9,7 +9,7 @@ import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.ui.UiResourceCreator;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.filter.FilterData;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class BlueprintWorkbenchBlockEntity extends LockableBlockEntity implements MinimalSidedContainer, BlockEntityExtraListener {
+public class BlueprintWorkbenchBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer, BlockEntityExtraListener {
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);
     private final NonNullList<FilterData> filters = NonNullList.withSize(9, FilterData.EMPTY_FALSE);
     private ItemStack outputPreview = ItemStack.EMPTY;

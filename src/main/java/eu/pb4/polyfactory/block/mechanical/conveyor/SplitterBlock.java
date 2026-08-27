@@ -238,6 +238,11 @@ public class SplitterBlock extends Block implements FactoryBlock, MovingItemCons
         return Blocks.SMOOTH_STONE.defaultBlockState();
     }
 
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

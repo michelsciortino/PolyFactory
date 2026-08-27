@@ -162,6 +162,11 @@ public class NixieTubeBlock extends Block implements FactoryBlock, EntityBlock, 
         return Blocks.GLASS.defaultBlockState();
     }
 
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
     public static final class Model extends BlockModel {
         private static final Brightness MAX_BRIGHTNESS = new Brightness(15, 15);
         private final Matrix4fStack mat = new Matrix4fStack(2);

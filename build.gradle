@@ -33,13 +33,12 @@ loom {
 			name = "Data Generation"
 			runDir = "build/datagen"
 			vmArg("-Dfabric-api.datagen")
-			vmArg("-Dfabric-api.datagen.id=polyfactory")
+			vmArg("-Dfabric-api.datagen.modid=polyfactory")
 			vmArg("-Dfabric-api.datagen.output-dir=${file("src/main/generated")}")
 		}
 	}
 	accessWidenerPath = file("src/main/resources/polyfactory.accesswidener")
 }
-
 
 sourceSets {
 	main {
@@ -192,7 +191,7 @@ if (System.getenv("MODRINTH")) {
 
 		dependencies {
 			required.project "polymer"
-			optional.project "polydex"
+			required.project "polydex"
 			optional.project "booklet"
 		}
 	}

@@ -93,6 +93,11 @@ public class SelectivePassthroughBlock extends Block implements FactoryBlock, Ba
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return state.getFluidState().isEmpty();
+    }
+
+    @Override
     public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         var model = new BlockModel();
         var element = ItemDisplayElementUtil.createSimple(this.asItem());

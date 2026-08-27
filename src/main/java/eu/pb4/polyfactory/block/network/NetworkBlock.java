@@ -36,6 +36,11 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
         this.updateNetworkAt(world, pos);
     }
 
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
     protected abstract void updateNetworkAt(LevelReader world, BlockPos pos);
     protected abstract boolean isSameNetworkType(Block block);
 

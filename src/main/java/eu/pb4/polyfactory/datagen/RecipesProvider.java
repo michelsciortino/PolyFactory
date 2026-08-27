@@ -39,6 +39,7 @@ import eu.pb4.polyfactory.recipe.spout.ContainerFillSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.PotionSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.RepairSpoutRecipe;
 import eu.pb4.polyfactory.recipe.spout.SimpleSpoutRecipe;
+import eu.pb4.polyfactory.recipe.trommel.SimpleTrommelRecipe;
 import eu.pb4.polyfactory.util.DyeColorExtra;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -69,7 +70,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -132,6 +135,17 @@ class RecipesProvider extends FabricRecipeProvider {
                         .define('w', Items.SMOOTH_STONE_SLAB)
                         .define('p', ItemTags.PLANKS)
                         .unlockedBy("get_steel", InventoryChangeTrigger.TriggerInstance.hasItems(Items.IRON_INGOT))
+                        .save(output);
+
+                this.shaped(RecipeCategory.REDSTONE, FactoryItems.TROMMEL, 1)
+                        .pattern("sgs")
+                        .pattern("scs")
+                        .pattern("wsw")
+                        .define('w', Items.SMOOTH_STONE_SLAB)
+                        .define('s', FactoryItems.STEEL_PLATE)
+                        .define('g', FactoryItems.STEEL_MACHINE_GEARBOX)
+                        .define('c', FactoryItems.METAL_GRID)
+                        .unlockedBy("get_steel", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.STEEL_INGOT))
                         .save(output);
 
                 this.shaped(RecipeCategory.REDSTONE, FactoryItems.STEEL_MACHINE_GEARBOX, 1)
@@ -1100,6 +1114,104 @@ class RecipesProvider extends FabricRecipeProvider {
                         SimpleGrindingRecipe.of("leaf_litter_to_dye", "dye", Ingredient.of(Items.LEAF_LITTER), 0.5, 12, OutputStack.of(Items.DYE.brown(), 0.3f))
                 );
 
+                of(exporter,
+                        SimpleTrommelRecipe.of("gravel", Ingredient.of(Items.GRAVEL), 0.75, 20,
+                                OutputStack.of(Items.FLINT, 0.6f, 2),
+                                OutputStack.of(FactoryItems.RAW_IRON_NUGGET, 0.08f,2),
+                                OutputStack.of(FactoryItems.RAW_COPPER_NUGGET, 0.1f, 2),
+                                OutputStack.of(FactoryItems.RAW_GOLD_NUGGET, 0.02f)
+                        ),
+                        SimpleTrommelRecipe.of("sand", Ingredient.of(Items.SAND), 0.5, 5, 16,
+                                OutputStack.of(Items.FLINT, 0.1f, 1),
+                                OutputStack.of(FactoryItems.RAW_IRON_NUGGET, 0.02f, 1),
+                                OutputStack.of(FactoryItems.RAW_COPPER_NUGGET, 0.04f),
+                                OutputStack.of(FactoryItems.RAW_GOLD_NUGGET, 0.05f, 2)
+                        ),
+                        SimpleTrommelRecipe.of("red_sand", Ingredient.of(Items.RED_SAND), 0.5, 5, 16,
+                                OutputStack.of(Items.FLINT, 0.1f, 1),
+                                OutputStack.of(FactoryItems.RAW_IRON_NUGGET, 0.05f, 1),
+                                OutputStack.of(FactoryItems.RAW_GOLD_NUGGET, 0.12f, 2)
+                        ),
+                        SimpleTrommelRecipe.of("short_grass", Ingredient.of(Items.SHORT_GRASS), 0.25, 2, 16,
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.5f, 2)
+                        ),
+                        SimpleTrommelRecipe.of("wheat", Ingredient.of(Items.WHEAT), 0.25, 2, 16,
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.8f, 3)
+                        ),
+                        SimpleTrommelRecipe.of("azalea_leaves", Ingredient.of(Items.AZALEA_LEAVES, Items.FLOWERING_AZALEA_LEAVES),
+                                0.4, 2, 16,
+                                OutputStack.of(Items.AZALEA, 0.05f),
+                                OutputStack.of(Items.FLOWERING_AZALEA, 0.05f),
+                                OutputStack.of(Items.STICK, 0.6f, 3)
+                        ),
+                        SimpleTrommelRecipe.of("dirt", Ingredient.of(Items.DIRT, Items.DIRT_PATH, Items.FARMLAND),
+                                1, 2, 16,
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.2f, 1),
+                                OutputStack.of(Items.FLINT, 0.3f, 1),
+                                OutputStack.of(Items.CLAY_BALL, 0.2f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("coarse_dirt", Ingredient.of(Items.COARSE_DIRT),
+                                1, 2, 16,
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.1f, 1),
+                                OutputStack.of(Items.FLINT, 0.6f, 1),
+                                OutputStack.of(Items.CLAY_BALL, 0.2f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("rooted_dirt", Ingredient.of(Items.ROOTED_DIRT),
+                                1, 2, 16,
+                                OutputStack.of(Items.HANGING_ROOTS, 1f, 1),
+                                OutputStack.of(Items.FLINT, 0.3f, 1),
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.2f, 1),
+                                OutputStack.of(Items.CLAY_BALL, 0.2f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("grass_block", Ingredient.of(Items.GRASS_BLOCK, Items.PODZOL),
+                                1, 2, 16,
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.4f, 2),
+                                OutputStack.of(Items.FLINT, 0.3f, 1),
+                                OutputStack.of(Items.CLAY_BALL, 0.2f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("mycelium", Ingredient.of(Items.MYCELIUM),
+                                1, 2, 16,
+                                OutputStack.of(Items.RED_MUSHROOM, 0.6f, 1),
+                                OutputStack.of(Items.BROWN_MUSHROOM, 0.6f, 1),
+                                OutputStack.of(Items.FLINT, 0.3f, 1),
+                                OutputStack.of(Items.CLAY_BALL, 0.2f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("mud", Ingredient.of(Items.MUD),
+                                1, 2, 16,
+                                OutputStack.of(Items.CLAY_BALL, 0.6f, 4),
+                                OutputStack.of(Items.FLINT, 0.1f, 1),
+                                OutputStack.of(Items.WHEAT_SEEDS, 0.1f, 1)
+                        ),
+                        SimpleTrommelRecipe.of("soul_sand", Ingredient.of(Items.SOUL_SAND, Items.SOUL_SOIL),
+                                1, 2, 16,
+                                OutputStack.of(Items.NETHER_WART, 0.06f, 1),
+                                OutputStack.of(Items.FLINT, 0.1f, 1),
+                                OutputStack.of(Items.BONE, 0.40f, 1),
+                                OutputStack.of(FactoryItems.RAW_GOLD_NUGGET, 0.2f)
+                        )
+                );
+
+
+                for (var wood : WoodType.values().toList()) {
+                    var leaves = BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(wood.name() + "_leaves"));
+                    if (leaves == Items.AIR) {
+                        continue;
+                    }
+
+                    var sapling = wood == WoodType.MANGROVE ? Items.MANGROVE_PROPAGULE : BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(wood.name() + "_sapling"));
+
+                    var list = new ArrayList<OutputStack>();
+                    list.add(OutputStack.of(sapling, 0.1f, 1));
+                    list.add(OutputStack.of(Items.STICK, 0.6f, 3));
+
+                    if (wood == WoodType.OAK || wood == WoodType.DARK_OAK) {
+                        list.add(OutputStack.of(Items.APPLE, 0.02f, 1));
+                    }
+
+                    of(exporter, SimpleTrommelRecipe.of(wood.name() + "_leaves",
+                            Ingredient.of(leaves), 0.4, 2, 16, list.toArray(OutputStack[]::new)));
+                }
+
                 oreSmelting(List.of(FactoryItems.CRUSHED_RAW_IRON), RecipeCategory.MISC, CookingBookCategory.MISC, Items.IRON_INGOT, 0.5F, 180, "iron_ingot");
                 oreSmelting(List.of(FactoryItems.CRUSHED_RAW_COPPER), RecipeCategory.MISC, CookingBookCategory.MISC, Items.COPPER_INGOT, 0.5F, 180, "copper_ingot");
                 oreSmelting(List.of(FactoryItems.CRUSHED_RAW_GOLD), RecipeCategory.MISC, CookingBookCategory.MISC, Items.GOLD_INGOT, 0.7F, 180, "gold_ingot");
@@ -1171,15 +1283,15 @@ class RecipesProvider extends FabricRecipeProvider {
 
                         GenericPressRecipe.of("sunflower_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.SUNFLOWER),
                                 CountedIngredient.EMPTY,
-                                8, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 60 / 100))),
+                                8, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 80 / 100))),
 
                         GenericPressRecipe.of("seeds_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.WHEAT_SEEDS),
                                 CountedIngredient.EMPTY,
-                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET))),
+                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 120 / 100))),
 
                         GenericPressRecipe.of("torchflower_seeds_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.TORCHFLOWER_SEEDS),
                                 CountedIngredient.EMPTY,
-                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 5 / 4))),
+                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 130 / 100))),
 
                         GenericPressRecipe.of("beetroot_seeds_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.BEETROOT_SEEDS),
                                 CountedIngredient.EMPTY,
@@ -1187,11 +1299,11 @@ class RecipesProvider extends FabricRecipeProvider {
 
                         GenericPressRecipe.of("pumpkin_seeds_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.PUMPKIN_SEEDS),
                                 CountedIngredient.EMPTY,
-                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 60 / 100))),
+                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 80 / 100))),
 
                         GenericPressRecipe.of("melon_seeds_to_plant_oil", "plant_oil", CountedIngredient.ofItems(1, Items.MELON_SEEDS),
                                 CountedIngredient.EMPTY,
-                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 50 / 100)))
+                                6, List.of(), List.of(FactoryFluids.PLANT_OIL.of(FluidConstants.NUGGET * 60 / 100)))
                 );
 
                 for (var i = 0; i < 5; i++) {

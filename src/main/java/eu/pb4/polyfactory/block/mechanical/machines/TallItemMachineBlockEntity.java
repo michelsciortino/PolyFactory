@@ -1,17 +1,12 @@
 package eu.pb4.polyfactory.block.mechanical.machines;
 
 import eu.pb4.factorytools.api.block.entity.LockableBlockEntity;
-import eu.pb4.factorytools.api.virtualentity.BlockModel;
 import eu.pb4.polyfactory.block.other.MachineInfoProvider;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
-import eu.pb4.polyfactory.util.movingitem.SimpleMovingItemContainerProvider;
-import eu.pb4.polyfactory.util.movingitem.MovingItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;

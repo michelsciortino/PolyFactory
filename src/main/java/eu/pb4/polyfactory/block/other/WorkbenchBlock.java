@@ -123,6 +123,11 @@ public class WorkbenchBlock extends Block implements FactoryBlock, EntityBlock, 
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return new Model(initialBlockState);
     }

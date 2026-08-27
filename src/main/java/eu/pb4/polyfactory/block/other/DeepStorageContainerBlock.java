@@ -110,6 +110,11 @@ public class DeepStorageContainerBlock extends MultiBlock implements FactoryBloc
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.IRON_BLOCK.defaultBlockState();
     }

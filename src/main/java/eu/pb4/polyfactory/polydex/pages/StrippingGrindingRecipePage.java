@@ -114,27 +114,27 @@ public class StrippingGrindingRecipePage extends GrindingRecipePage<StrippingGri
 
             if (x != null) {
                 layer.setIngredient(4, 1, stack);
-                layer.setOutput(3, 3, x.getDefaultInstance());
+                layer.setOutput(2, 3, x.getDefaultInstance());
             } else if (y != null) {
                 layer.setIngredient(4, 1, y.getDefaultInstance());
-                layer.setOutput(3, 3, stack);
+                layer.setOutput(2, 3, stack);
             } else {
                 layer.setIngredient(4, 1, this.inputDisplay);
-                layer.setOutput(3, 3, this.output);
+                layer.setOutput(2, 3, this.output);
             }
         } else {
             layer.setIngredient(4, 1, this.inputDisplay);
-            layer.setOutput(3, 3, this.output);
+            layer.setOutput(2, 3, this.output);
         }
 
         layer.set(7, 2, PolydexCompatImpl.requiredRotation(this.recipe.minimumSpeed(), this.recipe.optimalSpeed(), GrinderBlockEntity::getActiveStress));
 
         var i = 1;
         for (; i < this.outputExtra.length + 1; i++) {
-            layer.setOutput(3 + i, 3, this.outputExtra[i - 1]);
+            layer.setOutput(2 + i, 3, this.outputExtra[i - 1]);
         }
-        for (; i < 3; i++) {
-            layer.setEmpty(3 + i, 3);
+        for (; i < 5; i++) {
+            layer.setEmpty(2 + i, 3);
         }
     }
 }

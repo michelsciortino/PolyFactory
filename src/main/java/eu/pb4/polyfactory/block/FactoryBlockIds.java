@@ -25,6 +25,7 @@ public class FactoryBlockIds {
     public static final ResourceKey<Block> STEAM_ENGINE = of("steam_engine");
     public static final ResourceKey<Block> DIESEL_ENGINE = of("diesel_engine");
     public static final ResourceKey<Block> GRINDER = of("grinder");
+    public static final ResourceKey<Block> TROMMEL = of("trommel");
     public static final ResourceKey<Block> PRESS = of("press");
     public static final ResourceKey<Block> MIXER = of("mixer");
     public static final ResourceKey<Block> FERMENTER = of("fermenter");

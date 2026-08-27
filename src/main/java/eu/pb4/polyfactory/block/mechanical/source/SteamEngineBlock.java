@@ -177,6 +177,11 @@ public class SteamEngineBlock extends MultiBlock implements FactoryBlock, Entity
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.DEEPSLATE_BRICKS.defaultBlockState();
     }

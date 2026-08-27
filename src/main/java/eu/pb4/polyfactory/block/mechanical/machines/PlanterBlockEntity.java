@@ -13,7 +13,7 @@ import eu.pb4.polyfactory.block.mechanical.RotationUser;
 import eu.pb4.polyfactory.item.FactoryItemTags;
 import eu.pb4.polyfactory.ui.TagLimitedSlot;
 import eu.pb4.polyfactory.util.FactoryUtil;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.server.players.NameAndId;
@@ -41,7 +41,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
-public class PlanterBlockEntity extends LockableBlockEntity implements MinimalSidedContainer, BlockEntityExtraListener, OwnedBlockEntity {
+public class PlanterBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer, BlockEntityExtraListener, OwnedBlockEntity {
     private static final int[] SLOTS = IntStream.range(0, 9).toArray();
     private final NonNullList<ItemStack> items = NonNullList.withSize(9, ItemStack.EMPTY);
     protected GameProfile owner = null;

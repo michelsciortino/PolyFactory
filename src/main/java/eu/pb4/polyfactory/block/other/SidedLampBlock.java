@@ -144,6 +144,11 @@ public abstract class SidedLampBlock extends Block implements FactoryBlock, Enti
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         var stack = super.getCloneItemStack(world, pos, state, includeData);
         if (world.getBlockEntity(pos) instanceof ColorableBlockEntity be && !be.isDefaultColor()) {

@@ -95,6 +95,7 @@ public class FactoryItems {
     public static final Item CASTING_TABLE = register(FactoryBlocks.CASTING_TABLE);
     public static final Item SMELTERY_FAUCET = register(FactoryBlocks.FAUCET);
     public static final Item GRINDER = register(FactoryBlocks.GRINDER);
+    public static final Item TROMMEL = register(FactoryBlocks.TROMMEL);
     public static final Item PRESS = register(FactoryBlocks.PRESS);
     public static final Item CRAFTER = register(FactoryBlocks.CRAFTER);
     public static final Item MIXER = register(FactoryBlocks.MIXER);
@@ -361,6 +362,7 @@ public class FactoryItems {
                     entries.accept(GRINDER);
                     entries.accept(PRESS);
                     entries.accept(MIXER);
+                    entries.accept(TROMMEL);
                     entries.accept(FERMENTER);
                     entries.accept(CRAFTER);
                     entries.accept(MINER);

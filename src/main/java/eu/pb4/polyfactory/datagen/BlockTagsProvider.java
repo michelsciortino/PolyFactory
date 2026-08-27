@@ -106,6 +106,7 @@ class BlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(FactoryBlockIds.TEXT_INPUT)
                 .add(FactoryBlockIds.DIGITAL_CLOCK)
                 .add(FactoryBlockIds.GATED_CABLE)
+                .add(FactoryBlockIds.TROMMEL)
                 .add(FactoryBlockIds.REDSTONE_INPUT)
                 .add(FactoryBlockIds.REDSTONE_OUTPUT)
                 .add(FactoryBlockIds.WIRELESS_REDSTONE_RECEIVER)

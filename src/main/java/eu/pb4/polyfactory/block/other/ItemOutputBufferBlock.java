@@ -152,6 +152,11 @@ public class ItemOutputBufferBlock extends Block implements FactoryBlock, Entity
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.IRON_BLOCK.defaultBlockState();
     }

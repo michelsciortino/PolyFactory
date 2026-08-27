@@ -14,7 +14,7 @@ import eu.pb4.polyfactory.polydex.PolydexCompat;
 import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.CrafterLikeInsertContainer;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.polyfactory.util.inventory.WrappingInputRecipeInput;
 import eu.pb4.sgui.api.ClickType;
@@ -51,14 +51,13 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-public class MCrafterBlockEntity extends LockableBlockEntity implements MachineInfoProvider, MinimalSidedContainer, CrafterLikeInsertContainer, CraftingContainer, OutputContainerOwner {
+public class MCrafterBlockEntity extends LockableBlockEntity implements MachineInfoProvider, MinimalWorldlyContainer, CrafterLikeInsertContainer, CraftingContainer, OutputContainerOwner {
     private static final int[] INPUT_SLOTS = IntStream.range(0, 9).toArray();
     private static final int[] OUTPUT_SLOTS = IntStream.range(9, 9 + 9).toArray();
     private static final SoundEvent CRAFT_SOUND_EVENT = SoundEvent.createVariableRangeEvent(Identifier.parse("minecraft:block.crafter.craft"));

@@ -8,11 +8,11 @@ import eu.pb4.polyfactory.block.other.MachineInfoProvider;
 import eu.pb4.polyfactory.block.other.OutputContainerOwner;
 import eu.pb4.polyfactory.polydex.PolydexCompat;
 import eu.pb4.polyfactory.recipe.FactoryRecipeTypes;
-import eu.pb4.polyfactory.recipe.GrindingRecipe;
+import eu.pb4.polyfactory.recipe.grinding.GrindingRecipe;
 import eu.pb4.polyfactory.recipe.input.GrindingInput;
 import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.world.Container;
@@ -47,11 +47,11 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
-public class GrinderBlockEntity extends LockableBlockEntity implements MinimalSidedContainer, MachineInfoProvider, OutputContainerOwner {
+public class GrinderBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer, MachineInfoProvider, OutputContainerOwner {
     public static final int INPUT_SLOT = 0;
     private static final int[] INPUT_SLOTS = {INPUT_SLOT};
-    private static final int[] OUTPUT_SLOTS = {1, 2, 3};
-    private final NonNullList<ItemStack> stacks = NonNullList.withSize(4, ItemStack.EMPTY);
+    private static final int[] OUTPUT_SLOTS = {1, 2, 3, 4, 5};
+    private final NonNullList<ItemStack> stacks = NonNullList.withSize(6, ItemStack.EMPTY);
     protected double process = 0;
     @Nullable
     protected RecipeHolder<GrindingRecipe> currentRecipe = null;
@@ -250,9 +250,11 @@ public class GrinderBlockEntity extends LockableBlockEntity implements MinimalSi
 
             this.setSlot(4, new Slot(GrinderBlockEntity.this, 0, 0, 0));
             this.setSlot(13, GuiTextures.PROGRESS_VERTICAL.get(progress()));
-            this.setSlot(21, new FurnaceResultSlot(player, GrinderBlockEntity.this, 1, 1, 0));
-            this.setSlot(22, new FurnaceResultSlot(player, GrinderBlockEntity.this, 2, 2, 0));
-            this.setSlot(23, new FurnaceResultSlot(player, GrinderBlockEntity.this, 3, 3, 0));
+            this.setSlot(20, new FurnaceResultSlot(player, GrinderBlockEntity.this, 1, 1, 0));
+            this.setSlot(21, new FurnaceResultSlot(player, GrinderBlockEntity.this, 2, 2, 0));
+            this.setSlot(22, new FurnaceResultSlot(player, GrinderBlockEntity.this, 3, 3, 0));
+            this.setSlot(23, new FurnaceResultSlot(player, GrinderBlockEntity.this, 4, 4, 0));
+            this.setSlot(24, new FurnaceResultSlot(player, GrinderBlockEntity.this, 5, 5, 0));
             this.open();
         }
 

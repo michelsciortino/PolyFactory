@@ -11,7 +11,7 @@ import eu.pb4.polyfactory.recipe.casting.CastingRecipe;
 import eu.pb4.polyfactory.recipe.input.FluidContainerInput;
 import eu.pb4.polyfactory.recipe.input.SingleItemWithFluid;
 import eu.pb4.polyfactory.util.FactoryUtil;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import net.minecraft.world.item.ItemStackTemplate;
 import org.apache.commons.lang3.function.Consumers;
@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-public class CastingTableBlockEntity extends LockableBlockEntity implements MinimalSidedContainer {
+public class CastingTableBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer {
 
     public static final int OUTPUT_FIRST = 1;
     public static final int INPUT_FIRST = 0;

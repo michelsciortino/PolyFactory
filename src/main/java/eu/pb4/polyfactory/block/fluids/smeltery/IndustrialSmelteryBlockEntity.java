@@ -19,7 +19,7 @@ import eu.pb4.polyfactory.ui.FuelSlot;
 import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.ui.UiResourceCreator;
 import eu.pb4.polyfactory.util.FactoryUtil;
-import eu.pb4.polyfactory.util.inventory.MinimalSidedContainer;
+import eu.pb4.polyfactory.util.inventory.MinimalWorldlyContainer;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import eu.pb4.sgui.api.containerwrappers.slot.WrappingSlot;
@@ -58,7 +58,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class IndustrialSmelteryBlockEntity extends LockableBlockEntity implements MinimalSidedContainer, FluidOutput.ContainerBased {
+public class IndustrialSmelteryBlockEntity extends LockableBlockEntity implements MinimalWorldlyContainer, FluidOutput.ContainerBased {
     public static final int FLUID_CAPACITY = (int) (FluidConstants.BUCKET * 12 * 2);
     private static final Codec<List<BlockState>> BLOCK_STATE_LIST_CODEC = BlockState.CODEC.listOf();
     private static final int[] ALL_SLOTS = IntStream.range(0, 12).toArray();

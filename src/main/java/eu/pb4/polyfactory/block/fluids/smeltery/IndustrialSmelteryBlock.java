@@ -200,6 +200,11 @@ public class IndustrialSmelteryBlock extends MultiBlock implements FactoryBlock,
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.DEEPSLATE_BRICKS.defaultBlockState();
     }

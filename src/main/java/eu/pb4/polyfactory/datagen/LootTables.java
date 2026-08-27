@@ -149,6 +149,8 @@ class LootTables extends FabricBlockLootSubProvider {
         this.createMultiPropConditionTable(FactoryBlocks.DEEP_STORAGE_CONTAINER,
                 (block2, pred) -> pred.hasProperty(block2.partX, 0).hasProperty(block2.partY, 0).hasProperty(block2.partZ, 0));
 
+        this.createMultiPropConditionTable(FactoryBlocks.TROMMEL,
+                (block2, pred) -> pred.hasProperty(block2.partX, 0).hasProperty(block2.partZ, 0));
 
         {
             var table = LootTable.lootTable();

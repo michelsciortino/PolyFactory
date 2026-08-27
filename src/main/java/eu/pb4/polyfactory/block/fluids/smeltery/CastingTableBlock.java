@@ -115,6 +115,11 @@ public class CastingTableBlock extends Block implements FactoryBlock, EntityBloc
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.CAULDRON.defaultBlockState();
     }

@@ -149,6 +149,11 @@ public class FluidTankBlock extends Block implements FactoryBlock, PipeConnectab
     }
 
     @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
     public BlockState getPolymerBreakEventBlockState(BlockState state, PacketContext context) {
         return Blocks.COPPER_BLOCK.weathering().unaffected().defaultBlockState();
     }

@@ -54,10 +54,10 @@ public class SimpleGrindingRecipePage extends GrindingRecipePage<SimpleGrindingR
 
         var i = 0;
         for (; i < this.output.length; i++) {
-            layer.setOutput(3 + i, 3, this.output[i]);
+            layer.setOutput(2 + i, 3, this.output[i]);
         }
-        for (; i < 3; i++) {
-            layer.setEmpty(3 + i, 3);
+        for (; i < 5; i++) {
+            layer.setEmpty(2 + i, 3);
         }
     }
 }
