@@ -298,6 +298,31 @@
     ],
     "subtitle": "subtitles.polyfactory.fluid.shoot.biodiesel"
   },
+  "fluid.shoot.fertilizer": {
+    "sounds": [
+      {
+        "name": "liquid/swim1",
+        "pitch": 1.5,
+        "volume": 0.8
+      },
+      {
+        "name": "liquid/swim2",
+        "pitch": 1.5,
+        "volume": 0.8
+      },
+      {
+        "name": "liquid/swim3",
+        "pitch": 1.5,
+        "volume": 0.8
+      },
+      {
+        "name": "liquid/swim4",
+        "pitch": 1.5,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.polyfactory.fluid.shoot.fertilizer"
+  },
   "item.clipboard.write": {
     "sounds": [
       {

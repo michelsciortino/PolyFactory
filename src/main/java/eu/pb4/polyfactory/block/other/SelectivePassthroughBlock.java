@@ -84,14 +84,6 @@ public class SelectivePassthroughBlock extends Block implements FactoryBlock, Ba
         super.entityInside(state, world, pos, entity, handler, bl);
     }
 
-
-    @Deprecated(forRemoval = true)
-    protected void onEntityCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier handler) {
-        if (entity.is(FactoryEntityTags.GRID_PASSABLE)) {
-            entity.getEntityData().set(EntityData.SILENT, entity.isSilent(), true);
-        }
-    }
-
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return state.getFluidState().isEmpty();

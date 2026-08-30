@@ -9,6 +9,8 @@ import eu.pb4.factorytools.api.virtualentity.ItemDisplayElementUtil;
 import eu.pb4.factorytools.api.virtualentity.LodItemDisplayElement;
 import eu.pb4.polyfactory.block.FactoryBlockEntities;
 import eu.pb4.polyfactory.block.FactoryBlockTags;
+import eu.pb4.polyfactory.block.configurable.BlockConfig;
+import eu.pb4.polyfactory.block.configurable.ConfigurableBlock;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
 import eu.pb4.polyfactory.block.mechanical.RotationalNetworkBlock;
 import eu.pb4.polyfactory.item.FactoryItems;
@@ -47,8 +49,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class GrinderBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, RotationUser, AbovePlacingLimiter {
-    public static final Property<Direction> INPUT_FACING = EnumProperty.create("input_facing", Direction.class, x -> x.getAxis() != Direction.Axis.Y);
+public class GrinderBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, RotationUser, AbovePlacingLimiter, ConfigurableBlock {
+    public static final EnumProperty<Direction> INPUT_FACING = EnumProperty.create("input_facing", Direction.class, x -> x.getAxis() != Direction.Axis.Y);
+
+    private static final List<BlockConfig<?>> BLOCK_CONFIGS = List.of(
+            BlockConfig.ofDirection(INPUT_FACING)
+    );
 
     public GrinderBlock(Properties settings) {
         super(settings);
@@ -139,6 +145,10 @@ public class GrinderBlock extends RotationalNetworkBlock implements FactoryBlock
         return world instanceof ServerLevel && type == FactoryBlockEntities.GRINDER ? GrinderBlockEntity::ticker : null;
     }
 
+    @Override
+    public List<BlockConfig<?>> getBlockConfiguration(@Nullable ServerPlayer player, BlockPos blockPos, Direction side, BlockState state) {
+        return BLOCK_CONFIGS;
+    }
 
     @Override
     public ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {

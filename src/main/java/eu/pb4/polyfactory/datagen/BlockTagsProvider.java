@@ -49,9 +49,19 @@ class BlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(FactoryBlockIds.MECHANICAL_DRAIN)
                 .add(FactoryBlockIds.GRINDER)
                 .add(FactoryBlockIds.FERMENTER)
+        ;
+
+        this.tag(FactoryBlockTags.CONVEYOR_SIDE_OUTPUT_FROM_TOP)
                 .add(BlockItemIds.HOPPER.block())
                 .add(BlockItemIds.COMPOSTER.block())
+                .add(FactoryBlockIds.CASTING_TABLE)
         ;
+
+        this.tag(FactoryBlockTags.FUNNEL_IGNORE_SIDE_EXTRACT)
+                .add(BlockItemIds.COMPOSTER.block())
+        ;
+
+        this.tag(FactoryBlockTags.FUNNEL_IGNORE_SIDE_INSERT);
 
         this.tag(FactoryBlockTags.SPLITTER_SIDE_OUTPUT)
                 .addOptionalTag(FactoryBlockTags.CONVEYOR_SIDE_OUTPUT)

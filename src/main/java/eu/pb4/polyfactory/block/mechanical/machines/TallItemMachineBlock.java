@@ -4,6 +4,8 @@ import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import eu.pb4.factorytools.api.block.AttackableBlock;
 import eu.pb4.factorytools.api.block.FactoryBlock;
 import eu.pb4.polyfactory.block.FactoryBlocks;
+import eu.pb4.polyfactory.block.configurable.BlockConfig;
+import eu.pb4.polyfactory.block.configurable.ConfigurableBlock;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
 import eu.pb4.polyfactory.block.mechanical.RotationalNetworkBlock;
 import eu.pb4.polyfactory.nodes.generic.FunctionalAxisNode;
@@ -15,6 +17,7 @@ import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,10 +50,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class TallItemMachineBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, WorldlyContainerHolder, RotationUser, AttackableBlock {
+public abstract class TallItemMachineBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, WorldlyContainerHolder, RotationUser,
+        AttackableBlock, ConfigurableBlock {
     public static final Property<Part> PART = EnumProperty.create("part", Part.class);
     public static final BooleanProperty HAS_CONVEYOR = BooleanProperty.create("has_conveyor");
-    public static final Property<Direction> INPUT_FACING = EnumProperty.create("input_facing", Direction.class, x -> x.getAxis() != Direction.Axis.Y);
+    public static final EnumProperty<Direction> INPUT_FACING = EnumProperty.create("input_facing", Direction.class, x -> x.getAxis() != Direction.Axis.Y);
+
+    private static final List<BlockConfig<?>> BLOCK_CONFIGS = List.of(
+            BlockConfig.ofDirection(INPUT_FACING)
+    );
 
     public TallItemMachineBlock(Properties settings) {
         super(settings);
@@ -101,17 +109,21 @@ public abstract class TallItemMachineBlock extends RotationalNetworkBlock implem
     protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickView, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         var part = state.getValue(PART);
 
-        if (((part == Part.MAIN && direction == Direction.UP)
-                || (part == Part.TOP && direction == Direction.DOWN)
-        ) && !neighborState.is(this)) {
-            Rotational.updateRotationalAt(world, pos);
+        boolean isFromOtherHalf = (part == Part.MAIN && direction == Direction.UP) || (part == Part.TOP && direction == Direction.DOWN);
+        if (isFromOtherHalf && !neighborState.is(this)) {
+            this.updateNetworkAt(world, pos);
             return Blocks.AIR.defaultBlockState();
+        } else if (isFromOtherHalf && neighborState.is(this) && neighborState.getValue(INPUT_FACING) != state.getValue(INPUT_FACING) ) {
+            this.updateNetworkAt(world, pos);
+            return super.updateShape(state, world, tickView, pos, direction, neighborPos, neighborState, random).setValue(INPUT_FACING, neighborState.getValue(INPUT_FACING));
         } else if (direction == state.getValue(INPUT_FACING).getOpposite()) {
             return super.updateShape(state, world, tickView, pos, direction, neighborPos, neighborState, random).setValue(HAS_CONVEYOR, neighborState.is(FactoryBlocks.CONVEYOR));
         } else {
             return super.updateShape(state, world, tickView, pos, direction, neighborPos, neighborState, random);
         }
     }
+
+
 
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
@@ -169,6 +181,11 @@ public abstract class TallItemMachineBlock extends RotationalNetworkBlock implem
     }
 
     protected abstract BlockEntity createSourceBlockEntity(BlockPos pos, BlockState state);
+
+    @Override
+    public List<BlockConfig<?>> getBlockConfiguration(@Nullable ServerPlayer player, BlockPos blockPos, Direction side, BlockState state) {
+        return BLOCK_CONFIGS;
+    }
 
     @Override
     public WorldlyContainer getContainer(BlockState state, LevelAccessor world, BlockPos pos) {

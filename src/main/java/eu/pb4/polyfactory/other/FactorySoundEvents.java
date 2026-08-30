@@ -29,6 +29,7 @@ public interface FactorySoundEvents {
     Holder<SoundEvent> FLUID_SHOOT_EXPERIENCE = ofEntry("fluid.shoot.experience");
     Holder<SoundEvent> FLUID_SHOOT_PLANT_OIL = ofEntry("fluid.shoot.plant_oil");
     Holder<SoundEvent> FLUID_SHOOT_BIODIESEL = ofEntry("fluid.shoot.biodiesel");
+    Holder<SoundEvent> FLUID_SHOOT_FERTILIZER = ofEntry("fluid.shoot.fertilizer");
 
     SoundEvent ITEM_CLIPBOARD_WRITE = of("item.clipboard.write");
     SoundEvent ITEM_CLIPBOARD_APPLY = of("item.clipboard.apply");

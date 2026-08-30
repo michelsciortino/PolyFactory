@@ -121,30 +121,38 @@ public abstract class SplashEntity<T> extends Projectile implements PolymerEntit
     }
     @Override
     public void tick() {
-        super.tick();
-
         if (this.discardInBlock(this.getInBlockState(), this.blockPosition())) {
             this.discard();
         }
 
-        HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-        if (hitResult.getType() != HitResult.Type.MISS) {
-            this.hitTargetOrDeflectSelf(hitResult);
-        }
-        //this.checkBlockCollision();
-        this.updateRotation();
+        this.applyGravity();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.99));
 
-        if (this.isAlive()) {
-            this.spawnExistenceParticles();
-            this.move(MoverType.SELF, this.getDeltaMovement());
+        HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+        Vec3 newPosition;
+        if (result.getType() != HitResult.Type.MISS) {
+            newPosition = result.getLocation();
+        } else {
+            newPosition = this.position().add(this.getDeltaMovement());
         }
+
+        this.setPos(newPosition);
+        this.updateRotation();
+        this.applyEffectsFromBlocks();
+        super.tick();
+        if (result.getType() != HitResult.Type.MISS && this.isAlive()) {
+            this.hitTargetOrDeflectSelf(result);
+        }
+
         if (this.tickCount > this.existenceTime) {
             this.onNaturalDiscard();
             this.discard();
             return;
         }
-        this.setDeltaMovement(this.getDeltaMovement().scale(0.99));
-        this.applyGravity();
+
+        if (this.isAlive()) {
+            this.spawnExistenceParticles();
+        }
     }
 
     protected void onNaturalDiscard() {

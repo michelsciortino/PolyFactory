@@ -3,6 +3,7 @@ package eu.pb4.polyfactory.block.mechanical.conveyor;
 import eu.pb4.factorytools.api.util.LazyItemStack;
 import eu.pb4.factorytools.api.util.WorldPointer;
 import eu.pb4.factorytools.api.virtualentity.ItemDisplayElementUtil;
+import eu.pb4.polyfactory.block.FactoryBlockTags;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.movingitem.MovingItemContainerHolder;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
@@ -57,7 +58,7 @@ public class SlotAwareFunnelBlock extends FunnelBlock {
         var selfDir = selfState.getValue(FACING);
         var mode = selfState.getValue(MODE);
 
-        if (!mode.fromConveyor || relative != Direction.UP || selfDir.getOpposite() == pushDirection || conveyor.movementDelta() < (selfDir == pushDirection ? 0.90 : 0.48) || selfDir.getAxis() == Direction.Axis.Y) {
+        if (!mode.fromConveyor || relative != Direction.DOWN || selfDir.getOpposite() == pushDirection || conveyor.movementDelta() < (selfDir == pushDirection ? 0.90 : 0.48) || selfDir.getAxis() == Direction.Axis.Y) {
             return false;
         }
         if (!(self.getBlockEntity() instanceof SlotAwareFunnelBlockEntity be)) {
@@ -91,9 +92,9 @@ public class SlotAwareFunnelBlock extends FunnelBlock {
             stackToMove = stackToMove.split(be.maxStackSize());
             copied = true;
         }
-        var targetPos =  self.getPos().relative(selfState.getValue(FACING));
+        var targetBlockPos = self.getPos().relative(selfState.getValue(FACING));
 
-        if (FactoryUtil.tryInsertingIntoSlot(self.getWorld(), targetPos, stackToMove, null, list) == -1) {
+        if (FactoryUtil.tryInsertingIntoSlot(self.getWorld(), targetBlockPos, stackToMove, null, list) == -1) {
             return selfDir.getAxis() == pushDirection.getAxis();
         }
 
@@ -128,8 +129,11 @@ public class SlotAwareFunnelBlock extends FunnelBlock {
             return;
         }
 
-        var inv = HopperBlockEntity.getContainerAt(self.getWorld(), self.getPos().relative(selfFacing));
-        var sided = inv instanceof WorldlyContainer s ? s : null;
+        var targetBlockPos = self.getPos().relative(selfState.getValue(FACING));
+        var targetBlockState = self.getWorld().getBlockState(targetBlockPos);
+
+        var inv = HopperBlockEntity.getContainerAt(self.getWorld(), targetBlockPos);
+        var sided = targetBlockState.is(FactoryBlockTags.FUNNEL_IGNORE_SIDE_EXTRACT) && inv instanceof WorldlyContainer s ? s : null;
         if (inv != null) {
             for (var a = 0; a < be.slotTargets.length; a++) {
                 var i = be.slotTargets[a];
@@ -155,7 +159,7 @@ public class SlotAwareFunnelBlock extends FunnelBlock {
                 }
             }
         } else {
-            var storage = ItemStorage.SIDED.find(self.getWorld(), self.getPos().relative(selfFacing), selfFacing);
+            var storage = ItemStorage.SIDED.find(self.getWorld(), targetBlockPos, !targetBlockState.is(FactoryBlockTags.FUNNEL_IGNORE_SIDE_EXTRACT) ? selfFacing : null);
 
             if (storage instanceof SlottedStorage<ItemVariant> slottedStorage) {
                 for (var a = 0; a < be.slotTargets.length; a++) {

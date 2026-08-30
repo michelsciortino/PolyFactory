@@ -1,10 +1,12 @@
 package eu.pb4.polyfactory.entity.splash;
 
 import eu.pb4.polyfactory.fluid.FactoryFluids;
+import eu.pb4.polyfactory.mixin.BaseFireBlockAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -36,9 +38,11 @@ public class LavaSplashEntity extends SplashEntity<Unit> {
             var blockState = world.getBlockState(blockPos);
             if (!CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState)) {
                 BlockPos blockPos2 = blockPos.relative(context.getDirection());
-                if (BaseFireBlock.canBePlacedAt(world, blockPos2, context.getDirection())) {
-                    BlockState blockState2 = BaseFireBlock.getState(world, blockPos2);
-                    world.setBlock(blockPos2, blockState2, Block.UPDATE_ALL_IMMEDIATE);
+                var fireState = BaseFireBlock.getState(world, blockPos2);
+                var currentState = world.getBlockState(blockPos2);
+                if (BaseFireBlock.canBePlacedAt(world, blockPos2, context.getDirection())
+                        || (currentState.canBeReplaced() && ((BaseFireBlockAccessor) fireState.getBlock()).callCanBurn(currentState) && fireState.canSurvive(level(), blockPos2))) {
+                    world.setBlock(blockPos2, fireState, Block.UPDATE_ALL_IMMEDIATE);
                     world.gameEvent(this, GameEvent.BLOCK_PLACE, blockPos);
                 }
             } else {

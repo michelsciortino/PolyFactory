@@ -21,7 +21,9 @@ public class V3818_3Mixin {
         var map = cir.getReturnValue();
 
         map.put("polyfactory:item_filter", () -> DSL.or(References.ITEM_STACK.in(schema), DSL.list(References.ITEM_STACK.in(schema))));
+        map.put("polyfactory:drill_attachment", () -> References.ITEM_STACK.in(schema));
         map.put("polyfactory:stored_data", () -> FactoryTypeReferences.DATA_CONTAINER.in(schema));
         map.put("polyfactory:remote_keys", () -> DSL.compoundList(References.ITEM_STACK.in(schema)));
+        //map.put("polyfactory:current_fluid", () -> FactoryTypeReferences.FLUID_INSTANCE.in(schema));
     }
 }

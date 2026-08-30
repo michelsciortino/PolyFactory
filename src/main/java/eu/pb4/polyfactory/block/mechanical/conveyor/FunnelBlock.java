@@ -9,6 +9,7 @@ import eu.pb4.factorytools.api.virtualentity.BlockModel;
 import eu.pb4.factorytools.api.virtualentity.ItemDisplayElementUtil;
 import eu.pb4.factorytools.api.virtualentity.LodItemDisplayElement;
 import eu.pb4.polyfactory.advancement.FactoryTriggers;
+import eu.pb4.polyfactory.block.FactoryBlockTags;
 import eu.pb4.polyfactory.block.configurable.BlockConfig;
 import eu.pb4.polyfactory.block.configurable.ConfigurableBlock;
 import eu.pb4.polyfactory.item.configuration.WrenchHandler;
@@ -106,7 +107,7 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
         var selfDir = selfState.getValue(FACING);
         var mode = selfState.getValue(MODE);
 
-        if (!mode.fromConveyor || relative != Direction.UP || selfDir.getOpposite() == pushDirection || conveyor.movementDelta() < (selfDir == pushDirection ? 0.90 : 0.48) || selfDir.getAxis() == Direction.Axis.Y) {
+        if (!mode.fromConveyor || relative != Direction.DOWN || selfDir.getOpposite() == pushDirection || conveyor.movementDelta() < (selfDir == pushDirection ? 0.90 : 0.48) || selfDir.getAxis() == Direction.Axis.Y) {
             return false;
         }
         var be = self.getBlockEntity();
@@ -126,8 +127,11 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
             copied = true;
         }
 
+        var targetBlockPos = self.getPos().relative(selfState.getValue(FACING));
+        var targetBlockState = self.getWorld().getBlockState(targetBlockPos);
 
-        if (FactoryUtil.tryInserting(self.getWorld(), self.getPos().relative(selfState.getValue(FACING)), stackToMove, selfDir.getOpposite()) == -1) {
+        if (FactoryUtil.tryInserting(self.getWorld(), targetBlockPos, stackToMove,
+                targetBlockState.is(FactoryBlockTags.FUNNEL_IGNORE_SIDE_INSERT) ? null : selfDir.getOpposite()) == -1) {
             return selfDir.getAxis() == pushDirection.getAxis();
         }
 
@@ -161,8 +165,11 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
             return;
         }
 
-        var inv = HopperBlockEntity.getContainerAt(self.getWorld(), self.getPos().relative(selfFacing));
-        var sided = inv instanceof WorldlyContainer s ? s : null;
+        var targetBlockPos = self.getPos().relative(selfState.getValue(FACING));
+        var targetBlockState = self.getWorld().getBlockState(targetBlockPos);
+
+        var inv = HopperBlockEntity.getContainerAt(self.getWorld(), targetBlockPos);
+        var sided = !targetBlockState.is(FactoryBlockTags.FUNNEL_IGNORE_SIDE_EXTRACT) && inv instanceof WorldlyContainer s ? s : null;
         if (inv != null) {
             for (var i = 0; i < inv.getContainerSize(); i++) {
                 var stack = inv.getItem(i);
@@ -181,7 +188,7 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
                 }
             }
         } else {
-            var storage = ItemStorage.SIDED.find(self.getWorld(), self.getPos().relative(selfFacing), selfFacing);
+            var storage = ItemStorage.SIDED.find(self.getWorld(), targetBlockPos, !targetBlockState.is(FactoryBlockTags.FUNNEL_IGNORE_SIDE_EXTRACT) ? selfFacing : null);
 
             if (storage != null) {
                 for (var view : storage) {
@@ -424,7 +431,9 @@ public class FunnelBlock extends Block implements FactoryBlock, MovingItemConsum
 
             this.filterElement.setTransformation(mat);
 
-            this.tick();
+            if (this.inWorld()) {
+                this.tick();
+            }
         }
 
         protected ItemStack getModel(boolean outModel) {

@@ -56,7 +56,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import static eu.pb4.polyfactory.util.FactoryUtil.id;
 
 public class PlanterBlock extends RotationalNetworkBlock implements FactoryBlock, EntityBlock, RotationUser, BarrierBasedWaterloggable, ConfigurableBlock {
-    private static final BlockConfig RADIUS_ACTION = BlockConfig.ofBlockEntityInt("radius", PlanterBlockEntity.class, 1, 2, 0,
+    private static final BlockConfig<?> RADIUS_ACTION = BlockConfig.ofBlockEntityInt("radius", PlanterBlockEntity.class, 1, 2, 0,
             PlanterBlockEntity::radius, PlanterBlockEntity::setRadius);
 
     public PlanterBlock(Properties settings) {

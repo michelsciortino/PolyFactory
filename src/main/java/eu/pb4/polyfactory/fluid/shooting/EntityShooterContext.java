@@ -7,7 +7,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-public record EntityShooterContext(LivingEntity entity) implements ShooterContext {
+public record EntityShooterContext(LivingEntity entity, float force, float extraSpread) implements ShooterContext {
+    public EntityShooterContext(LivingEntity entity) {
+        this(entity, 1, 0);
+    }
+
     @Override
     public RandomSource random() {
         return entity.getRandom();

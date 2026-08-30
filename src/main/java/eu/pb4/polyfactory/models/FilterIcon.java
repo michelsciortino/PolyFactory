@@ -5,6 +5,7 @@ import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.util.filter.FilterData;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
@@ -18,6 +19,8 @@ public class FilterIcon {
     private final ElementHolder holder;
     private final Matrix4f transform = new Matrix4f();
     private FilterData filterData = FilterData.EMPTY_TRUE;
+    private Vec3 offset = Vec3.ZERO;
+    private int teleportDuration;
 
     public FilterIcon(ElementHolder holder) {
         this.holder = holder;
@@ -91,16 +94,32 @@ public class FilterIcon {
         }
     }
 
-    private static ItemDisplayElement createDefaultElement() {
+    private ItemDisplayElement createDefaultElement() {
         var element = new ItemDisplayElement();
         element.setDisplaySize(1, 1);
         element.setItemDisplayContext(ItemDisplayContext.GUI);
         element.setInvisible(true);
         element.setViewRange(0.3f);
+        element.setOffset(this.offset);
+        element.setTeleportDuration(this.teleportDuration);
         return element;
     }
 
     public int getCount() {
         return this.filterData.icon().size();
+    }
+
+    public void setOffset(Vec3 offset) {
+        this.offset = offset;
+        for (var element : elements) {
+            element.setOffset(offset);
+        }
+    }
+
+    public void setTeleportDuration(int i) {
+        this.teleportDuration = i;
+        for (var element : elements) {
+            element.setTeleportDuration(i);
+        }
     }
 }

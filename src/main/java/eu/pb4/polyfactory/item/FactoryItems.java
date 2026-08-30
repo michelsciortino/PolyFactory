@@ -209,6 +209,7 @@ public class FactoryItems {
     public static final Item PLANT_OIL_BUCKET = register(FactoryItemIds.PLANT_OIL_BUCKET, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
     public static final Item ETHANOL_BUCKET = register(FactoryItemIds.ETHANOL_BUCKET, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
     public static final Item BIODIESEL_BUCKET = register(FactoryItemIds.BIODIESEL_BUCKET, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
+    public static final Item FERTILIZER_BUCKET = register(FactoryItemIds.FERTILIZER_BUCKET, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
 
     public static final Item BIOMASS = register(FactoryItemIds.BIOMASS);
 
@@ -466,6 +467,7 @@ public class FactoryItems {
                     entries.accept(PLANT_OIL_BUCKET);
                     entries.accept(ETHANOL_BUCKET);
                     entries.accept(BIODIESEL_BUCKET);
+                    entries.accept(FERTILIZER_BUCKET);
 
                     entries.accept(BIOMASS);
 

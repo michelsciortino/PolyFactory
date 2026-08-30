@@ -159,6 +159,11 @@ public class FactoryFluids {
                     .shootingBehavior(ShootProjectileEntity.ofSplash(FactoryEntities.BIODIESEL_SPLASH, 10,300, FactorySoundEvents.FLUID_SHOOT_BIODIESEL))
                     .build());
 
+    public static final FluidType<Unit> FERTILIZER = register(FactoryFluidIds.FERTILIZER,
+            FluidType.of().density(300).transparent()
+                    .shootingBehavior(ShootProjectileEntity.ofSplash(FactoryEntities.FERTILIZER_SPLASH, 4,FluidConstants.NUGGET / 5, FactorySoundEvents.FLUID_SHOOT_FERTILIZER))
+                    .build());
+
     public static void register() {
         FluidBehaviours.addBlockStateConversions(Blocks.WATER.defaultBlockState(), Blocks.AIR.defaultBlockState(), WATER.ofBucket());
         FluidBehaviours.addBlockStateConversions(Blocks.POWDER_SNOW.defaultBlockState(), Blocks.AIR.defaultBlockState(), SNOW.ofBucket());
@@ -208,6 +213,7 @@ public class FactoryFluids {
         FluidBehaviours.addItemToFluidLink(FactoryItems.PLANT_OIL_BUCKET, PLANT_OIL.defaultInstance());
         FluidBehaviours.addItemToFluidLink(FactoryItems.ETHANOL_BUCKET, ETHANOL.defaultInstance());
         FluidBehaviours.addItemToFluidLink(FactoryItems.BIODIESEL_BUCKET, BIODIESEL.defaultInstance());
+        FluidBehaviours.addItemToFluidLink(FactoryItems.FERTILIZER_BUCKET, FERTILIZER.defaultInstance());
 
         Function<ItemStack, FluidInstance<?>> potionFunction = (stack) -> {
             var x = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);

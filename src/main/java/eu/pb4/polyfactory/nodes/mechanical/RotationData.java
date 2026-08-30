@@ -62,6 +62,7 @@ public class RotationData implements GraphEntity<RotationData> {
     private double stressUsage;
     private GraphEntityContext ctx;
     private boolean negative;
+    private int providerCount;
 
     public RotationData() {
     }
@@ -317,6 +318,7 @@ public class RotationData implements GraphEntity<RotationData> {
     }
 
     private void applyState(State state) {
+        this.providerCount = state.providerCount;
         if (state.providerCount == 0) {
             this.overstressed = false;
             this.stressCapacity = 0;
@@ -420,6 +422,10 @@ public class RotationData implements GraphEntity<RotationData> {
 
     public double speedRPM() {
         return FactoryUtil.degreesPerTickToRPM(this.speed);
+    }
+
+    public boolean hasNoActiveProviders() {
+        return this.providerCount != 0;
     }
 
     public static class State {

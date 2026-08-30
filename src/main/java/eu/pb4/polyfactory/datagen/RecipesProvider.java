@@ -4,10 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import eu.pb4.factorytools.api.recipe.CountedIngredient;
 import eu.pb4.factorytools.api.recipe.OutputStack;
 import eu.pb4.polyfactory.block.BlockHeat;
-import eu.pb4.polyfactory.fluid.FactoryFluidConstants;
-import eu.pb4.polyfactory.fluid.FactoryFluids;
-import eu.pb4.polyfactory.fluid.FluidStack;
-import eu.pb4.polyfactory.fluid.FluidType;
+import eu.pb4.polyfactory.fluid.*;
 import eu.pb4.polyfactory.item.FactoryItemTags;
 import eu.pb4.polyfactory.item.FactoryItems;
 import eu.pb4.polyfactory.item.tool.SpoutMolds;
@@ -1051,8 +1048,13 @@ class RecipesProvider extends FabricRecipeProvider {
                         SimpleGrindingRecipe.of("granite_to_gravel", Ingredient.of(Items.GRANITE), 2, 6, 24, OutputStack.of(Items.GRAVEL), OutputStack.of(Items.QUARTZ, 0.1f, 1)),
                         SimpleGrindingRecipe.of("tuff_to_gravel", Ingredient.of(Items.TUFF), 2, 6, 24, OutputStack.of(Items.GRAVEL), OutputStack.of(FactoryItems.RAW_IRON_NUGGET, 0.33f, 1)),
 
-
                         SimpleGrindingRecipe.of("gravel_to_sand", Ingredient.of(Items.GRAVEL), 2, 3, 27, Items.SAND),
+
+                        SimpleGrindingRecipe.of("sandstone_to_sand", Ingredient.of(Items.SANDSTONE, Items.SMOOTH_SANDSTONE, Items.CHISELED_SANDSTONE), 1, 3, 16,
+                                OutputStack.of(Items.SAND, 1, 2), OutputStack.of(Items.SAND, 0.5f)),
+                        SimpleGrindingRecipe.of("red_sandstone_to_red_sand", Ingredient.of(Items.RED_SANDSTONE, Items.SMOOTH_RED_SANDSTONE, Items.CHISELED_RED_SANDSTONE), 1, 3, 16,
+                                OutputStack.of(Items.RED_SAND, 1, 2), OutputStack.of(Items.RED_SAND, 0.5f)),
+
 
                         SimpleGrindingRecipe.of("iron_ingot_to_nuggets", Ingredient.of(Items.IRON_INGOT), 1, 5, 15, new ItemStackTemplate(Items.IRON_NUGGET, 9)),
                         SimpleGrindingRecipe.of("gold_ingot_to_nuggets", Ingredient.of(Items.GOLD_INGOT), 0.9, 5, 15, new ItemStackTemplate(Items.GOLD_NUGGET, 9)),
@@ -1585,6 +1587,13 @@ class RecipesProvider extends FabricRecipeProvider {
                                 List.of(),
                                 List.of(FluidInputStack.from(FactoryFluids.WATER.of(800))),
                                 1, 1, 3f, Float.NEGATIVE_INFINITY, -0.05f, List.of(), List.of(FactoryFluids.SNOW.of(1000))),
+                        GenericMixingRecipe.ofCounted("fertilizer", "",
+                                List.of(
+                                        CountedIngredient.ofItems(1, Items.BONE_MEAL),
+                                        CountedIngredient.ofItems(2, FactoryItems.BIOMASS)
+                                ),
+                                List.of(FluidInputStack.from(FactoryFluids.WATER.of(FluidConstants.NUGGET * 2))),
+                                2, 1, 10f, 0, List.of(), List.of(FactoryFluids.FERTILIZER.of(FluidConstants.NUGGET * 3 / 2))),
 
 
                         RatedFluidMixingMixingRecipe.of("biodiesel", "",
@@ -1622,8 +1631,11 @@ class RecipesProvider extends FabricRecipeProvider {
                         SimpleFermentingRecipe.of("apple", "", Ingredient.of(Items.APPLE), OutputStack.of(FactoryItems.BIOMASS, 0.1f), FactoryFluids.ETHANOL.ofNuggets(1), 130),
                         SimpleFermentingRecipe.of("beetroot", "", Ingredient.of(Items.BEETROOT), OutputStack.of(FactoryItems.BIOMASS, 0.25f), FactoryFluids.ETHANOL.ofNuggets(5), 110),
 
-                        SimpleFermentingRecipe.of("cheese", "", Ingredient.of(Items.MILK_BUCKET), FactoryItems.CHEESE_WHEEL, 250)
-                );
+                        SimpleFermentingRecipe.of("cheese", "", Ingredient.of(Items.MILK_BUCKET), FactoryItems.CHEESE_WHEEL, 250),
+                        SimpleFermentingRecipe.of("biomass_small", "", Ingredient.of(fakeTagList(FactoryItemTags.FERMENTER_TO_BIOMASS_SMALL)), OutputStack.of(FactoryItems.BIOMASS, 0.10f), 80),
+                        SimpleFermentingRecipe.of("biomass_medium", "", Ingredient.of(fakeTagList(FactoryItemTags.FERMENTER_TO_BIOMASS_MEDIUM)), OutputStack.of(FactoryItems.BIOMASS, 0.40f), 110)//,
+                        //SimpleFermentingRecipe.of("biomass_large", "", Ingredient.of(fakeTagList(FactoryItemTags.FERMENTER_TO_BIOMASS_LARGE)), OutputStack.of(FactoryItems.BIOMASS, 0.75f, 2), 140)
+                        );
 
                 this.shapeless(RecipeCategory.FOOD, FactoryItems.CHEESE_WEDGE, 7)
                         .unlockedBy("cheese", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.CHEESE_WHEEL))
@@ -1680,6 +1692,7 @@ class RecipesProvider extends FabricRecipeProvider {
                 fluidBase(output, FactoryItems.PLANT_OIL_BUCKET, Items.BUCKET, FactoryFluids.PLANT_OIL.ofBucket(), SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
                 fluidBase(output, FactoryItems.ETHANOL_BUCKET, Items.BUCKET, FactoryFluids.ETHANOL.ofBucket(), SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
                 fluidBase(output, FactoryItems.BIODIESEL_BUCKET, Items.BUCKET, FactoryFluids.BIODIESEL.ofBucket(), SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+                fluidBase(output, FactoryItems.FERTILIZER_BUCKET, Items.BUCKET, FactoryFluids.FERTILIZER.ofBucket(), SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
 
                 fluidBasePotion(output, Items.POTION, Items.GLASS_BOTTLE, FluidConstants.BOTTLE, SoundEvents.BOTTLE_FILL, SoundEvents.BOTTLE_EMPTY);
                 fluidBasePotion(output, Items.SPLASH_POTION, FactoryItems.THROWABLE_GLASS_BOTTLE, FluidConstants.BOTTLE, SoundEvents.BOTTLE_FILL, SoundEvents.BOTTLE_EMPTY);

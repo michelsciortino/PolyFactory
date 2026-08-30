@@ -138,6 +138,10 @@ public abstract class V1460Mixin extends Schema {
                 //    "game_event", () -> DSL.optionalFields("event", TypeReferences.GAME_EVENT_NAME.in(schema))
             ))));
         });
+
+        //schema.registerType(false, FactoryTypeReferences.FLUID_INSTANCE, () -> {
+        //    return DSL.
+        //});
     }
 
     @Unique

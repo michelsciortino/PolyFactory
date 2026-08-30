@@ -139,6 +139,7 @@ public class FactoryItemIds {
     public static final ResourceKey<Item> PLANT_OIL_BUCKET = of("plant_oil_bucket");
     public static final ResourceKey<Item> ETHANOL_BUCKET = of("ethanol_bucket");
     public static final ResourceKey<Item> BIODIESEL_BUCKET = of("biodiesel_bucket");
+    public static final ResourceKey<Item> FERTILIZER_BUCKET = of("fertilizer_bucket");
 
     public static final ResourceKey<Item> BIOMASS = of("biomass");
 

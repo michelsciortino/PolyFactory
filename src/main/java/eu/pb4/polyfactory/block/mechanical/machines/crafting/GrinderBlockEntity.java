@@ -199,7 +199,7 @@ public class GrinderBlockEntity extends LockableBlockEntity implements MinimalWo
                         (Math.random() - 0.5) * 0.2, 0.04, (Math.random() - 0.5) * 0.2, 0.3);
             }
 
-            self.state = rot.getStateTextOrElse(TOO_SLOW_TEXT);
+            self.state = rot.getStateTextOrElse(rot.hasNoActiveProviders() ? TOO_SLOW_TEXT : TOO_SLOW_DISCONNECTED_TEXT);
         }
     }
 

@@ -8,6 +8,7 @@ import eu.pb4.polyfactory.fluid.shooting.EntityShooterContext;
 import eu.pb4.polyfactory.item.FactoryDataComponents;
 import eu.pb4.polyfactory.item.FactoryItemTags;
 import eu.pb4.polyfactory.item.component.FluidComponent;
+import eu.pb4.polyfactory.item.util.AttackActionItem;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polymer.common.api.PolymerCommonUtils;
 import eu.pb4.polymer.core.api.item.PolymerItem;
@@ -16,11 +17,15 @@ import eu.pb4.polymer.core.impl.PolymerImplUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.PiercingWeapon;
+import net.minecraft.world.item.component.SwingAnimation;
 import org.jetbrains.annotations.Nullable;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.Level;
 
-public class PressureFluidGunItem extends Item implements PolymerItem {
+public class PressureFluidGunItem extends Item implements PolymerItem, AttackActionItem {
     public PressureFluidGunItem(Properties settings) {
         super(settings);
     }
@@ -133,6 +138,47 @@ public class PressureFluidGunItem extends Item implements PolymerItem {
         return InteractionResult.FAIL;
     }
 
+    @Override
+    public boolean onAttackAction(ServerPlayer user, ItemStack stack, InteractionHand hand) {
+        if (stack.has(FactoryDataComponents.CURRENT_FLUID)) {
+            return true;
+        }
+
+        var containers = findFluidContainer(user);
+        if (containers.isEmpty() || !isUsable(stack)) {
+            return true;
+        }
+
+        var ctx = new EntityShooterContext(user, 1.2f, 0.15f);
+
+        for (var container : containers) {
+            //noinspection unchecked
+            for (var fluid : ((List<FluidInstance<Object>>) (Object) container.fluids())) {
+                if (fluid.shootingBehavior().canShoot(ctx, fluid, container)) {
+                    fluid.shootingBehavior().startShooting(ctx, fluid, container);
+                    var tick = 0;
+                    while (fluid.shootingBehavior().canShoot(ctx, fluid, container) && tick < 4) {
+                        fluid.shootingBehavior().continueShooting(ctx, fluid, tick++, container);
+                    }
+
+                    stack.hurtAndBreak(1, user, EquipmentSlot.MAINHAND);
+
+
+                    var vec = ctx.rotation().scale(user.onGround() ? -0.02 : -0.014);
+                    FactoryUtil.addSafeVelocity(user, vec);
+                    if (user instanceof ServerPlayer player) {
+                        FactoryUtil.sendVelocityDelta(player, vec);
+                        FluidShootsCriterion.triggerFluidLauncher(player, stack, fluid);
+                    }
+                    fluid.shootingBehavior().stopShooting(ctx, fluid);
+                    return true;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private List<FluidContainer> findFluidContainer(LivingEntity user) {
         var stacks = new ArrayList<FluidContainer>();
         for (var eq : EquipmentSlot.values()) {
@@ -161,21 +207,13 @@ public class PressureFluidGunItem extends Item implements PolymerItem {
     }
 
     @Override
-    public ItemStack getPolymerItemStack(ItemStack itemStack, TooltipFlag tooltipType, PacketContext context, HolderLookup.Provider lookup) {
-        var out = PolymerItem.super.getPolymerItemStack(itemStack, tooltipType, context, lookup);
-        if (this.useCrossbowModel(itemStack)) {
+    public void modifyBasePolymerItemStack(ItemStack out, ItemStack stack, PacketContext context, HolderLookup.Provider lookup) {
+        if (this.useCrossbowModel(stack)) {
             out.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(new ItemStackTemplate(Items.ARROW)));
-            /*out.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, out.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
-                    .with(
-                            EntityAttributes.GENERIC_ATTACK_SPEED,
-                            new EntityAttributeModifier(id("packet_fluid_launcher"), -1000, EntityAttributeModifier.Operation.ADD_VALUE),
-                            AttributeModifierSlot.ANY)
-                    .withShowInTooltip(false)
-            );*/
         }
-        //out.set(DataComponentTypes.CONSUMABLE, new ConsumableComponent(99999f, UseAction.BOW, Registries.SOUND_EVENT.getEntry(SoundEvents.INTENTIONALLY_EMPTY), false, List.of()));
-        out.set(DataComponents.DAMAGE, itemStack.get(DataComponents.DAMAGE));
-        return out;
+
+        out.set(DataComponents.PIERCING_WEAPON, new PiercingWeapon(false, false, Optional.empty(), Optional.empty()));
+        //out.set(DataComponents.SWING_ANIMATION, new SwingAnimation(SwingAnimationType.NONE, 1));
     }
 
     @Override

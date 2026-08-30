@@ -256,7 +256,7 @@ public class MSpoutBlockEntity extends TallItemMachineBlockEntity implements Out
             }
 
 
-            self.state = rot.getStateTextOrElse(TOO_SLOW_TEXT);
+            self.state = rot.getStateTextOrElse(rot.hasNoActiveProviders() ? TOO_SLOW_TEXT : TOO_SLOW_DISCONNECTED_TEXT);
         }
     }
 

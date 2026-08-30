@@ -9,7 +9,9 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.tags.TagAppender;
+import net.minecraft.references.BlockItemIds;
 import net.minecraft.references.ItemIds;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -166,6 +168,26 @@ public class ItemTagsProvider extends FabricTagsProvider.ItemTagsProvider {
                 .add(FactoryItemIds.CREATIVE_CONTAINER)
                 .add(FactoryItemIds.CREATIVE_DRAIN)
                 .add(FactoryItemIds.CREATIVE_MOTOR);
+
+        this.tag(FactoryItemTags.FERMENTER_TO_BIOMASS_SMALL)
+                .addOptionalTag(ConventionalItemTags.FLOWERS)
+                .addOptionalTag(BlockItemTags.SAPLINGS.item())
+                .addOptionalTag(BlockItemTags.LEAVES.item())
+                .add(BlockItemIds.SHORT_GRASS.item())
+                .add(BlockItemIds.TALL_GRASS.item())
+                .add(BlockItemIds.MOSS_CARPET.item())
+                .add(BlockItemIds.PALE_MOSS_CARPET.item())
+                .add(BlockItemIds.PALE_HANGING_MOSS.item())
+                .add(BlockItemIds.KELP.item())
+                .remove(BlockItemIds.AZALEA.item(), BlockItemIds.FLOWERING_AZALEA.item())
+        ;
+
+        this.tag(FactoryItemTags.FERMENTER_TO_BIOMASS_MEDIUM)
+                .add(BlockItemIds.AZALEA.item(), BlockItemIds.FLOWERING_AZALEA.item())
+                .add(BlockItemIds.MOSS_BLOCK.item())
+                .add(BlockItemIds.PALE_MOSS_BLOCK.item())
+                .add(BlockItemIds.CACTUS.item())
+        ;
 
         this.tag(ConventionalItemTags.HIDDEN_FROM_RECIPE_VIEWERS)
                 .addOptionalTag(FactoryItemTags.CREATIVE_ITEMS);

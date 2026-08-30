@@ -46,6 +46,11 @@ public record SimpleFermentingRecipe(String group, Ingredient input,
                 List.of(outputFluid), time, 0, 1));
     }
 
+    public static RecipeHolder<SimpleFermentingRecipe> of(String id, String group, Ingredient input, OutputStack outputItem, double time) {
+        return new RecipeHolder<>(FactoryUtil.recipeKey("fermenting/" + id), new SimpleFermentingRecipe(group, input, List.of(outputItem),
+                List.of(), time, 0, 1));
+    }
+
     public static RecipeHolder<SimpleFermentingRecipe> of(String id, String group, Ingredient input, FluidStack<?> outputFluid, double time) {
         return new RecipeHolder<>(FactoryUtil.recipeKey("fermenting/" + id), new SimpleFermentingRecipe(group, input, List.of(),
                 List.of(outputFluid), time, 0, 1));

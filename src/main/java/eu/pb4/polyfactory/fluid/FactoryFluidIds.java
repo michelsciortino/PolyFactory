@@ -38,6 +38,8 @@ public class FactoryFluidIds {
 
     public static final ResourceKey<FluidType<?>> BIODIESEL = of("biodiesel");
 
+    public static final ResourceKey<FluidType<?>> FERTILIZER = of("fertilizer");
+
 
     public static ResourceKey<FluidType<?>> of(Identifier identifier) {
         return ResourceKey.create(FactoryRegistries.FLUID_TYPES_KEY, identifier);

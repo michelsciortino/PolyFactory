@@ -27,6 +27,9 @@ public class FactoryItemTags {
     public static final TagKey<Item> FLUID_CONTAINER_INTERACTABLE_ON_ATTACK = of("fluid_container_interactable_on_attack");
     public static final TagKey<Item> DYNAMIC_FLUID_INTERACTION = of("dynamic_fluid_interaction");
     public static final TagKey<Item> INVENTORY_FLUID_SOURCES = of("inventory_fluid_sources");
+    public static final TagKey<Item> FERMENTER_TO_BIOMASS_SMALL = of("fermenter/to_biomass_small");
+    public static final TagKey<Item> FERMENTER_TO_BIOMASS_MEDIUM = of("fermenter/to_biomass_medium");
+    //public static final TagKey<Item> FERMENTER_TO_BIOMASS_LARGE = of("fermenter/to_biomass_large");
     public static final TagKey<Item> CREATIVE_ITEMS = of("creative_items");
 
     private static TagKey<Item> of(String path) {

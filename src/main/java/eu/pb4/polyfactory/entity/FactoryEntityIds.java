@@ -20,6 +20,7 @@ public class FactoryEntityIds {
     public static final ResourceKey<EntityType<?>> SLIME_SPLASH = of("slime_splash");
     public static final ResourceKey<EntityType<?>> PLANT_OIL_SPLASH = of("plant_oil_splash");
     public static final ResourceKey<EntityType<?>> BIODIESEL_SPLASH = of("biodiesel_splash");
+    public static final ResourceKey<EntityType<?>> FERTILIZER_SPLASH = of("fertilizer_splash");
 
     public static final ResourceKey<EntityType<?>> CHAIN_LIFT = of("chain_lift");
     public static final ResourceKey<EntityType<?>> MINECART_WITH_BLOCKS = of("minecart_with_blocks");

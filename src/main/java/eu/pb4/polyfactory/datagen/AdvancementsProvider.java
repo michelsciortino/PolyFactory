@@ -367,6 +367,20 @@ class AdvancementsProvider extends FabricAdvancementProvider {
                 .addCriterion("use", TriggerCriterion.of(FactoryTriggers.WRENCH))
                 .save(exporter, "polyfactory:main/base/wrench");
 
+        var multimeter = Advancement.Builder.advancement()
+                .parent(wrench)
+                .display(
+                        FactoryItems.MULTIMETER,
+                        Component.translatable("advancements.polyfactory.multimeter.title"),
+                        Component.translatable("advancements.polyfactory.multimeter.description"),
+                        null,
+                        AdvancementType.TASK,
+                        true,
+                        true,
+                        false
+                )
+                .addCriterion("a", TriggerCriterion.of(FactoryTriggers.MULTIMETER_MEASURE))
+                .save(exporter, "polyfactory:main/base/multimeter");
 
         var mixer = Advancement.Builder.advancement()
                 .parent(steel)
@@ -453,21 +467,6 @@ class AdvancementsProvider extends FabricAdvancementProvider {
                 .addCriterion("use3", RecipeCraftedTrigger.TriggerInstance.craftedItem(recipeKey("press/copper_plate")))
                 .requirements(AdvancementRequirements.Strategy.OR)
                 .save(exporter, "polyfactory:main/base/press");
-
-        var deepStorageContainer = Advancement.Builder.advancement()
-                .parent(press)
-                .display(
-                        FactoryItems.DEEP_STORAGE_CONTAINER,
-                        Component.translatable("advancements.polyfactory.deep_storage_container.title"),
-                        Component.translatable("advancements.polyfactory.deep_storage_container.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true,
-                        true,
-                        false
-                )
-                .addCriterion("use", TriggerCriterion.of(FactoryTriggers.DEEP_STORAGE_CONTAINER))
-                .save(exporter, "polyfactory:main/base/deep_storage_container");
 
         var itemOutputBuffer = Advancement.Builder.advancement()
                 .parent(press)
@@ -703,6 +702,21 @@ class AdvancementsProvider extends FabricAdvancementProvider {
                 )
                 .addCriterion("use", TriggerCriterion.of(FactoryTriggers.CONTAINER_ADD_ITEM))
                 .save(exporter, "polyfactory:main/base/container");
+
+        var deepStorageContainer = Advancement.Builder.advancement()
+                .parent(container)
+                .display(
+                        FactoryItems.DEEP_STORAGE_CONTAINER,
+                        Component.translatable("advancements.polyfactory.deep_storage_container.title"),
+                        Component.translatable("advancements.polyfactory.deep_storage_container.description"),
+                        null,
+                        AdvancementType.TASK,
+                        true,
+                        true,
+                        false
+                )
+                .addCriterion("use", TriggerCriterion.of(FactoryTriggers.DEEP_STORAGE_CONTAINER))
+                .save(exporter, "polyfactory:main/base/deep_storage_container");
 
 
         var itemFilter = Advancement.Builder.advancement()
@@ -1073,21 +1087,6 @@ class AdvancementsProvider extends FabricAdvancementProvider {
                                 LootItemBlockStatePropertyCondition.hasBlockStateProperties(FactoryBlocks.STRESSOMETER)
                         )))
                 .save(exporter, "polyfactory:main/base/tachometer");
-
-        var multimeter = Advancement.Builder.advancement()
-                .parent(cable)
-                .display(
-                        FactoryItems.MULTIMETER,
-                        Component.translatable("advancements.polyfactory.multimeter.title"),
-                        Component.translatable("advancements.polyfactory.multimeter.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true,
-                        true,
-                        false
-                )
-                .addCriterion("a", TriggerCriterion.of(FactoryTriggers.MULTIMETER_MEASURE))
-                .save(exporter, "polyfactory:main/base/multimeter");
 
         var recordPlayer = Advancement.Builder.advancement()
                 .parent(cable)

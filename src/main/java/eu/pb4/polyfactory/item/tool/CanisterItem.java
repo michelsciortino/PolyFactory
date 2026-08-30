@@ -21,6 +21,7 @@ import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.Custom
 import eu.pb4.polymer.resourcepack.extras.api.format.item.tint.CustomModelDataTintSource;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -49,6 +50,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -64,6 +67,7 @@ public class CanisterItem extends SimplePolymerItem implements SwitchActionItem,
         super(settings);
         var identifier = settings.itemIdOrThrow().identifier();
         PolymerResourcePackUtils.RESOURCE_PACK_AFTER_INITIAL_CREATION_EVENT.register(builder -> this.createItemAsset(builder, identifier));
+        FluidBehaviours.addItemToFluidLink(this, stack -> stack.getOrDefault(FactoryDataComponents.FLUID, FluidComponent.DEFAULT).topFluid());
     }
 
     @Override
@@ -96,6 +100,22 @@ public class CanisterItem extends SimplePolymerItem implements SwitchActionItem,
         var fluids = itemStack.get(FactoryDataComponents.FLUID);
         if (fluids == null) {
             return InteractionResult.PASS;
+        }
+
+        if (fluids.get(FactoryFluids.FERTILIZER.defaultInstance()) >= FluidConstants.NUGGET
+                && level instanceof ServerLevel serverLevel
+                && blockState.getBlock() instanceof BonemealableBlock bonemealableBlock
+                && bonemealableBlock.isValidBonemealTarget(level, hitResult.getBlockPos(), blockState)) {
+            level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, hitResult.getBlockPos(), 15);
+
+            var res = fluids.extract(FactoryFluids.FERTILIZER.defaultInstance(), FluidConstants.NUGGET, true);
+            itemStack.set(FactoryDataComponents.FLUID, res.component());
+            level.playSound(null, hitResult.getBlockPos(), FactoryFluids.FERTILIZER.insertSoundEvent(), SoundSource.BLOCKS, 1f, 1);
+
+            if (bonemealableBlock.isBonemealSuccess(level, player.getRandom(), hitResult.getBlockPos(), blockState)) {
+                bonemealableBlock.performBonemeal(serverLevel, player.getRandom(), hitResult.getBlockPos(), blockState);
+            }
+            return InteractionResult.SUCCESS_SERVER;
         }
 
         var inserts = FluidBehaviours.BLOCK_STATE_TO_FLUID_INSERT.get(blockState);

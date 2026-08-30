@@ -1,7 +1,9 @@
 package eu.pb4.polyfactory.block.configurable;
 
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.MultiBlock;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
+import eu.pb4.polymer.virtualentity.api.data.DisplayEntityData;
 import eu.pb4.polymer.virtualentity.api.elements.DisplayElement;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import org.jetbrains.annotations.Nullable;
@@ -74,12 +76,14 @@ public interface BlockConfigValue<T> {
                                 map2.put(displayElement, displayElement.getInterpolationDuration());
                                 displayElement.setTeleportDuration(0);
                                 displayElement.setInterpolationDuration(0);
+                                displayElement.getSyncedData().setDirty(DisplayEntityData.START_INTERPOLATION, false);
                                 displayElement.tick();
                             }
                         }
                         world.setBlockAndUpdate(pos, newState);
                         for (var el : holder.holder().getElements()) {
                             if (el instanceof DisplayElement displayElement) {
+                                displayElement.tick();
                                 displayElement.setTeleportDuration(map.getInt(displayElement));
                                 displayElement.setInterpolationDuration(map2.getInt(displayElement));
                                 displayElement.tick();

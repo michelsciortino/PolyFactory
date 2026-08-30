@@ -857,6 +857,10 @@ public class FactoryUtil {
     public enum MovableResult {
         SUCCESS_MOVABLE,
         SUCCESS_REGULAR,
-        FAILURE
+        FAILURE;
+
+        public boolean isSuccess() {
+            return this != FAILURE;
+        }
     }
 }

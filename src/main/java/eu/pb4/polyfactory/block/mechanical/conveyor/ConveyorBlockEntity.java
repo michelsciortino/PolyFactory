@@ -85,7 +85,7 @@ public class ConveyorBlockEntity extends BlockEntity implements MovingItemContai
 
         if (state.getValue(ConveyorBlock.HAS_OUTPUT_TOP) && !vert.stack) {
             self.delta += speed;
-            if (self.tryInserting(world, pos.relative(Direction.UP), Direction.UP, FactoryBlockTags.CONVEYOR_TOP_OUTPUT)) {
+            if (self.tryInserting(world, pos.relative(Direction.UP), Direction.DOWN, FactoryBlockTags.CONVEYOR_TOP_OUTPUT)) {
                 if (self.isContainerEmpty()) {
                     self.setDelta(0);
                 }
@@ -100,7 +100,11 @@ public class ConveyorBlockEntity extends BlockEntity implements MovingItemContai
 
             self.delta += speed;
             if (!vert.stack) {
-                block = self.tryInserting(world, pos.relative(dir), dir, FactoryBlockTags.CONVEYOR_SIDE_OUTPUT);
+                block = self.tryInserting(world, pos.relative(dir), dir.getOpposite(), FactoryBlockTags.CONVEYOR_SIDE_OUTPUT);
+
+                if (!block) {
+                    block = self.tryInserting(world, pos.relative(dir), Direction.UP, FactoryBlockTags.CONVEYOR_SIDE_OUTPUT_FROM_TOP);
+                }
             }
 
             if (!block) {
@@ -213,7 +217,7 @@ public class ConveyorBlockEntity extends BlockEntity implements MovingItemContai
             this.clearContainer();
             this.setDelta(0);
         }
-        return x != FactoryUtil.MovableResult.FAILURE;
+        return x.isSuccess();
     }
 
     @Override
