@@ -33,6 +33,7 @@
 - Changed recipes of Clutch and Copper Pipe with Redstone Valve to use Smooth Stone Slabs instead of Steel Plates.
 - Changed Mechanical Spout and Mechanical Drain recipes to take less time (30% less).
 - Grinder can now store 5 stacks of output items (was 3 before).
+- Fluids added by other mods should now be automatically compatible with PolyFactory (no transfer compatibility yet through).
 - Increased amount of Plant Oil received from seeds.
 - Updated Creative Motor item model to match the look of the in world one (same as change in previous update).
 - Conveyors can now put items into composters (as it was originally intended, but didn't work due to a bug).
@@ -42,7 +43,11 @@
 - New recipes:
   - Fermenting all Flowers, all Saplings (aside azalea), all Grass, Moss Carpets, Pale Hanging Moss, Kelp and Leaves creates 1 Biomass at 10% chance.
   - Fermenting Azaleas, all Moss and Cactus create 1 Biomass at 40% chance.
+  - Fermenting Pumpkin creates 1 Biomass at 60% chance, 1-2 Pumpkin Seeds and Ethanol.
+  - Fermenting Melon Block creates 1 biomass at 50% chance, 3-4 Melon Seeds and a little bit of Ethanol.
+  - Fermenting Melon Slice creates 1 biomass at 5% chance.
   - Griding (Red) Sandstones gives back 2-3 (Red) Sand Blocks.
+- Fixed Fermenter Polydex page putting results in wrong place.
 - Fixed Golden Drill Head missing its material name translation.
 - Fixed Fermenter crafting sometimes locking up or loosing items.
 - Fixed Plant Oil Splashes using wrong fluid type internally (gave them wrong particle).

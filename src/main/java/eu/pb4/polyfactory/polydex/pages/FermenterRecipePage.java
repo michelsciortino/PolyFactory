@@ -131,7 +131,7 @@ public abstract class FermenterRecipePage<T extends FermentingRecipe> extends Pr
 
         var out = this.getItemOutput();
         for (var i = 0; i < Math.min(out.size(), 6); i++) {
-            layer.setOutput(6 + i % 2, 2 + i / 2, out.get(i));
+            layer.setOutput(5 + i % 2, 1 + i / 2, out.get(i));
         }
 
         //layer.set(8, 2, PolydexCompatImpl.requiredRotation(this.getMinimumSpeed(), this.getOptimalSpeed(), FermenterBlockEntity::getActiveStress));

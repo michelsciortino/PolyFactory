@@ -1,7 +1,9 @@
 package eu.pb4.polyfactory.block.mechanical.machines.crafting;
 
+import eu.pb4.factorytools.api.advancement.TriggerCriterion;
 import eu.pb4.factorytools.api.block.BlockEntityExtraListener;
 import eu.pb4.factorytools.api.block.entity.LockableBlockEntity;
+import eu.pb4.polyfactory.advancement.FactoryTriggers;
 import eu.pb4.polyfactory.block.FactoryBlockEntities;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
 import eu.pb4.polyfactory.block.other.ItemOutputBufferBlock;
@@ -140,17 +142,22 @@ public class TrommelBlockEntity extends LockableBlockEntity implements MinimalWo
                 }
             }
 
-            if (FactoryUtil.getClosestPlayer(world, pos, 32) instanceof ServerPlayer player) {
-                CriteriaTriggers.RECIPE_CRAFTED.trigger(player, self.currentRecipe.id(), self.stacks.subList(0, 1));
-            }
-
             var sound = stack.getItem() instanceof BlockItem blockItem ? blockItem.getBlock().defaultBlockState().getSoundType().getBreakSound() : SoundEvents.STONE_BREAK;
             world.playSound(null, pos, sound, SoundSource.BLOCKS, 0.6f, 0.25f);
             self.process = 0;
             stack.shrink(1);
 
+            int successCount = 0;
             for (var out : self.currentRecipe.value().output(input, world.getRandom())) {
                 FactoryUtil.tryInsertingRegular(output, out.copy());
+                successCount++;
+            }
+
+            if (successCount >= 1) {
+                if (FactoryUtil.getClosestPlayer(world, pos, 32) instanceof ServerPlayer player) {
+                    CriteriaTriggers.RECIPE_CRAFTED.trigger(player, self.currentRecipe.id(), self.stacks.subList(0, 1));
+                    TriggerCriterion.trigger(player, FactoryTriggers.TROMMEL_SUCCESS);
+                }
             }
 
             self.setChanged();

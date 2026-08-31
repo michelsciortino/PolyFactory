@@ -1144,7 +1144,8 @@ class RecipesProvider extends FabricRecipeProvider {
                                 0.4, 2, 16,
                                 OutputStack.of(Items.AZALEA, 0.05f),
                                 OutputStack.of(Items.FLOWERING_AZALEA, 0.05f),
-                                OutputStack.of(Items.STICK, 0.6f, 3)
+                                OutputStack.of(Items.STICK, 0.25f, 3),
+                                OutputStack.of(Items.LEAF_LITTER, 0.6f, 1)
                         ),
                         SimpleTrommelRecipe.of("dirt", Ingredient.of(Items.DIRT, Items.DIRT_PATH, Items.FARMLAND),
                                 1, 2, 16,
@@ -1205,6 +1206,7 @@ class RecipesProvider extends FabricRecipeProvider {
                     var list = new ArrayList<OutputStack>();
                     list.add(OutputStack.of(sapling, 0.1f, 1));
                     list.add(OutputStack.of(Items.STICK, 0.6f, 3));
+                    list.add(OutputStack.of(Items.LEAF_LITTER, 0.25f, 1));
 
                     if (wood == WoodType.OAK || wood == WoodType.DARK_OAK) {
                         list.add(OutputStack.of(Items.APPLE, 0.02f, 1));
@@ -1630,6 +1632,9 @@ class RecipesProvider extends FabricRecipeProvider {
                         SimpleFermentingRecipe.of("glow_berries", "", Ingredient.of(Items.GLOW_BERRIES), OutputStack.of(FactoryItems.BIOMASS, 0.2f), FactoryFluids.ETHANOL.ofNuggets(5), 160),
                         SimpleFermentingRecipe.of("apple", "", Ingredient.of(Items.APPLE), OutputStack.of(FactoryItems.BIOMASS, 0.1f), FactoryFluids.ETHANOL.ofNuggets(1), 130),
                         SimpleFermentingRecipe.of("beetroot", "", Ingredient.of(Items.BEETROOT), OutputStack.of(FactoryItems.BIOMASS, 0.25f), FactoryFluids.ETHANOL.ofNuggets(5), 110),
+                        SimpleFermentingRecipe.of("pumpkin", "", Ingredient.of(Items.PUMPKIN), List.of(OutputStack.of(FactoryItems.BIOMASS, 0.6f), OutputStack.of(Items.PUMPKIN_SEEDS, 1, 2), OutputStack.of(Items.PUMPKIN_SEEDS, 0.5f)), FactoryFluids.ETHANOL.ofNuggets(5), 120),
+                        SimpleFermentingRecipe.of("melon_block", "", Ingredient.of(Items.MELON), List.of(OutputStack.of(FactoryItems.BIOMASS, 0.5f), OutputStack.of(Items.MELON_SEEDS, 1, 2), OutputStack.of(Items.MELON_SEEDS, 0.5f)), FactoryFluids.ETHANOL.ofNuggets(1), 120),
+                        SimpleFermentingRecipe.of("melon_slice", "", Ingredient.of(Items.MELON_SLICE), OutputStack.of(FactoryItems.BIOMASS, 0.05f), 120),
 
                         SimpleFermentingRecipe.of("cheese", "", Ingredient.of(Items.MILK_BUCKET), FactoryItems.CHEESE_WHEEL, 250),
                         SimpleFermentingRecipe.of("biomass_small", "", Ingredient.of(fakeTagList(FactoryItemTags.FERMENTER_TO_BIOMASS_SMALL)), OutputStack.of(FactoryItems.BIOMASS, 0.10f), 80),

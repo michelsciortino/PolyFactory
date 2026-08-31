@@ -734,6 +734,21 @@ class AdvancementsProvider extends FabricAdvancementProvider {
                 .addCriterion("use", TriggerCriterion.of(FactoryTriggers.ITEM_FILTER_USE))
                 .save(exporter, "polyfactory:main/base/item_filter");
 
+        var trommel = Advancement.Builder.advancement()
+                .parent(press)
+                .display(
+                        FactoryItems.TROMMEL,
+                        Component.translatable("advancements.polyfactory.trommel.title"),
+                        Component.translatable("advancements.polyfactory.trommel.description"),
+                        null,
+                        AdvancementType.TASK,
+                        true,
+                        true,
+                        false
+                )
+                .addCriterion("use", TriggerCriterion.of(FactoryTriggers.TROMMEL_SUCCESS))
+                .save(exporter, "polyfactory:main/base/trommel");
+
         var itemPacker = Advancement.Builder.advancement()
                 .parent(container)
                 .display(

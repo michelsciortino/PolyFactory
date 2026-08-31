@@ -53,4 +53,5 @@ public interface FactoryTriggers {
     Identifier FERMENTER_FERMENTS = id("fermenter_ferments");
     Identifier PORTABLE_DRILL_MINES = id("portable_drill_mines");
     Identifier MULTIMETER_MEASURE = id("multimeter_measure");
+    Identifier TROMMEL_SUCCESS = id("trommel_success");
 }
