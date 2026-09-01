@@ -70,7 +70,8 @@ public class SmartValvePipeBlock extends PipeBaseBlock implements ConfigurableBl
             BlockConfig.ofBlockEntity("allowed_fluid_amount", ExtraCodecs.NON_NEGATIVE_LONG, SmartValvePipeBlockEntity.class,
                     BlockValueFormatter.text(FactoryUtil::fluidTextGeneric), SmartValvePipeBlockEntity::targetAmount,
                     SmartValvePipeBlockEntity::setTargetAmount, WrenchModifyBlockValue.ofAltCustomInputBlockEntity(
-                            Component.literal("// Todo"), SmartValvePipeBlockEntity.class, SmartValvePipeBlockEntity::setTargetAmount,
+                            Component.translatable("item.polyfactory.wrench.action.allowed_fluid_amount"),
+                            SmartValvePipeBlockEntity.class, SmartValvePipeBlockEntity::setTargetAmount,
                             FactoryUtil::parseFluidText, FactoryUtil::stringifyFullFluidAmount), Component.translatable("text.polyfactory.range_inclusive_to_infinite", 0))
     );
     private final Identifier model;
