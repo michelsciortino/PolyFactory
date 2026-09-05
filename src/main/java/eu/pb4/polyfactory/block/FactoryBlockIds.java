@@ -121,6 +121,9 @@ public class FactoryBlockIds {
     public static final ResourceKey<Block> FLUID_TANK = of("fluid_tank");
     public static final ResourceKey<Block> PORTABLE_FLUID_TANK = of("portable_fluid_tank");
 
+    // Disenchanter block id
+    public static final ResourceKey<Block> DISENCHANTER = of("disenchanter");
+
     public static final ResourceKey<Block> STEEL_BLOCK = of("steel_block");
     public static final ResourceKey<Block> TPS_PROVIDER = of("tps_provider");
 
