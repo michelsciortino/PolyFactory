@@ -14,32 +14,32 @@
 	"elements": [
 		{
 			"name": "chamber-back",
-			"from": [2, 14, 10],
-			"to": [14, 26, 15],
+			"from": [4, 14, 10],
+			"to": [12, 26, 15],
 			"faces": {
 				"north": {"uv": [0, 7, 5, 11.5], "texture": "#3"},
-				"east": {"uv": [0.5, 3, 7.5, 9], "texture": "#1"},
-				"south": {"uv": [1, 3, 7, 9], "texture": "#2"},
-				"west": {"uv": [0.5, 3, 7.5, 9], "texture": "#1"}
+				"south": {"uv": [2, 3, 6, 9], "texture": "#2"}
 			}
 		},
 		{
 			"name": "chamber-wall-left",
 			"from": [2, 14, 1],
-			"to": [4, 26, 10],
+			"to": [4, 26, 15],
 			"faces": {
 				"north": {"uv": [1, 3, 2, 9], "texture": "#0"},
 				"west": {"uv": [0.5, 3, 7.5, 9], "texture": "#1"},
+				"south": {"uv": [1, 3, 2, 9], "texture": "#2"},
 				"east": {"uv": [0, 7, 5, 11.5], "texture": "#3"}
 			}
 		},
 		{
 			"name": "chamber-wall-right",
 			"from": [12, 14, 1],
-			"to": [14, 26, 10],
+			"to": [14, 26, 15],
 			"faces": {
 				"north": {"uv": [6, 3, 7, 9], "texture": "#0"},
 				"east": {"uv": [0.5, 3, 7.5, 9], "texture": "#1"},
+				"south": {"uv": [6, 3, 7, 9], "texture": "#2"},
 				"west": {"uv": [0, 7, 5, 11.5], "texture": "#3"}
 			}
 		},
