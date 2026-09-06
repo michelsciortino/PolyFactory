@@ -303,8 +303,8 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
         }
 
         /**
-         * A book lies open and tilted the way the enchanting table's does; a stray item just stands
-         * upright, both of them turning with the same hover.
+         * A book lies open pages-up, tipped the last 10 degrees towards the viewer the way the
+         * enchanting table's is; a stray item just stands upright, both turning with the same hover.
          */
         private void updateHoverTransform(ItemDisplayElement element, float modelX, float bob, boolean asBook) {
             // Offsets are from the holder, which sits at the block centre - the model's own (8, 8, 8).
@@ -313,7 +313,8 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             mat.translate((8 - modelX) / 16, (BOOK_Y - 8) / 16 + bob, (8 - BOOK_Z) / 16);
             mat.rotateY(this.bookRotation);
             if (asBook) {
-                mat.rotateZ(BOOK_TILT);
+                // Swings the opening, which the model points at +Z, up to +Y less the tilt.
+                mat.rotateX(-BOOK_TILT);
             }
             mat.scale(asBook ? BOOK_SCALE : STRAY_ITEM_SCALE);
             element.setTransformation(mat);

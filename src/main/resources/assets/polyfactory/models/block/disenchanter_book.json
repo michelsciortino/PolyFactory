@@ -29,8 +29,8 @@
 		},
 		{
 			"name": "left_pages",
-			"from": [3.2, 4, 7.7],
-			"to": [8, 12, 7.7],
+			"from": [3.2, 4, 8.5],
+			"to": [8, 12, 8.5],
 			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8]},
 			"shade": false,
 			"faces": {
@@ -40,8 +40,8 @@
 		},
 		{
 			"name": "right_pages",
-			"from": [8, 4, 7.7],
-			"to": [12.8, 12, 7.7],
+			"from": [8, 4, 8.5],
+			"to": [12.8, 12, 8.5],
 			"rotation": {"angle": -45, "axis": "y", "origin": [8, 8, 8]},
 			"shade": false,
 			"faces": {
