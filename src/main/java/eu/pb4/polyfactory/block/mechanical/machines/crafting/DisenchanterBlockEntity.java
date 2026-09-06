@@ -70,14 +70,23 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     private static final Component NEED_XP_FLUID_TEXT = Component.translatable("text.polyfactory.state.need_xp_fluid").withStyle(ChatFormatting.YELLOW);
     private static final Component TOOL_OUTPUT_BLOCKED_TEXT = Component.translatable("text.polyfactory.state.tool_output_blocked").withStyle(ChatFormatting.YELLOW);
 
-    private final SimpleMovingItemContainer[] containers = new SimpleMovingItemContainer[]{
-            new SimpleMovingItemContainer(0, this::addMoving, this::removeMoving),
-            new SimpleMovingItemContainer(),
-            new SimpleMovingItemContainer(2, this::addMoving, this::removeMoving),
-            new SimpleMovingItemContainer(3, this::addMoving, this::removeMoving)
-    };
+    // Anchors in the block model's own coordinates (assets/polyfactory/models/block/disenchanter.json).
+    // The model is two blocks tall (0-32) and rendered so one model unit is 1/16 of a block, with
+    // model -Z pointing at INPUT_FACING and model +X at its clockwise side. See modelPoint.
+    private static final double ANVIL_Z = 6;
+    private static final double ANVIL_ITEM_Y = 21.9;
+    private static final double POOL_ITEM_Y = 16.6;
+    private static final double POOL_FRONT_Z = 3;
+    private static final double POOL_BACK_Z = 9;
+    private static final double POOL_SIDE_X = 5;
+    private static final float ANVIL_ITEM_SCALE = 0.5f;
+    private static final float POOL_ITEM_SCALE = 0.35f;
 
-    private final Container outputContainer = new SubContainer(this, OUTPUT_BOOK_SLOT);
+    private final SimpleMovingItemContainer[] containers = SimpleMovingItemContainer.createArray(4, this::addMoving, this::removeMoving);
+
+    // Book output only: the tool output is a separate port with its own face, so a produced book
+    // must never spill into it once this slot is full.
+    private final Container outputContainer = new SubContainer(this, OUTPUT_BOOK_SLOT, OUTPUT_BOOK_SLOT + 1);
     private final FluidContainerImpl fluidContainer = FluidContainerImpl.singleFluid(1000 * 20, this::setChanged);
 
     private double process = 0;
@@ -85,6 +94,8 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     private boolean multi;
     @Nullable
     private DisenchanterBlock.Model model;
+    @Nullable
+    private Direction modelFacing;
 
     public DisenchanterBlockEntity(BlockPos pos, BlockState state) {
         super(FactoryBlockEntities.DISENCHANTER, pos, state);
@@ -98,6 +109,14 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             for (int i = 0; i < self.containers.length; i++) {
                 self.updatePosition(i);
                 self.containers[i].maybeAdd(self.model);
+            }
+        }
+
+        var facing = state.getValue(TallItemMachineBlock.INPUT_FACING);
+        if (self.modelFacing != facing) {
+            self.modelFacing = facing;
+            for (int i = 0; i < self.containers.length; i++) {
+                self.updatePosition(i);
             }
         }
 
@@ -352,20 +371,46 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         }
 
         var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
-        var base = Vec3.atCenterOf(this.worldPosition).add(0, 0.4, 0);
+        Vec3 base;
+        float scale;
 
         switch (id) {
-            case SOURCE_SLOT -> base = base.relative(facing, 0.22);
-            case BLANK_BOOK_SLOT -> base = base.relative(facing.getClockWise(), 0.2);
-            case OUTPUT_BOOK_SLOT -> base = base.relative(facing, -0.22);
-            case OUTPUT_TOOL_SLOT -> base = base.relative(facing, -0.22).relative(facing.getClockWise(), 0.2);
+            // The item being stripped rests on the anvil itself, the rest float on the experience
+            // pool filling the chamber floor, each next to the port it's fed from or pushed out of.
+            case SOURCE_SLOT -> {
+                base = this.modelPoint(facing, 8, ANVIL_ITEM_Y, ANVIL_Z);
+                scale = ANVIL_ITEM_SCALE;
+            }
+            case BLANK_BOOK_SLOT -> {
+                base = this.modelPoint(facing, 8, POOL_ITEM_Y, POOL_FRONT_Z);
+                scale = POOL_ITEM_SCALE;
+            }
+            case OUTPUT_BOOK_SLOT -> {
+                base = this.modelPoint(facing, 8, POOL_ITEM_Y, POOL_BACK_Z);
+                scale = POOL_ITEM_SCALE;
+            }
+            case OUTPUT_TOOL_SLOT -> {
+                base = this.modelPoint(facing, POOL_SIDE_X, POOL_ITEM_Y, ANVIL_Z);
+                scale = POOL_ITEM_SCALE;
+            }
             default -> {
                 return;
             }
         }
 
         container.getContainer().setPos(base);
-        container.getContainer().scale(0.5f);
+        container.getContainer().scale(scale);
+    }
+
+    /**
+     * Turns a position in the block model's coordinate space into a world one, following the
+     * rotation the model itself is rendered with: -Z faces {@code facing}, +X its clockwise side.
+     */
+    private Vec3 modelPoint(Direction facing, double x, double y, double z) {
+        return Vec3.atBottomCenterOf(this.worldPosition)
+                .add(0, y / 16, 0)
+                .relative(facing, (8 - z) / 16)
+                .relative(facing.getClockWise(), (x - 8) / 16);
     }
 
     @Override
