@@ -313,8 +313,9 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             mat.translate((8 - modelX) / 16, (BOOK_Y - 8) / 16 + bob, (8 - BOOK_Z) / 16);
             mat.rotateY(this.bookRotation);
             if (asBook) {
-                // Swings the opening, which the model points at +Z, up to +Y less the tilt.
-                mat.rotateX(-BOOK_TILT);
+                // The model points its opening at +Z, but item display rendering flips that to -Z
+                // before this runs, so a positive turn is the one that swings it up to +Y.
+                mat.rotateX(BOOK_TILT);
             }
             mat.scale(asBook ? BOOK_SCALE : STRAY_ITEM_SCALE);
             element.setTransformation(mat);
