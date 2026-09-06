@@ -419,7 +419,7 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     private class Gui extends SimpleGui {
         private static final Component MODE_LABEL = Component.translatable("text.polyfactory.disenchanter.mode");
         private static final int TITLE_ORIGIN_X = 8;
-        private static final int CHECKBOX_CENTER_X = 8 + 4 * 18 + 8;
+        private static final int CHECKBOX_RIGHT_X = 8 + 4 * 18 + 16 + 3;
         private int lastFluidUpdate = -1;
         private int delayTick = -1;
 
@@ -459,11 +459,11 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             this.lastFluidUpdate = DisenchanterBlockEntity.this.fluidContainer.updateId();
         }
 
-        // Header label centered over the mode checkbox (slot 4). Net-zero horizontal advance so the block name stays at the title origin.
+        // Header label placed just right of the mode checkbox (slot 4). Net-zero horizontal advance so the block name stays at the title origin.
         private Component modeLabel() {
             var label = MODE_LABEL.copy();
             var width = DefaultFonts.REGISTRY.getWidth(label, 8);
-            var start = Math.max(0, CHECKBOX_CENTER_X - TITLE_ORIGIN_X - width / 2);
+            var start = Math.max(0, CHECKBOX_RIGHT_X - TITLE_ORIGIN_X);
             return Component.empty()
                     .append(TextUncenterer.filler(start))
                     .append(label)
