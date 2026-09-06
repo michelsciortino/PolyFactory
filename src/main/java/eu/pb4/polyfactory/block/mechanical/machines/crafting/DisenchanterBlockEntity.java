@@ -1,6 +1,7 @@
 package eu.pb4.polyfactory.block.mechanical.machines.crafting;
 
 import eu.pb4.factorytools.api.virtualentity.BlockModel;
+import eu.pb4.mapcanvas.api.font.DefaultFonts;
 import eu.pb4.polyfactory.block.FactoryBlockEntities;
 import eu.pb4.polyfactory.block.fluids.FluidInput;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
@@ -21,6 +22,7 @@ import eu.pb4.polyfactory.ui.UiResourceCreator;
 import eu.pb4.polyfactory.ui.fluid.FluidTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
+import eu.pb4.polyfactory.util.language.TextUncenterer;
 import eu.pb4.polyfactory.util.movingitem.SimpleMovingItemContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -413,6 +415,8 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     private class Gui extends SimpleGui {
         private static final Component MODE_LABEL = Component.translatable("text.polyfactory.disenchanter.mode");
+        private static final int TITLE_ORIGIN_X = 8;
+        private static final int CHECKBOX_CENTER_X = 8 + 4 * 18 + 8;
         private int lastFluidUpdate = -1;
         private int delayTick = -1;
 
@@ -441,6 +445,7 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
                     .append(Component.literal(GuiTextures.DISENCHANTER_FLUID_OFFSET + "").setStyle(UiResourceCreator.STYLE))
                             .append(FluidTextures.MIXER.render(DisenchanterBlockEntity.this.fluidContainer::provideRender))
                     .append(Component.literal(GuiTextures.DISENCHANTER_FLUID_OFFSET_N + "").setStyle(UiResourceCreator.STYLE))
+                            .append(modeLabel())
                             .append(DisenchanterBlockEntity.this.getBlockState().getBlock().getName())
             );
 
@@ -449,6 +454,17 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             }
 
             this.lastFluidUpdate = DisenchanterBlockEntity.this.fluidContainer.updateId();
+        }
+
+        // Header label centered over the mode checkbox (slot 4). Net-zero horizontal advance so the block name stays at the title origin.
+        private Component modeLabel() {
+            var label = MODE_LABEL.copy().setStyle(UiResourceCreator.STYLE);
+            var width = DefaultFonts.REGISTRY.getWidth(label, 8);
+            var start = Math.max(0, CHECKBOX_CENTER_X - TITLE_ORIGIN_X - width / 2);
+            return Component.empty()
+                    .append(TextUncenterer.filler(start))
+                    .append(label)
+                    .append(GuiTextures.negativeSpace(start + width));
         }
 
         private float progress() {
