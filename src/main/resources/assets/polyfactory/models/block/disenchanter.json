@@ -10,6 +10,7 @@
 		"4": "minecraft:block/anvil",
 		"5": "minecraft:block/anvil_top",
 		"6": "polyfactory:block/disenchanter/chamber",
+		"7": "polyfactory:block/fluid/experience",
 		"particle": "polyfactory:block/disenchanter/front"
 	},
 	"elements": [
@@ -59,7 +60,17 @@
 			"to": [12, 16, 10],
 			"faces": {
 				"north": {"uv": [2, 8, 6, 9], "texture": "#6"},
-				"up": {"uv": [6, 7, 10.5, 7.5], "texture": "#3"}
+				"up": {"uv": [0, 7, 5, 11.5], "texture": "#3"}
+			}
+		},
+		{
+			"name": "chamber-fluid-lip",
+			"from": [4, 16, 1],
+			"to": [12, 17, 2],
+			"faces": {
+				"north": {"uv": [2, 8, 6, 8.5], "texture": "#6"},
+				"up": {"uv": [2, 3, 6, 3.5], "texture": "#6"},
+				"south": {"uv": [2, 3, 6, 3.5], "texture": "#6"}
 			}
 		},
 		{

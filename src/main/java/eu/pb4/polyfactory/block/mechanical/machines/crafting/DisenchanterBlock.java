@@ -35,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class DisenchanterBlock extends TallItemMachineBlock implements PipeConnectable, FluidInput.Getter, MovingItemConsumer, MovingItemProvider {
+    public static final eu.pb4.factorytools.api.util.LazyItemStack FLUID_MODEL = ItemDisplayElementUtil.getModel(eu.pb4.polyfactory.util.FactoryUtil.id("block/disenchanter_fluid"));
+
     public DisenchanterBlock(Properties props) {
         super(props);
     }
@@ -173,6 +175,8 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
     public static final class Model extends RotationAwareModel {
         private final ItemDisplayElement main;
         private final ItemDisplayElement gears;
+        private final ItemDisplayElement fluid;
+        private boolean fluidVisible;
 
         private Model(BlockState state) {
             this.main = ItemDisplayElementUtil.createSimple(state.getBlock().asItem());
@@ -180,11 +184,24 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             this.main.setTranslation(new Vector3f(0, 0.5f, 0));
             this.gears = LodItemDisplayElement.createSimple(GenericParts.SMALL_GEAR_DOUBLE.get(), this.getUpdateRate(), 0.3f, 0.5f);
             this.gears.setViewRange(0.4f);
+            this.fluid = ItemDisplayElementUtil.createSimple();
+            this.fluid.setScale(new Vector3f(2));
+            this.fluid.setTranslation(new Vector3f(0, 0.5f, 0));
+            this.fluid.setViewRange(0.6f);
 
             this.updateStatePos(state);
             this.updateAnimation(true, 0, isNegativeRotation(state.getValue(INPUT_FACING)));
             this.addElement(this.main);
             this.addElement(this.gears);
+            this.addElement(this.fluid);
+        }
+
+        public void setFluidVisible(boolean visible) {
+            if (this.fluidVisible == visible) {
+                return;
+            }
+            this.fluidVisible = visible;
+            this.fluid.setItem(visible ? FLUID_MODEL.get().copy() : ItemStack.EMPTY);
         }
 
         private static boolean isNegativeRotation(Direction dir) {
@@ -195,6 +212,7 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             var direction = state.getValue(INPUT_FACING);
             this.main.setYaw(direction.toYRot());
             this.gears.setYaw(direction.toYRot());
+            this.fluid.setYaw(direction.toYRot());
         }
 
         private void updateAnimation(boolean updateGears, float rotation, boolean negative) {

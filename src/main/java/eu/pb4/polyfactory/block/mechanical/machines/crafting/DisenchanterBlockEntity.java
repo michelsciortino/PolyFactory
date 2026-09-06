@@ -99,6 +99,11 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             }
         }
 
+        if (self.model != null) {
+            var topFluid = self.fluidContainer.topFluid();
+            self.model.setFluidVisible(topFluid != null && topFluid.type() == FactoryFluids.EXPERIENCE);
+        }
+
         self.state = null;
 
         if (self.process < 0) {
