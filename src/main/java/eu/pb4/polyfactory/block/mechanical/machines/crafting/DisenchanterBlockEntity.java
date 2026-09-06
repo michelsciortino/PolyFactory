@@ -23,7 +23,6 @@ import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.polyfactory.util.movingitem.SimpleMovingItemContainer;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -420,11 +419,11 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         }
 
         private void updateTitleAndFluid() {
-            var text = GuiTextures.MIXER.apply(
+            var text = GuiTextures.DISENCHANTER.apply(
                     Component.empty()
-                            .append(Component.literal(GuiTextures.MIXER_FLUID_OFFSET + "").setStyle(UiResourceCreator.STYLE))
+                    .append(Component.literal(GuiTextures.DISENCHANTER_FLUID_OFFSET + "").setStyle(UiResourceCreator.STYLE))
                             .append(FluidTextures.MIXER.render(DisenchanterBlockEntity.this.fluidContainer::provideRender))
-                            .append(Component.literal(GuiTextures.MIXER_FLUID_OFFSET_N + "").setStyle(UiResourceCreator.STYLE))
+                    .append(Component.literal(GuiTextures.DISENCHANTER_FLUID_OFFSET_N + "").setStyle(UiResourceCreator.STYLE))
                             .append(DisenchanterBlockEntity.this.getBlockState().getBlock().getName())
             );
 
@@ -448,8 +447,9 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
                     ? "text.polyfactory.disenchanter.mode.multi"
                     : "text.polyfactory.disenchanter.mode.single");
 
-            this.setSlot(4, GuiElementBuilder.from((DisenchanterBlockEntity.this.multi ? Items.ENCHANTED_BOOK : Items.BOOK).getDefaultInstance())
-                    .setName(MODE_LABEL.copy().append(": ").append(modeText))
+            this.setSlot(4, (DisenchanterBlockEntity.this.multi ? GuiTextures.BUTTON_CHECKBOX_SELECTED : GuiTextures.BUTTON_CHECKBOX).get()
+                .setName(MODE_LABEL.copy().append(": ").append(modeText))
+                .addLoreLine(Component.translatable("text.polyfactory.disenchanter.mode.toggle").withStyle(ChatFormatting.GRAY))
                     .setCallback(clickType -> {
                         DisenchanterBlockEntity.this.setMulti(!DisenchanterBlockEntity.this.multi);
                         this.updateModeButton();

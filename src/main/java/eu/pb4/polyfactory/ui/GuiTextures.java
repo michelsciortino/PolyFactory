@@ -22,6 +22,7 @@ public class GuiTextures {
     public static final Function<Component, Component> GRINDER = background("grinder");
     public static final Function<Component, Component> PRESS = background("press");
     public static final Function<Component, Component> MIXER = background("mixer");
+    public static final Function<Component, Component> DISENCHANTER = background("disenchanter");
     public static final Function<Component, Component> FERMENTER = background("fermenter");
     public static final Function<Component, Component> MECHANICAL_DRAIN = background("mechanical_drain");
     public static final Function<Component, Component> MECHANICAL_SPOUT = background("mechanical_spout");
@@ -59,6 +60,8 @@ public class GuiTextures {
     public static final Supplier<GuiElementBuilder> BUTTON_CLOSE = icon32("button/close");
     public static final Supplier<GuiElementBuilder> BUTTON_DONE = icon32("button/done");
     public static final Supplier<GuiElementBuilder> BUTTON_DONE_BLOCKED = icon32("button/done_blocked");
+    public static final Supplier<GuiElementBuilder> BUTTON_CHECKBOX = icon16("button/mini/base");
+    public static final Supplier<GuiElementBuilder> BUTTON_CHECKBOX_SELECTED = icon16("button/mini/base_selected");
     public static final Supplier<GuiElementBuilder> BUTTON_ITEM_FILTER_TYPE_ONLY = icon32("button/item_filter/type_only");
     public static final Supplier<GuiElementBuilder> BUTTON_ITEM_FILTER_STRICT = icon32("button/item_filter/strict");
     public static final Supplier<GuiElementBuilder> LOCKED_SLOT = icon32("locked_slot");
@@ -102,6 +105,8 @@ public class GuiTextures {
     public static final char POLYDEX_OFFSET_N = space(-168);
     public static final char MIXER_FLUID_OFFSET = space(28 - 8);
     public static final char MIXER_FLUID_OFFSET_N = space(-28 + 8);
+    public static final char DISENCHANTER_FLUID_OFFSET = space(28 - 8);
+    public static final char DISENCHANTER_FLUID_OFFSET_N = space(-28 + 8);
     public static final char FERMENTER_FLUID_OFFSET = space(28 - 8 + 18 * 6);
     public static final char FERMENTER_FLUID_OFFSET_N = space(-28 + 8 - 18 * 6);
     public static final char MECHANICAL_DRAIN_FLUID_OFFSET = space(118 - 8);

@@ -558,6 +558,7 @@
   "text.polyfactory.state.need_xp_fluid": "Need experience fluid!",
   "text.polyfactory.state.tool_output_blocked": "Tool output blocked!",
   "text.polyfactory.disenchanter.mode": "Mode",
+  "text.polyfactory.disenchanter.mode.toggle": "Toggle transfer mode",
   "text.polyfactory.disenchanter.mode.single": "Single",
   "text.polyfactory.disenchanter.mode.multi": "Multi",
 
