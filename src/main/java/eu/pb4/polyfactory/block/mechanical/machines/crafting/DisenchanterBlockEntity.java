@@ -461,7 +461,7 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
         // Header label centered over the mode checkbox (slot 4). Net-zero horizontal advance so the block name stays at the title origin.
         private Component modeLabel() {
-            var label = MODE_LABEL.copy().setStyle(UiResourceCreator.STYLE);
+            var label = MODE_LABEL.copy();
             var width = DefaultFonts.REGISTRY.getWidth(label, 8);
             var start = Math.max(0, CHECKBOX_CENTER_X - TITLE_ORIGIN_X - width / 2);
             return Component.empty()
