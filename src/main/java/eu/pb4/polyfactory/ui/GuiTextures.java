@@ -60,8 +60,6 @@ public class GuiTextures {
     public static final Supplier<GuiElementBuilder> BUTTON_CLOSE = icon32("button/close");
     public static final Supplier<GuiElementBuilder> BUTTON_DONE = icon32("button/done");
     public static final Supplier<GuiElementBuilder> BUTTON_DONE_BLOCKED = icon32("button/done_blocked");
-    public static final Supplier<GuiElementBuilder> BUTTON_CHECKBOX = icon16("button/mini/base");
-    public static final Supplier<GuiElementBuilder> BUTTON_CHECKBOX_SELECTED = icon16("button/mini/base_selected");
     public static final Supplier<GuiElementBuilder> BUTTON_ITEM_FILTER_TYPE_ONLY = icon32("button/item_filter/type_only");
     public static final Supplier<GuiElementBuilder> BUTTON_ITEM_FILTER_STRICT = icon32("button/item_filter/strict");
     public static final Supplier<GuiElementBuilder> LOCKED_SLOT = icon32("locked_slot");

@@ -447,9 +447,9 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
                     ? "text.polyfactory.disenchanter.mode.multi"
                     : "text.polyfactory.disenchanter.mode.single");
 
-            this.setSlot(4, (DisenchanterBlockEntity.this.multi ? GuiTextures.BUTTON_CHECKBOX_SELECTED : GuiTextures.BUTTON_CHECKBOX).get()
-                .setName(MODE_LABEL.copy().append(": ").append(modeText))
-                .addLoreLine(Component.translatable("text.polyfactory.disenchanter.mode.toggle").withStyle(ChatFormatting.GRAY))
+            this.setSlot(4, (DisenchanterBlockEntity.this.multi ? GuiTextures.BUTTON_DONE : GuiTextures.BUTTON_DONE_BLOCKED).get()
+                    .setName(MODE_LABEL.copy().append(": ").append(modeText))
+                    .addLoreLine(Component.translatable("text.polyfactory.disenchanter.mode.toggle").withStyle(ChatFormatting.GRAY))
                     .setCallback(clickType -> {
                         DisenchanterBlockEntity.this.setMulti(!DisenchanterBlockEntity.this.multi);
                         this.updateModeButton();
