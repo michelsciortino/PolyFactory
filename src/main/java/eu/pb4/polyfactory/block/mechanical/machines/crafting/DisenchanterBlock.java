@@ -307,8 +307,10 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
          * upright, both of them turning with the same hover.
          */
         private void updateHoverTransform(ItemDisplayElement element, float modelX, float bob, boolean asBook) {
+            // Offsets are from the holder, which sits at the block centre - the model's own (8, 8, 8).
+            // X and Z run backwards against the model because item displays rendering flips them.
             var mat = mat();
-            mat.translate((8 - modelX) / 16, BOOK_Y / 16 + bob, (8 - BOOK_Z) / 16);
+            mat.translate((8 - modelX) / 16, (BOOK_Y - 8) / 16 + bob, (8 - BOOK_Z) / 16);
             mat.rotateY(this.bookRotation);
             if (asBook) {
                 mat.rotateZ(BOOK_TILT);
