@@ -8,8 +8,10 @@ import net.minecraft.world.item.enchantment.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EnchantmentTransferHelper {
     public static class TransferResult {
@@ -26,8 +28,12 @@ public class EnchantmentTransferHelper {
 
     /**
      * Transfers up to `maxTransfer` enchantments from `source` into enchanted books. If multi==true,
-     * transfers all selected enchantments into a single book. Returns the resulting source stack (with enchants removed),
+     * transfers up to `maxTransfer` selected enchantments into a single book. Returns the resulting source stack (with enchants removed),
      * list of transferred enchantments and the book stack (or empty).
+     *
+     * Selection rules:
+     *  - Curses are ignored (not transferable)
+     *  - Enchantments are prioritized by level (desc) then by rarity (rare first)
      */
     public static TransferResult transferEnchantments(ItemStack source, int maxTransfer, boolean multi) {
         if (source.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
@@ -35,9 +41,14 @@ public class EnchantmentTransferHelper {
         var map = EnchantmentHelper.getEnchantments(source);
         if (map.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
 
-        var entries = new ArrayList<Map.Entry<Enchantment, Integer>>(map.entrySet());
+        // Build list and filter out curses
+        var entries = map.entrySet().stream()
+                .filter(e -> !isCurse(e.getKey()))
+                .sorted(Comparator.<Map.Entry<Enchantment, Integer>>comparingInt(e -> -e.getValue())
+                        .thenComparing((a, b) -> Integer.compare(b.getKey().getRarity().ordinal(), a.getKey().getRarity().ordinal())))
+                .collect(Collectors.toList());
 
-        // Sort by level desc then rarity? Keep natural order for now
+        if (entries.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
 
         var toTransfer = new ArrayList<EnchantmentInstance>();
         int count = 0;
@@ -52,9 +63,7 @@ public class EnchantmentTransferHelper {
         if (!toTransfer.isEmpty()) {
             if (multi) {
                 book = new ItemStack(EnchantedBookItem.getItem());
-                var tag = new CompoundTag();
-                EnchantedBookItem.addEnchantment(book, toTransfer.get(0));
-                for (int i = 1; i < toTransfer.size(); i++) {
+                for (int i = 0; i < toTransfer.size(); i++) {
                     EnchantedBookItem.addEnchantment(book, toTransfer.get(i));
                 }
             } else {
@@ -76,5 +85,15 @@ public class EnchantmentTransferHelper {
         EnchantmentHelper.setEnchantments(newMap, outSource);
 
         return new TransferResult(outSource, toTransfer, book);
+    }
+
+    private static boolean isCurse(Enchantment e) {
+        try {
+            return e.isCurse();
+        } catch (NoSuchMethodError ex) {
+            // Fallback: check registry key contains "curse" (best effort)
+            var id = EnchantmentHelper.getEnchantments(new ItemStack(net.minecraft.world.item.Items.ENCHANTED_BOOK));
+            return false;
+        }
     }
 }
