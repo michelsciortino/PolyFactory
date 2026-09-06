@@ -11,6 +11,10 @@
         },
         {
             "type": "single",
+            "resource": "minecraft:entity/enchantment/enchanting_table_book"
+        },
+        {
+            "type": "single",
             "resource": "polyfactory:icon"
         }
     ]

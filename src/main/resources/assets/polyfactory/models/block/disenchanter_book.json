@@ -1,0 +1,63 @@
+{
+	"texture_size": [64, 32],
+	"textures": {
+		"0": "minecraft:entity/enchantment/enchanting_table_book",
+		"particle": "minecraft:entity/enchantment/enchanting_table_book"
+	},
+	"elements": [
+		{
+			"name": "left_lid",
+			"from": [2, 3, 8],
+			"to": [8, 13, 8],
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8]},
+			"shade": false,
+			"faces": {
+				"north": {"uv": [0, 0, 6, 10], "texture": "#0"},
+				"south": {"uv": [6, 0, 12, 10], "texture": "#0"}
+			}
+		},
+		{
+			"name": "right_lid",
+			"from": [8, 3, 8],
+			"to": [14, 13, 8],
+			"rotation": {"angle": -45, "axis": "y", "origin": [8, 8, 8]},
+			"shade": false,
+			"faces": {
+				"north": {"uv": [16, 0, 22, 10], "texture": "#0"},
+				"south": {"uv": [22, 0, 28, 10], "texture": "#0"}
+			}
+		},
+		{
+			"name": "left_pages",
+			"from": [3.2, 4, 7.7],
+			"to": [8, 12, 7.7],
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 8, 8]},
+			"shade": false,
+			"faces": {
+				"north": {"uv": [1, 11, 6, 19], "texture": "#0"},
+				"south": {"uv": [1, 11, 6, 19], "texture": "#0"}
+			}
+		},
+		{
+			"name": "right_pages",
+			"from": [8, 4, 7.7],
+			"to": [12.8, 12, 7.7],
+			"rotation": {"angle": -45, "axis": "y", "origin": [8, 8, 8]},
+			"shade": false,
+			"faces": {
+				"north": {"uv": [13, 11, 18, 19], "texture": "#0"},
+				"south": {"uv": [13, 11, 18, 19], "texture": "#0"}
+			}
+		},
+		{
+			"name": "seam",
+			"from": [8, 3, 7],
+			"to": [8, 13, 9],
+			"shade": false,
+			"faces": {
+				"east": {"uv": [12, 0, 14, 10], "texture": "#0"},
+				"west": {"uv": [14, 0, 12, 10], "texture": "#0"}
+			}
+		}
+	]
+}

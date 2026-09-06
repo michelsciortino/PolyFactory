@@ -21,9 +21,11 @@ import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
@@ -36,6 +38,7 @@ import org.joml.Vector3f;
 
 public class DisenchanterBlock extends TallItemMachineBlock implements PipeConnectable, FluidInput.Getter, MovingItemConsumer, MovingItemProvider {
     public static final eu.pb4.factorytools.api.util.LazyItemStack FLUID_MODEL = ItemDisplayElementUtil.getModel(eu.pb4.polyfactory.util.FactoryUtil.id("block/disenchanter_fluid"));
+    public static final eu.pb4.factorytools.api.util.LazyItemStack BOOK_MODEL = ItemDisplayElementUtil.getModel(eu.pb4.polyfactory.util.FactoryUtil.id("block/disenchanter_book"));
 
     public DisenchanterBlock(Properties props) {
         super(props);
@@ -173,10 +176,28 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
     }
 
     public static final class Model extends RotationAwareModel {
+        // Both books hover in front of the anvil, at the middle of its height, in the block model's
+        // own coordinates - see DisenchanterBlockEntity.modelPoint for how those map to the world.
+        private static final float BOOK_LEFT_X = 10;
+        private static final float BOOK_RIGHT_X = 6;
+        private static final float BOOK_Y = 18.6f;
+        private static final float BOOK_Z = 2.6f;
+        private static final float BOOK_SCALE = 0.25f;
+        private static final float STRAY_ITEM_SCALE = 0.375f;
+        private static final float BOOK_TILT = 80 * Mth.DEG_TO_RAD;
+        private static final double BOOK_LOOK_RANGE = 4;
+
         private final ItemDisplayElement main;
         private final ItemDisplayElement gears;
         private final ItemDisplayElement fluid;
+        private final ItemDisplayElement blankBook;
+        private final ItemDisplayElement enchantedBook;
         private boolean fluidVisible;
+        private ItemStack blankSlotStack = ItemStack.EMPTY;
+        private boolean blankSlotIsBook;
+        private boolean enchantedBookVisible;
+        private float bookRotation;
+        private float bookTargetRotation;
 
         private Model(BlockState state) {
             this.main = ItemDisplayElementUtil.createSimple(state.getBlock().asItem());
@@ -188,12 +209,18 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             this.fluid.setScale(new Vector3f(2));
             this.fluid.setTranslation(new Vector3f(0, 0.5f, 0));
             this.fluid.setViewRange(0.6f);
+            this.blankBook = LodItemDisplayElement.createSimple(ItemStack.EMPTY, 2, 0.4f, 0.8f);
+            this.blankBook.setViewRange(0.5f);
+            this.enchantedBook = LodItemDisplayElement.createSimple(ItemStack.EMPTY, 2, 0.4f, 0.8f);
+            this.enchantedBook.setViewRange(0.5f);
 
             this.updateStatePos(state);
             this.updateAnimation(true, 0, isNegativeRotation(state.getValue(INPUT_FACING)));
             this.addElement(this.main);
             this.addElement(this.gears);
             this.addElement(this.fluid);
+            this.addElement(this.blankBook);
+            this.addElement(this.enchantedBook);
         }
 
         public void setFluidVisible(boolean visible) {
@@ -202,6 +229,32 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             }
             this.fluidVisible = visible;
             this.fluid.setItem(visible ? FLUID_MODEL.get().copy() : ItemStack.EMPTY);
+        }
+
+        /**
+         * The blank book port takes any item, so anything that isn't a book is shown as itself
+         * rather than being dressed up as one.
+         */
+        public void setChamberContents(ItemStack blankSlot, boolean enchantedBook) {
+            if (!ItemStack.isSameItemSameComponents(this.blankSlotStack, blankSlot)) {
+                this.blankSlotStack = blankSlot.copy();
+                this.blankSlotIsBook = blankSlot.is(Items.BOOK);
+                this.blankBook.setItem(blankSlot.isEmpty() ? ItemStack.EMPTY
+                        : this.blankSlotIsBook ? bookModel(false) : blankSlot.copy());
+            }
+
+            if (this.enchantedBookVisible != enchantedBook) {
+                this.enchantedBookVisible = enchantedBook;
+                this.enchantedBook.setItem(enchantedBook ? bookModel(true) : ItemStack.EMPTY);
+            }
+        }
+
+        private static ItemStack bookModel(boolean glowing) {
+            var stack = BOOK_MODEL.get().copy();
+            if (glowing) {
+                stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+            }
+            return stack;
         }
 
         private static boolean isNegativeRotation(Direction dir) {
@@ -213,6 +266,66 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             this.main.setYaw(direction.toYRot());
             this.gears.setYaw(direction.toYRot());
             this.fluid.setYaw(direction.toYRot());
+            this.blankBook.setYaw(direction.toYRot());
+            this.enchantedBook.setYaw(direction.toYRot());
+        }
+
+        /**
+         * Mirrors the hover of {@code minecraft:enchanting_table}'s book: a slow bob, and a spin that
+         * turns the open side towards the closest nearby player, drifting on its own when there is none.
+         */
+        private void updateBooks() {
+            var facing = this.blockState().getValue(INPUT_FACING);
+            var pos = this.blockPos();
+            var player = this.getAttachment() == null ? null : this.getAttachment().getWorld()
+                    .getNearestPlayer(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, BOOK_LOOK_RANGE, false);
+
+            if (player != null) {
+                // The book spins inside the model's own frame, so aim it with the player offset expressed there.
+                var right = facing.getCounterClockWise();
+                var dx = player.getX() - (pos.getX() + 0.5);
+                var dz = player.getZ() - (pos.getZ() + 0.5);
+                this.bookTargetRotation = (float) Mth.atan2(
+                        -(dx * right.getStepX() + dz * right.getStepZ()),
+                        -(dx * facing.getStepX() + dz * facing.getStepZ()));
+            } else {
+                // Vanilla drifts by 0.02 every tick; this runs every other one.
+                this.bookTargetRotation += 0.04f;
+            }
+
+            this.bookRotation += wrapRadians(this.bookTargetRotation - this.bookRotation) * 0.4f;
+            this.bookRotation = wrapRadians(this.bookRotation);
+            this.bookTargetRotation = wrapRadians(this.bookTargetRotation);
+
+            var bob = Mth.sin(this.getTick() * 0.1f) * 0.01f;
+            this.updateHoverTransform(this.blankBook, BOOK_LEFT_X, bob, this.blankSlotIsBook);
+            this.updateHoverTransform(this.enchantedBook, BOOK_RIGHT_X, bob, true);
+        }
+
+        /**
+         * A book lies open and tilted the way the enchanting table's does; a stray item just stands
+         * upright, both of them turning with the same hover.
+         */
+        private void updateHoverTransform(ItemDisplayElement element, float modelX, float bob, boolean asBook) {
+            var mat = mat();
+            mat.translate((8 - modelX) / 16, BOOK_Y / 16 + bob, (8 - BOOK_Z) / 16);
+            mat.rotateY(this.bookRotation);
+            if (asBook) {
+                mat.rotateZ(BOOK_TILT);
+            }
+            mat.scale(asBook ? BOOK_SCALE : STRAY_ITEM_SCALE);
+            element.setTransformation(mat);
+        }
+
+        private static float wrapRadians(float value) {
+            var wrapped = value % Mth.TWO_PI;
+            if (wrapped >= Mth.PI) {
+                wrapped -= Mth.TWO_PI;
+            }
+            if (wrapped < -Mth.PI) {
+                wrapped += Mth.TWO_PI;
+            }
+            return wrapped;
         }
 
         private void updateAnimation(boolean updateGears, float rotation, boolean negative) {
@@ -244,6 +357,12 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
                     isNegativeRotation(dir));
 
             this.gears.startInterpolationIfDirty();
+
+            if ((!this.blankSlotStack.isEmpty() || this.enchantedBookVisible) && this.getTick() % 2 == 0) {
+                this.updateBooks();
+                this.blankBook.startInterpolationIfDirty();
+                this.enchantedBook.startInterpolationIfDirty();
+            }
         }
     }
 }

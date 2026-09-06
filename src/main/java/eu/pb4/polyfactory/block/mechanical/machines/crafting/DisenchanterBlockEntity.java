@@ -74,15 +74,21 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     // The model is two blocks tall (0-32) and rendered so one model unit is 1/16 of a block, with
     // model -Z pointing at INPUT_FACING and model +X at its clockwise side. See modelPoint.
     private static final double ANVIL_Z = 6;
-    private static final double ANVIL_ITEM_Y = 21.9;
-    private static final double POOL_ITEM_Y = 16.6;
-    private static final double POOL_FRONT_Z = 3;
-    private static final double POOL_BACK_Z = 9;
-    private static final double POOL_SIDE_X = 5;
-    private static final float ANVIL_ITEM_SCALE = 0.5f;
-    private static final float POOL_ITEM_SCALE = 0.35f;
+    private static final double ANVIL_ITEM_Y = 21.7;
+    private static final double ANVIL_LEFT_X = 9.4;
+    private static final double ANVIL_RIGHT_X = 6.6;
+    private static final float ANVIL_ITEM_SCALE = 0.3f;
 
-    private final SimpleMovingItemContainer[] containers = SimpleMovingItemContainer.createArray(4, this::addMoving, this::removeMoving);
+    // Only the two worked items sit on the anvil; both books are drawn by the model itself, hovering
+    // in front of it, so their containers stay detached from it.
+    private final SimpleMovingItemContainer[] containers = new SimpleMovingItemContainer[]{
+            new SimpleMovingItemContainer(SOURCE_SLOT, this::addMoving, this::removeMoving),
+            new SimpleMovingItemContainer(),
+            new SimpleMovingItemContainer(),
+            new SimpleMovingItemContainer(OUTPUT_TOOL_SLOT, this::addMoving, this::removeMoving)
+    };
+
+    private static final int[] ANVIL_SLOTS = {SOURCE_SLOT, OUTPUT_TOOL_SLOT};
 
     // Book output only: the tool output is a separate port with its own face, so a produced book
     // must never spill into it once this slot is full.
@@ -106,23 +112,25 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
         if (self.model == null) {
             self.model = (DisenchanterBlock.Model) BlockBoundAttachment.get(world, pos).holder();
-            for (int i = 0; i < self.containers.length; i++) {
-                self.updatePosition(i);
-                self.containers[i].maybeAdd(self.model);
+            for (var slot : ANVIL_SLOTS) {
+                self.updatePosition(slot);
+                self.containers[slot].maybeAdd(self.model);
             }
         }
 
         var facing = state.getValue(TallItemMachineBlock.INPUT_FACING);
         if (self.modelFacing != facing) {
             self.modelFacing = facing;
-            for (int i = 0; i < self.containers.length; i++) {
-                self.updatePosition(i);
+            for (var slot : ANVIL_SLOTS) {
+                self.updatePosition(slot);
             }
         }
 
         if (self.model != null) {
             var topFluid = self.fluidContainer.topFluid();
             self.model.setFluidVisible(topFluid != null && topFluid.type() == FactoryFluids.EXPERIENCE);
+            self.model.setChamberContents(self.containers[BLANK_BOOK_SLOT].getStack(),
+                    !self.containers[OUTPUT_BOOK_SLOT].isContainerEmpty());
             self.model.tick();
         }
 
@@ -371,35 +379,17 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         }
 
         var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
-        Vec3 base;
-        float scale;
 
-        switch (id) {
-            // The item being stripped rests on the anvil itself, the rest float on the experience
-            // pool filling the chamber floor, each next to the port it's fed from or pushed out of.
-            case SOURCE_SLOT -> {
-                base = this.modelPoint(facing, 8, ANVIL_ITEM_Y, ANVIL_Z);
-                scale = ANVIL_ITEM_SCALE;
-            }
-            case BLANK_BOOK_SLOT -> {
-                base = this.modelPoint(facing, 8, POOL_ITEM_Y, POOL_FRONT_Z);
-                scale = POOL_ITEM_SCALE;
-            }
-            case OUTPUT_BOOK_SLOT -> {
-                base = this.modelPoint(facing, 8, POOL_ITEM_Y, POOL_BACK_Z);
-                scale = POOL_ITEM_SCALE;
-            }
-            case OUTPUT_TOOL_SLOT -> {
-                base = this.modelPoint(facing, POOL_SIDE_X, POOL_ITEM_Y, ANVIL_Z);
-                scale = POOL_ITEM_SCALE;
-            }
-            default -> {
-                return;
-            }
+        // Both share the anvil's top face, the item being stripped on the left, the freed tool on the
+        // right - the same sides their ports are on when facing the machine.
+        if (id != SOURCE_SLOT && id != OUTPUT_TOOL_SLOT) {
+            return;
         }
 
-        container.getContainer().setPos(base);
-        container.getContainer().scale(scale);
+        var x = id == SOURCE_SLOT ? ANVIL_LEFT_X : ANVIL_RIGHT_X;
+
+        container.getContainer().setPos(this.modelPoint(facing, x, ANVIL_ITEM_Y, ANVIL_Z));
+        container.getContainer().scale(ANVIL_ITEM_SCALE);
     }
 
     /**
