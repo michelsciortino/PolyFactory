@@ -116,6 +116,9 @@ public class FactoryBlockEntities {
     public static final BlockEntityType<FermenterBlockEntity> FERMENTER = register("fermenter",
             FabricBlockEntityTypeBuilder.create(FermenterBlockEntity::new, FactoryBlocks.FERMENTER));
 
+    public static final BlockEntityType<DisenchanterBlockEntity> DISENCHANTER = register("disenchanter",
+             FabricBlockEntityTypeBuilder.create(DisenchanterBlockEntity::new, FactoryBlocks.DISENCHANTER));
+
     public static final BlockEntityType<MCrafterBlockEntity> CRAFTER = register("crafter",
              FabricBlockEntityTypeBuilder.create(MCrafterBlockEntity::new, FactoryBlocks.CRAFTER));
 

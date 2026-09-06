@@ -207,6 +207,18 @@ class RecipesProvider extends FabricRecipeProvider {
                         .unlockedBy("get_steel", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.STEEL_INGOT))
                         .save(output);
 
+                this.shaped(RecipeCategory.REDSTONE, FactoryItems.DISENCHANTER, 1)
+                        .pattern(" b ")
+                        .pattern("pep")
+                        .pattern("gag")
+                        .define('b', Items.BOOK)
+                        .define('p', FactoryItems.STEEL_PLATE)
+                        .define('e', FactoryItems.EXPERIENCE_BUCKET)
+                        .define('g', FactoryItems.STEEL_MACHINE_GEARBOX)
+                        .define('a', FactoryItems.AXLE)
+                        .unlockedBy("get_steel", InventoryChangeTrigger.TriggerInstance.hasItems(FactoryItems.STEEL_INGOT))
+                        .save(output);
+
                 this.shaped(RecipeCategory.REDSTONE, FactoryItems.MINER, 1)
                         .pattern(" i ")
                         .pattern("wsw")

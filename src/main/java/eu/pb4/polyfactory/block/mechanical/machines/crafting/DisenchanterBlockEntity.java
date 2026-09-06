@@ -1,33 +1,70 @@
 package eu.pb4.polyfactory.block.mechanical.machines.crafting;
 
+import eu.pb4.factorytools.api.virtualentity.BlockModel;
 import eu.pb4.polyfactory.block.FactoryBlockEntities;
-import eu.pb4.polyfactory.enchant.EnchantmentTransferHelper;
-import eu.pb4.polyfactory.fluid.FluidInstance;
-import eu.pb4.polyfactory.fluid.FluidContainerImpl;
+import eu.pb4.polyfactory.block.fluids.FluidInput;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
+import eu.pb4.polyfactory.block.mechanical.conveyor.SimpleMovingItemContainerBlockEntity;
+import eu.pb4.polyfactory.block.mechanical.machines.TallItemMachineBlock;
 import eu.pb4.polyfactory.block.mechanical.machines.TallItemMachineBlockEntity;
 import eu.pb4.polyfactory.block.other.ItemOutputBufferBlock;
+import eu.pb4.polyfactory.block.other.OutputContainerOwner;
+import eu.pb4.polyfactory.enchant.EnchantmentTransferHelper;
+import eu.pb4.polyfactory.fluid.FactoryFluids;
+import eu.pb4.polyfactory.fluid.FluidContainer;
+import eu.pb4.polyfactory.fluid.FluidContainerImpl;
+import eu.pb4.polyfactory.fluid.FluidContainerUtil;
+import eu.pb4.polyfactory.fluid.FluidInteractionMode;
+import eu.pb4.polyfactory.item.FactoryItemTags;
+import eu.pb4.polyfactory.ui.GuiTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.polyfactory.util.movingitem.SimpleMovingItemContainer;
+import eu.pb4.polymer.virtualentity.api.attachment.BlockBoundAttachment;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.FurnaceResultSlot;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantedBookItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implements OutputContainerOwner, SimpleMovingItemContainerBlockEntity {
+public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implements OutputContainerOwner, SimpleMovingItemContainerBlockEntity, FluidInput.ContainerBased {
     public static final int SOURCE_SLOT = 0;
     public static final int BLANK_BOOK_SLOT = 1;
     public static final int OUTPUT_BOOK_SLOT = 2;
     public static final int OUTPUT_TOOL_SLOT = 3;
+
+    private static final int[] SOURCE_SLOTS = {SOURCE_SLOT};
+    private static final int[] BLANK_BOOK_SLOTS = {BLANK_BOOK_SLOT};
+    private static final int[] OUTPUT_SLOTS = {OUTPUT_BOOK_SLOT, OUTPUT_TOOL_SLOT};
+    private static final double REQUIRED_SPEED = 1;
+    private static final long BASE_COST = 1000L;
+    private static final Component NEED_BOOK_TEXT = Component.translatable("text.polyfactory.state.need_book").withStyle(ChatFormatting.YELLOW);
+    private static final Component NEED_XP_FLUID_TEXT = Component.translatable("text.polyfactory.state.need_xp_fluid").withStyle(ChatFormatting.YELLOW);
+    private static final Component TOOL_OUTPUT_BLOCKED_TEXT = Component.translatable("text.polyfactory.state.tool_output_blocked").withStyle(ChatFormatting.YELLOW);
 
     private final SimpleMovingItemContainer[] containers = new SimpleMovingItemContainer[]{
             new SimpleMovingItemContainer(0, this::addMoving, this::removeMoving),
@@ -37,19 +74,30 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     };
 
     private final Container outputContainer = new SubContainer(this, OUTPUT_BOOK_SLOT);
-    private final FluidContainerImpl container = FluidContainerImpl.singleFluid(1000 * 20, this::setChanged);
+    private final FluidContainerImpl fluidContainer = FluidContainerImpl.singleFluid(1000 * 20, this::setChanged);
 
     private double process = 0;
-    private boolean active = false;
-    private boolean multi = false; // multi mode -> all selected enchants into one book
-    private Component state;
+    private boolean active;
+    private boolean multi;
+    @Nullable
+    private DisenchanterBlock.Model model;
 
     public DisenchanterBlockEntity(BlockPos pos, BlockState state) {
-        super(FactoryBlockEntities.PRESS, pos, state); // TODO: new BE type when registering
+        super(FactoryBlockEntities.DISENCHANTER, pos, state);
     }
 
     public static <T extends BlockEntity> void ticker(Level world, BlockPos pos, BlockState state, T t) {
         var self = (DisenchanterBlockEntity) t;
+
+        if (self.model == null) {
+            self.model = (DisenchanterBlock.Model) BlockBoundAttachment.get(world, pos).holder();
+            for (int i = 0; i < self.containers.length; i++) {
+                self.updatePosition(i);
+                self.containers[i].maybeAdd(self.model);
+            }
+        }
+
+        self.state = null;
 
         if (self.process < 0) {
             var speed = Math.max(Math.abs(RotationUser.getRotation(world, pos.above()).speed()), 0);
@@ -58,7 +106,7 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             return;
         }
 
-        var sourceContainer = self.containers[0];
+        var sourceContainer = self.containers[SOURCE_SLOT];
         if (sourceContainer.isContainerEmpty()) {
             self.process = 0;
             self.active = false;
@@ -66,93 +114,159 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         }
 
         var inputStack = sourceContainer.getStack();
-        var map = net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(inputStack);
-        if (map.isEmpty()) {
-            // nothing to do
+        var enchantments = inputStack.getEnchantments();
+        if (enchantments.isEmpty()) {
             self.process = 0;
             self.active = false;
+            self.state = INCORRECT_ITEMS_TEXT;
+            return;
+        }
+
+        var transferableCount = (int) enchantments.entrySet().stream().filter(entry -> isTransferable(entry.getKey())).count();
+        if (transferableCount == 0) {
+            self.process = 0;
+            self.active = false;
+            self.state = INCORRECT_ITEMS_TEXT;
             return;
         }
 
         var rot = RotationUser.getRotation(world, pos.above());
         var speed = Math.max(Math.abs(rot.speed()), 0);
-        var requiredSpeed = 1; // TODO: choose proper
 
-        if (speed < requiredSpeed) {
-            self.state = rot.getStateTextOrElse(rot.hasNoActiveProviders() ? Component.literal("Too slow") : Component.literal("Disconnected"));
+        if (speed < REQUIRED_SPEED) {
+            self.active = false;
+            self.state = rot.getStateTextOrElse(rot.hasNoActiveProviders() ? TOO_SLOW_TEXT : TOO_SLOW_DISCONNECTED_TEXT);
             return;
         }
 
         self.active = true;
         self.process += speed / 100;
 
-        if (self.process >= 1) {
-            // attempt transfer
-            int maxTransfer;
-            if (self.multi) {
-                // transfer all non-curse enchantments
-                var filteredCount = (int) net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(inputStack).entrySet().stream().filter(e -> {
-                    try {
-                        return !e.getKey().isCurse();
-                    } catch (NoSuchMethodError ex) {
-                        return true;
-                    }
-                }).count();
-                maxTransfer = Math.max(1, filteredCount);
-            } else {
-                maxTransfer = 1;
-            }
-
-            var helper = EnchantmentTransferHelper.transferEnchantments(inputStack, maxTransfer, self.multi);
-            if (!helper.transferred.isEmpty()) {
-                // ensure we have blank book(s)
-                if (self.getItem(BLANK_BOOK_SLOT).isEmpty()) {
-                    self.state = Component.literal("Need blank book");
-                    self.process = 0;
-                } else {
-                    long cost = 0;
-                    for (var inst : helper.transferred) {
-                        cost += xpFluidCostForLevel(inst.level);
-                    }
-                    FluidInstance<?> top = self.container.topFluid();
-                    if (top == null || self.container.get(top) < cost) {
-                        self.state = Component.literal("No XP fluid");
-                        self.process = 0;
-                    } else {
-                        self.container.extract(top, cost, false);
-
-                        // consume one blank book
-                        var bb = self.getItem(BLANK_BOOK_SLOT);
-                        bb.shrink(1);
-                        self.setItem(BLANK_BOOK_SLOT, bb);
-
-                        // push book to output (try inserting into output buffer / connected inventories)
-                        FactoryUtil.tryInsertingRegular(self.getOutputContainer(), helper.bookResult);
-
-                        // if source is now fully disenchanted, move it to the output tool slot (preserve durability)
-                        var outSource = helper.sourceResult;
-                        var remaining = net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(outSource);
-                        if (remaining.isEmpty()) {
-                            if (self.getItem(OUTPUT_TOOL_SLOT).isEmpty()) {
-                                self.setItem(OUTPUT_TOOL_SLOT, outSource);
-                                self.setItem(SOURCE_SLOT, ItemStack.EMPTY);
-                            } else {
-                                // couldn't put into dedicated output slot; leave the disenchanted tool in the source slot
-                                self.setItem(SOURCE_SLOT, outSource);
-                                self.state = Component.literal("Tool output blocked");
-                            }
-                        } else {
-                            // not finished yet, keep the partially-disenchanted tool in the source slot
-                            self.setItem(SOURCE_SLOT, outSource);
-                        }
-
-                        self.process = -0.6; // cooldown
-                    }
-                }
-            } else {
-                self.process = 0;
-            }
+        if (self.process < 1) {
+            return;
         }
+
+        var maxTransfer = self.multi ? transferableCount : 1;
+        var helper = EnchantmentTransferHelper.transferEnchantments(inputStack, maxTransfer, self.multi);
+        if (helper.transferred.isEmpty()) {
+            self.process = 0;
+            self.active = false;
+            self.state = INCORRECT_ITEMS_TEXT;
+            return;
+        }
+
+        if (self.getItem(BLANK_BOOK_SLOT).isEmpty()) {
+            self.state = NEED_BOOK_TEXT;
+            self.process = 0;
+            return;
+        }
+
+        if (!self.canInsertBookResult(helper.bookResult)) {
+            self.state = OUTPUT_FULL_TEXT;
+            self.process = 0;
+            return;
+        }
+
+        long cost = 0;
+        for (var transferred : helper.transferred) {
+            cost += xpFluidCostForLevel(transferred.level());
+        }
+
+        var top = self.fluidContainer.topFluid();
+        if (top == null || top.type() != FactoryFluids.EXPERIENCE || self.fluidContainer.get(top) < cost) {
+            self.state = NEED_XP_FLUID_TEXT;
+            self.process = 0;
+            return;
+        }
+
+        self.fluidContainer.extract(top, cost, false);
+
+        var books = self.getItem(BLANK_BOOK_SLOT);
+        books.shrink(1);
+        self.setItem(BLANK_BOOK_SLOT, books);
+
+        var outBook = helper.bookResult.copy();
+        FactoryUtil.tryInsertingRegular(self.getOutputContainer(), outBook);
+
+        var outSource = helper.sourceResult;
+        var remaining = outSource.getEnchantments();
+        if (remaining.isEmpty()) {
+            if (self.getItem(OUTPUT_TOOL_SLOT).isEmpty()) {
+                self.setItem(OUTPUT_TOOL_SLOT, outSource);
+                self.setItem(SOURCE_SLOT, ItemStack.EMPTY);
+            } else {
+                self.setItem(SOURCE_SLOT, outSource);
+                self.state = TOOL_OUTPUT_BLOCKED_TEXT;
+            }
+        } else {
+            self.setItem(SOURCE_SLOT, outSource);
+        }
+
+        self.process = -0.6;
+    }
+
+    @Override
+    protected void saveAdditional(ValueOutput view) {
+        this.writeInventoryView(view);
+        view.putDouble("Progress", this.process);
+        view.putBoolean("Multi", this.multi);
+        this.fluidContainer.writeData(view, "fluid");
+        super.saveAdditional(view);
+    }
+
+    @Override
+    public void loadAdditional(ValueInput view) {
+        this.readInventoryView(view);
+        this.process = view.getDoubleOr("Progress", 0);
+        this.multi = view.getBooleanOr("Multi", false);
+        this.fluidContainer.readData(view, "fluid");
+        super.loadAdditional(view);
+    }
+
+    @Override
+    public void removeComponentsFromTag(ValueOutput view) {
+        super.removeComponentsFromTag(view);
+        view.discard("fluid");
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
+        if (facing == side) {
+            return SOURCE_SLOTS;
+        } else if (facing.getOpposite() == side || side == Direction.DOWN) {
+            return OUTPUT_SLOTS;
+        } else if (facing.getClockWise().getAxis() == side.getAxis()) {
+            return BLANK_BOOK_SLOTS;
+        }
+        return new int[0];
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return slot == SOURCE_SLOT || (slot == BLANK_BOOK_SLOT && stack.is(Items.BOOK));
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
+        if (slot == SOURCE_SLOT) {
+            return dir == null || this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING) == dir;
+        }
+        if (slot == BLANK_BOOK_SLOT) {
+            return stack.is(Items.BOOK);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
+        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
+        return (slot == SOURCE_SLOT && facing == dir) || (slot != SOURCE_SLOT && (facing.getOpposite() == dir || dir == Direction.DOWN));
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        SimpleMovingItemContainerBlockEntity.super.setItem(slot, stack);
     }
 
     @Override
@@ -162,17 +276,78 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     @Override
     public Container getOutputContainer() {
-        return ItemOutputBufferBlock.getOutputContainer(this.outputContainer, this.level, this.getBlockPos(), this.getBlockState().getValue(PressBlock.INPUT_FACING).getOpposite());
+        return ItemOutputBufferBlock.getOutputContainer(this.outputContainer, this.level, this.getBlockPos(),
+                this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING).getOpposite());
     }
 
     @Override
     public boolean isOutputConnectedTo(Direction dir) {
-        return this.getBlockState().getValue(PressBlock.INPUT_FACING).getOpposite() == dir;
+        return this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING).getOpposite() == dir;
     }
 
     @Override
-    public @Nullable net.minecraft.world.Container getModel() {
-        return null;
+    public @Nullable FluidContainer getFluidContainer(Direction direction) {
+        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
+        if (direction == Direction.UP || direction == facing.getOpposite()) {
+            return null;
+        }
+        return this.fluidContainer;
+    }
+
+    @Override
+    public FluidContainer getMainFluidContainer() {
+        return this.fluidContainer;
+    }
+
+    @Override
+    public InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var interaction = FluidContainerUtil.interactWithInWorld(this.fluidContainer, player, itemStack, hand, FluidInteractionMode.ANY, FluidInteractionMode.INSERT);
+        if (interaction == null) {
+            return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
+        }
+        return interaction;
+    }
+
+    @Override
+    public InteractionResult onPlayerAttack(BlockState state, Level world, BlockPos pos, Player player) {
+        var stack = player.getMainHandItem();
+        if (stack.is(FactoryItemTags.FLUID_CONTAINER_INTERACTABLE_ON_ATTACK)) {
+            var interaction = FluidContainerUtil.interactWithInWorld(this.fluidContainer, player, stack, InteractionHand.MAIN_HAND, FluidInteractionMode.ANY, FluidInteractionMode.EXTRACT);
+            if (interaction != null) {
+                return interaction;
+            }
+        }
+
+        return super.onPlayerAttack(state, world, pos, player);
+    }
+
+    @Override
+    public void updatePosition(int id) {
+        var container = this.containers[id];
+        if (container.isContainerEmpty()) {
+            return;
+        }
+
+        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
+        var base = Vec3.atCenterOf(this.worldPosition).add(0, 0.4, 0);
+
+        switch (id) {
+            case SOURCE_SLOT -> base = base.relative(facing, 0.22);
+            case BLANK_BOOK_SLOT -> base = base.relative(facing.getClockWise(), 0.2);
+            case OUTPUT_BOOK_SLOT -> base = base.relative(facing, -0.22);
+            case OUTPUT_TOOL_SLOT -> base = base.relative(facing, -0.22).relative(facing.getClockWise(), 0.2);
+            default -> {
+                return;
+            }
+        }
+
+        container.getContainer().setPos(base);
+        container.getContainer().scale(0.5f);
+    }
+
+    @Override
+    public @Nullable BlockModel getModel() {
+        return this.model;
     }
 
     @Override
@@ -180,67 +355,92 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         return this.containers;
     }
 
-    @Override
-    protected void saveAdditional(ValueOutput view) {
-        view.putDouble("Progress", this.process);
-        this.container.writeData(view, "fluid");
-        super.saveAdditional(view);
-    }
-
-    @Override
-    public void loadAdditional(ValueInput view) {
-        this.process = view.getDoubleOr("Progress", 0);
-        this.container.readData(view, "fluid");
-        super.loadAdditional(view);
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-        var facing = this.getBlockState().getValue(PressBlock.INPUT_FACING);
-        if (facing == side) {
-            return new int[]{SOURCE_SLOT};
-        } else if (facing.getOpposite() == side || side == Direction.DOWN) {
-            return new int[]{OUTPUT_BOOK_SLOT, OUTPUT_TOOL_SLOT};
-        } else if (facing.getClockWise().getAxis() == side.getAxis()) {
-            return new int[]{BLANK_BOOK_SLOT};
-        }
-        return new int[0];
-    }
-
-    @Override
-    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
-        if (slot == SOURCE_SLOT) return dir == null || this.getBlockState().getValue(PressBlock.INPUT_FACING) == dir;
-        if (slot == BLANK_BOOK_SLOT) return stack.getItem() == net.minecraft.world.item.Items.BOOK;
-        return false;
-    }
-
-    @Override
-    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
-        var facing = this.getBlockState().getValue(PressBlock.INPUT_FACING);
-        return (slot == SOURCE_SLOT && facing == dir) || (slot != SOURCE_SLOT && (facing.getOpposite() == dir || dir == Direction.DOWN));
-    }
-
     public void setMulti(boolean multi) {
         this.multi = multi;
         this.setChanged();
     }
 
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        // attach model if needed
-        super.setItem(slot, stack);
+    public double getStress() {
+        return this.active ? PressBlockEntity.getActiveStress(REQUIRED_SPEED) : 0;
     }
 
-    @Override
-    public void removeComponentsFromTag(ValueOutput view) {
-        super.removeComponentsFromTag(view);
-        view.discard("fluid");
+    private boolean canInsertBookResult(ItemStack bookResult) {
+        if (bookResult.isEmpty()) {
+            return true;
+        }
+
+        var output = this.getOutputContainer();
+        var copy = new SimpleContainer(output.getContainerSize());
+        for (int i = 0; i < output.getContainerSize(); i++) {
+            copy.setItem(i, output.getItem(i).copy());
+        }
+
+        var testStack = bookResult.copy();
+        FactoryUtil.tryInsertingInv(copy, testStack, null);
+        return testStack.isEmpty();
+    }
+
+    private static boolean isTransferable(Holder<Enchantment> enchantment) {
+        return !enchantment.is(EnchantmentTags.CURSE);
     }
 
     private static long xpFluidCostForLevel(int level) {
-        final long BASE = 1000L;
-        // log10(level + 1) * BASE rounded up
-        double v = Math.log10(level + 1);
-        return (long) Math.ceil(BASE * v);
+        var scaled = Math.log10(level + 1);
+        return (long) Math.ceil(BASE_COST * scaled);
+    }
+
+    public void createGui(ServerPlayer player) {
+        new Gui(player);
+    }
+
+    private class Gui extends SimpleGui {
+        private static final Component MODE_LABEL = Component.translatable("text.polyfactory.disenchanter.mode");
+
+        private Gui(ServerPlayer player) {
+            super(MenuType.GENERIC_9x3, player, false);
+            this.setTitle(DisenchanterBlockEntity.this.getBlockState().getBlock().getName());
+
+            var fluidSlot = FluidContainerUtil.guiElement(fluidContainer, true);
+            this.setSlot(0, fluidSlot);
+            this.setSlot(9, fluidSlot);
+            this.setSlot(18, fluidSlot);
+
+            this.setSlot(11, new Slot(DisenchanterBlockEntity.this, SOURCE_SLOT, 0, 0));
+            this.setSlot(12, new Slot(DisenchanterBlockEntity.this, BLANK_BOOK_SLOT, 1, 0));
+            this.setSlot(13, GuiTextures.PROGRESS_VERTICAL.get(progress()));
+            this.setSlot(14, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_BOOK_SLOT, 2, 0));
+            this.setSlot(15, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_TOOL_SLOT, 3, 0));
+
+            this.updateModeButton();
+            this.open();
+        }
+
+        private float progress() {
+            return (float) Mth.clamp(DisenchanterBlockEntity.this.process, 0, 1);
+        }
+
+        private void updateModeButton() {
+            var modeText = Component.translatable(DisenchanterBlockEntity.this.multi
+                    ? "text.polyfactory.disenchanter.mode.multi"
+                    : "text.polyfactory.disenchanter.mode.single");
+
+            this.setSlot(4, GuiElementBuilder.from((DisenchanterBlockEntity.this.multi ? Items.ENCHANTED_BOOK : Items.BOOK).getDefaultInstance())
+                    .setName(MODE_LABEL.copy().append(": ").append(modeText))
+                    .setCallback(clickType -> {
+                        DisenchanterBlockEntity.this.setMulti(!DisenchanterBlockEntity.this.multi);
+                        this.updateModeButton();
+                    }));
+        }
+
+        @Override
+        public void onTick() {
+            if (player.position().distanceToSqr(Vec3.atCenterOf(DisenchanterBlockEntity.this.worldPosition)) > (18 * 18)) {
+                this.close();
+                return;
+            }
+
+            this.setSlot(13, GuiTextures.PROGRESS_VERTICAL.get(progress()));
+            super.onTick();
+        }
     }
 }

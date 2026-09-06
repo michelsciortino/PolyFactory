@@ -1,16 +1,17 @@
 package eu.pb4.polyfactory.enchant;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.EnchantedBookItem;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EnchantmentTransferHelper {
@@ -33,19 +34,18 @@ public class EnchantmentTransferHelper {
      *
      * Selection rules:
      *  - Curses are ignored (not transferable)
-     *  - Enchantments are prioritized by level (desc) then by rarity (rare first)
+    *  - Enchantments are prioritized by level (desc)
      */
     public static TransferResult transferEnchantments(ItemStack source, int maxTransfer, boolean multi) {
         if (source.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
 
-        var map = EnchantmentHelper.getEnchantments(source);
-        if (map.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
+        var enchantments = source.getEnchantments();
+        if (enchantments.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
 
         // Build list and filter out curses
-        var entries = map.entrySet().stream()
+        var entries = enchantments.entrySet().stream()
                 .filter(e -> !isCurse(e.getKey()))
-                .sorted(Comparator.<Map.Entry<Enchantment, Integer>>comparingInt(e -> -e.getValue())
-                        .thenComparing((a, b) -> Integer.compare(b.getKey().getRarity().ordinal(), a.getKey().getRarity().ordinal())))
+                .sorted(Comparator.comparingInt((it.unimi.dsi.fastutil.objects.Object2IntMap.Entry<Holder<Enchantment>> e) -> -e.getIntValue()))
                 .collect(Collectors.toList());
 
         if (entries.isEmpty()) return new TransferResult(source.copy(), List.of(), ItemStack.EMPTY);
@@ -54,7 +54,7 @@ public class EnchantmentTransferHelper {
         int count = 0;
         for (var e : entries) {
             if (count >= maxTransfer) break;
-            toTransfer.add(new EnchantmentInstance(e.getKey(), e.getValue()));
+            toTransfer.add(new EnchantmentInstance(e.getKey(), e.getIntValue()));
             count++;
         }
 
@@ -62,15 +62,14 @@ public class EnchantmentTransferHelper {
         ItemStack book = ItemStack.EMPTY;
         if (!toTransfer.isEmpty()) {
             if (multi) {
-                book = new ItemStack(EnchantedBookItem.getItem());
-                for (int i = 0; i < toTransfer.size(); i++) {
-                    EnchantedBookItem.addEnchantment(book, toTransfer.get(i));
+                book = Items.ENCHANTED_BOOK.getDefaultInstance();
+                for (var transfer : toTransfer) {
+                    book.enchant(transfer.enchantment(), transfer.level());
                 }
             } else {
                 // single mode: one book per enchant — produce only first now; machine will be invoked repeatedly
                 var inst = toTransfer.get(0);
-                book = new ItemStack(EnchantedBookItem.getItem());
-                EnchantedBookItem.addEnchantment(book, inst);
+                book = EnchantmentHelper.createBook(inst);
                 toTransfer = new ArrayList<>();
                 toTransfer.add(inst);
             }
@@ -78,22 +77,13 @@ public class EnchantmentTransferHelper {
 
         // Remove transferred enchants from source
         var outSource = source.copy();
-        var newMap = EnchantmentHelper.getEnchantments(outSource);
-        for (var inst : toTransfer) {
-            newMap.remove(inst.enchantment);
-        }
-        EnchantmentHelper.setEnchantments(newMap, outSource);
+        Set<Holder<Enchantment>> remove = toTransfer.stream().map(EnchantmentInstance::enchantment).collect(Collectors.toSet());
+        EnchantmentHelper.updateEnchantments(outSource, mutable -> mutable.removeIf(remove::contains));
 
         return new TransferResult(outSource, toTransfer, book);
     }
 
-    private static boolean isCurse(Enchantment e) {
-        try {
-            return e.isCurse();
-        } catch (NoSuchMethodError ex) {
-            // Fallback: check registry key contains "curse" (best effort)
-            var id = EnchantmentHelper.getEnchantments(new ItemStack(net.minecraft.world.item.Items.ENCHANTED_BOOK));
-            return false;
-        }
+    private static boolean isCurse(Holder<Enchantment> enchantment) {
+        return enchantment.is(EnchantmentTags.CURSE);
     }
 }

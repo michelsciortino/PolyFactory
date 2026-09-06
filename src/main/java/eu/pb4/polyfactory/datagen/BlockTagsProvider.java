@@ -49,6 +49,7 @@ class BlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(FactoryBlockIds.MECHANICAL_DRAIN)
                 .add(FactoryBlockIds.GRINDER)
                 .add(FactoryBlockIds.FERMENTER)
+                .add(FactoryBlockIds.DISENCHANTER)
         ;
 
         this.tag(FactoryBlockTags.CONVEYOR_SIDE_OUTPUT_FROM_TOP)
@@ -160,6 +161,7 @@ class BlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
                 .add(FactoryBlockIds.FLUID_TANK)
                 .add(FactoryBlockIds.NOZZLE)
                 .add(FactoryBlockIds.PORTABLE_FLUID_TANK)
+                .add(FactoryBlockIds.DISENCHANTER)
                 //.add(FactoryBlockIds.WALL_WITH_CABLE.values().toArray(new Block[0]))
         ;
 
