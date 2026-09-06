@@ -4,6 +4,7 @@ import eu.pb4.factorytools.api.util.WorldPointer;
 import eu.pb4.factorytools.api.virtualentity.ItemDisplayElementUtil;
 import eu.pb4.factorytools.api.virtualentity.LodItemDisplayElement;
 import eu.pb4.polyfactory.block.FactoryBlockEntities;
+import eu.pb4.polyfactory.block.fluids.FluidInput;
 import eu.pb4.polyfactory.block.fluids.transport.PipeConnectable;
 import eu.pb4.polyfactory.block.mechanical.RotationUser;
 import eu.pb4.polyfactory.block.mechanical.machines.TallItemMachineBlock;
@@ -33,24 +34,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-public class DisenchanterBlock extends TallItemMachineBlock implements PipeConnectable, MovingItemConsumer, MovingItemProvider {
+public class DisenchanterBlock extends TallItemMachineBlock implements PipeConnectable, FluidInput.Getter, MovingItemConsumer, MovingItemProvider {
     public DisenchanterBlock(Properties props) {
         super(props);
     }
 
     @Override
     public boolean pushItemTo(WorldPointer self, Direction pushDirection, Direction relative, BlockPos conveyorPos, MovingItemContainerHolder conveyor) {
-        if (self.getBlockState().getValue(INPUT_FACING) == pushDirection || self.getBlockState().getValue(PART) == Part.TOP || conveyor.isContainerEmpty()) {
+        if (self.getBlockState().getValue(PART) == Part.TOP || conveyor.isContainerEmpty()) {
             return false;
         }
 
+        var facing = self.getBlockState().getValue(INPUT_FACING);
         var be = (DisenchanterBlockEntity) self.getBlockEntity();
 
-        if (self.getBlockState().getValue(INPUT_FACING).getOpposite() != pushDirection) {
-            if (!conveyor.getContainer().get().is(net.minecraft.world.item.Items.BOOK)) {
-                return false;
-            }
-
+        if (relative == facing) {
+            // front face: blank book storage (any item is accepted, only a book makes the machine function)
             var stack = be.getItem(DisenchanterBlockEntity.BLANK_BOOK_SLOT);
             if (stack.isEmpty()) {
                 be.setItem(DisenchanterBlockEntity.BLANK_BOOK_SLOT, conveyor.pullAndDestroy().get());
@@ -70,6 +69,11 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
             }
 
             return true;
+        }
+
+        if (relative != facing.getClockWise()) {
+            // only the left face accepts the enchanted item input
+            return false;
         }
 
         var source = be.getContainerHolder(DisenchanterBlockEntity.SOURCE_SLOT);
@@ -99,18 +103,18 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
 
     @Override
     public void getItemFrom(WorldPointer self, Direction pushDirection, Direction relative, BlockPos conveyorPos, MovingItemContainerHolder conveyor) {
-        var inputDir = self.getBlockState().getValue(INPUT_FACING);
-        if (!conveyor.isContainerEmpty() || pushDirection == inputDir || inputDir.getOpposite() != relative || self.getBlockState().getValue(PART) == Part.TOP) {
+        if (!conveyor.isContainerEmpty() || self.getBlockState().getValue(PART) == Part.TOP) {
             return;
         }
 
+        var facing = self.getBlockState().getValue(INPUT_FACING);
         var be = (DisenchanterBlockEntity) self.getBlockEntity();
 
-        if (tryOutputFromSlot(be, DisenchanterBlockEntity.OUTPUT_BOOK_SLOT, pushDirection, inputDir, conveyor)) {
-            return;
+        if (relative == facing.getOpposite()) {
+            tryOutputFromSlot(be, DisenchanterBlockEntity.OUTPUT_BOOK_SLOT, pushDirection, facing, conveyor);
+        } else if (relative == facing.getCounterClockWise()) {
+            tryOutputFromSlot(be, DisenchanterBlockEntity.OUTPUT_TOOL_SLOT, pushDirection, facing, conveyor);
         }
-
-        tryOutputFromSlot(be, DisenchanterBlockEntity.OUTPUT_TOOL_SLOT, pushDirection, inputDir, conveyor);
     }
 
     private static boolean tryOutputFromSlot(DisenchanterBlockEntity be, int slot, Direction pushDirection, Direction inputDir, MovingItemContainerHolder conveyor) {
@@ -156,7 +160,14 @@ public class DisenchanterBlock extends TallItemMachineBlock implements PipeConne
 
     @Override
     public boolean canPipeConnect(LevelReader world, BlockPos pos, BlockState state, Direction dir) {
-        return state.getValue(PART) == Part.MAIN && dir != Direction.UP;
+        return (state.getValue(PART) == Part.MAIN && dir == Direction.DOWN) || (state.getValue(PART) == Part.TOP && dir == Direction.UP);
+    }
+
+    @Override
+    public FluidInput getFluidInput(ServerLevel world, BlockPos pos, Direction direction) {
+        var state = world.getBlockState(pos);
+        var mainPos = state.getValue(PART) == Part.MAIN ? pos : pos.below();
+        return world.getBlockEntity(mainPos) instanceof FluidInput input ? input : null;
     }
 
     public static final class Model extends RotationAwareModel {

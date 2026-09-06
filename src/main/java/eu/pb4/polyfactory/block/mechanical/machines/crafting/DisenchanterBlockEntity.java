@@ -60,7 +60,8 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     private static final int[] SOURCE_SLOTS = {SOURCE_SLOT};
     private static final int[] BLANK_BOOK_SLOTS = {BLANK_BOOK_SLOT};
-    private static final int[] OUTPUT_SLOTS = {OUTPUT_BOOK_SLOT, OUTPUT_TOOL_SLOT};
+    private static final int[] OUTPUT_BOOK_SLOTS = {OUTPUT_BOOK_SLOT};
+    private static final int[] OUTPUT_TOOL_SLOTS = {OUTPUT_TOOL_SLOT};
     private static final double REQUIRED_SPEED = 1;
     private static final long BASE_COST = 1000L;
     private static final Component NEED_BOOK_TEXT = Component.translatable("text.polyfactory.state.need_book").withStyle(ChatFormatting.YELLOW);
@@ -232,13 +233,16 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     @Override
     public int[] getSlotsForFace(Direction side) {
+        // left = source item, front = blank book, right = tool output, rear = book output; up/down are fluid-only
         var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
         if (facing == side) {
-            return SOURCE_SLOTS;
-        } else if (facing.getOpposite() == side || side == Direction.DOWN) {
-            return OUTPUT_SLOTS;
-        } else if (facing.getClockWise().getAxis() == side.getAxis()) {
             return BLANK_BOOK_SLOTS;
+        } else if (facing.getClockWise() == side) {
+            return SOURCE_SLOTS;
+        } else if (facing.getCounterClockWise() == side) {
+            return OUTPUT_TOOL_SLOTS;
+        } else if (facing.getOpposite() == side) {
+            return OUTPUT_BOOK_SLOTS;
         }
         return new int[0];
     }
@@ -250,11 +254,13 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
+        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
         if (slot == SOURCE_SLOT) {
-            return dir == null || this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING) == dir;
+            return dir == null || facing.getClockWise() == dir;
         }
         if (slot == BLANK_BOOK_SLOT) {
-            return stack.is(Items.BOOK);
+            // the front face only ever feeds this slot; a non-book item just sits there unusable
+            return dir == null || facing == dir;
         }
         return false;
     }
@@ -262,7 +268,13 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
         var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
-        return (slot == SOURCE_SLOT && facing == dir) || (slot != SOURCE_SLOT && (facing.getOpposite() == dir || dir == Direction.DOWN));
+        return switch (slot) {
+            case SOURCE_SLOT -> facing.getClockWise() == dir;
+            case BLANK_BOOK_SLOT -> facing == dir;
+            case OUTPUT_BOOK_SLOT -> facing.getOpposite() == dir;
+            case OUTPUT_TOOL_SLOT -> facing.getCounterClockWise() == dir;
+            default -> false;
+        };
     }
 
     @Override
@@ -288,11 +300,8 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     @Override
     public @Nullable FluidContainer getFluidContainer(Direction direction) {
-        var facing = this.getBlockState().getValue(TallItemMachineBlock.INPUT_FACING);
-        if (direction == Direction.UP || direction == facing.getOpposite()) {
-            return null;
-        }
-        return this.fluidContainer;
+        // top (of the top part) and bottom (ground face) only; the top face is reached via DisenchanterBlock's FluidInput.Getter redirect
+        return (direction == Direction.UP || direction == Direction.DOWN) ? this.fluidContainer : null;
     }
 
     @Override
@@ -302,11 +311,13 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     @Override
     public InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        var interaction = FluidContainerUtil.interactWithInWorld(this.fluidContainer, player, itemStack, hand, FluidInteractionMode.ANY, FluidInteractionMode.INSERT);
-        if (interaction == null) {
-            return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
+        if (hitResult.getDirection() == Direction.UP || hitResult.getDirection() == Direction.DOWN) {
+            var interaction = FluidContainerUtil.interactWithInWorld(this.fluidContainer, player, itemStack, hand, FluidInteractionMode.ANY, FluidInteractionMode.INSERT);
+            if (interaction != null) {
+                return interaction;
+            }
         }
-        return interaction;
+        return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
