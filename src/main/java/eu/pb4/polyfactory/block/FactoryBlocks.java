@@ -76,6 +76,7 @@ public class FactoryBlocks {
     public static final PressBlock PRESS = register(FactoryBlockIds.PRESS, BlockBehaviour.Properties.ofFullCopy(SPLITTER), PressBlock::new);
     public static final MixerBlock MIXER = register(FactoryBlockIds.MIXER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), MixerBlock::new);
     public static final FermenterBlock FERMENTER = register(FactoryBlockIds.FERMENTER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), FermenterBlock::new);
+    public static final DisenchanterBlock DISENCHANTER = register(FactoryBlockIds.DISENCHANTER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), DisenchanterBlock::new);
     public static final MCrafterBlock CRAFTER = register(FactoryBlockIds.CRAFTER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), MCrafterBlock::new);
     public static final MinerBlock MINER = register(FactoryBlockIds.MINER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), MinerBlock::new);
     public static final PlacerBlock PLACER = register(FactoryBlockIds.PLACER, BlockBehaviour.Properties.ofFullCopy(SPLITTER), PlacerBlock::new);

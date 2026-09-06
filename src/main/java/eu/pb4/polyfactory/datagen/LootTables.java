@@ -49,6 +49,7 @@ class LootTables extends FabricBlockLootSubProvider {
         this.addTallMachineDrop(FactoryBlocks.PRESS);
         this.addTallMachineDrop(FactoryBlocks.MIXER);
         this.addTallMachineDrop(FactoryBlocks.FERMENTER);
+        this.addTallMachineDrop(FactoryBlocks.DISENCHANTER);
         this.dropSelf(FactoryBlocks.HAND_CRANK);
         this.dropSelf(FactoryBlocks.CONVEYOR);
         this.dropSelf(FactoryBlocks.STICKY_CONVEYOR);

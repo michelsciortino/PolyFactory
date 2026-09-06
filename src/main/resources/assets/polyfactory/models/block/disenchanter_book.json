@@ -1,0 +1,63 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 32],
+	"textures": {
+		"0": "entity/enchantment/enchanting_table_book",
+		"particle": "entity/enchantment/enchanting_table_book"
+	},
+	"elements": [
+		{
+			"name": "left_lid",
+			"from": [2, 3, 8],
+			"to": [8, 13, 8],
+			"shade": false,
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 1.5, 5], "texture": "#0"},
+				"south": {"uv": [1.5, 0, 3, 5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "right_lid",
+			"from": [8, 3, 8],
+			"to": [14, 13, 8],
+			"shade": false,
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [4, 0, 5.5, 5], "texture": "#0"},
+				"south": {"uv": [5.5, 0, 7, 5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "left_pages",
+			"from": [3, 4, 8.2],
+			"to": [8, 12, 9.2],
+			"shade": false,
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [1.75, 5.5, 3, 9.5], "texture": "#0"},
+				"east": {"uv": [1.5, 5.5, 1.75, 9.5], "texture": "#0"},
+				"south": {"uv": [0.25, 5.5, 1.5, 9.5], "texture": "#0"},
+				"west": {"uv": [0, 5.5, 0.25, 9.5], "texture": "#0"},
+				"up": {"uv": [1.5, 5, 2.75, 5.5], "texture": "#0"},
+				"down": {"uv": [0.25, 5, 1.5, 5.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "right_pages",
+			"from": [8, 4, 8.2],
+			"to": [13, 12, 9.2],
+			"shade": false,
+			"rotation": {"angle": -22.5, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [4.75, 5.5, 6, 9.5], "texture": "#0"},
+				"east": {"uv": [4.5, 5.5, 4.75, 9.5], "texture": "#0"},
+				"south": {"uv": [3.25, 5.5, 4.5, 9.5], "texture": "#0"},
+				"west": {"uv": [3, 5.5, 3.25, 9.5], "texture": "#0"},
+				"up": {"uv": [4.5, 5, 5.75, 5.5], "texture": "#0"},
+				"down": {"uv": [3.25, 5, 4.5, 5.5], "texture": "#0"}
+			}
+		}
+	]
+}

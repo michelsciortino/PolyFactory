@@ -362,6 +362,8 @@ class AssetProvider implements DataProvider {
                 new BasicItemModel(id("block/decorative_small_gear"), Optional.of(new Transformation(new Matrix4f().translation(0, 0, 0.4f))), List.of()),
                 new BasicItemModel(id("block/decorative_small_gear"), Optional.of(new Transformation(new Matrix4f().translation(0, 0, -0.4f))), List.of())
         ))));
+
+        consumer.accept(id("-/block/disenchanter_fluid"), new ItemAsset(new BasicItemModel(id("block/disenchanter_fluid")), ItemAsset.Properties.DEFAULT));
     }
 
     private static void createNumberButtons(BiConsumer<String, byte[]> assetWriter) {

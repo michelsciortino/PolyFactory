@@ -100,6 +100,7 @@ public class FactoryItems {
     public static final Item CRAFTER = register(FactoryBlocks.CRAFTER);
     public static final Item MIXER = register(FactoryBlocks.MIXER);
     public static final Item FERMENTER = register(FactoryBlocks.FERMENTER);
+    public static final Item DISENCHANTER = register(FactoryBlocks.DISENCHANTER);
     public static final Item MINER = register(FactoryBlocks.MINER);
     public static final Item PLACER = register(FactoryBlocks.PLACER);
     public static final Item PLANTER = register(FactoryBlocks.PLANTER);
@@ -362,6 +363,7 @@ public class FactoryItems {
                     entries.accept(BLUEPRINT_WORKBENCH);
                     entries.accept(GRINDER);
                     entries.accept(PRESS);
+                    entries.accept(DISENCHANTER);
                     entries.accept(MIXER);
                     entries.accept(TROMMEL);
                     entries.accept(FERMENTER);
