@@ -101,9 +101,19 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
         if (self.process >= 1) {
             // attempt transfer
-            int maxTransfer = 1;
+            int maxTransfer;
             if (self.multi) {
-                maxTransfer = 8; // up to 8 enchants per operation
+                // transfer all non-curse enchantments
+                var filteredCount = (int) net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(inputStack).entrySet().stream().filter(e -> {
+                    try {
+                        return !e.getKey().isCurse();
+                    } catch (NoSuchMethodError ex) {
+                        return true;
+                    }
+                }).count();
+                maxTransfer = Math.max(1, filteredCount);
+            } else {
+                maxTransfer = 1;
             }
 
             var helper = EnchantmentTransferHelper.transferEnchantments(inputStack, maxTransfer, self.multi);
@@ -124,15 +134,31 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
                     } else {
                         self.container.extract(top, cost, false);
 
-                        // consume blank book(s)
+                        // consume one blank book
                         var bb = self.getItem(BLANK_BOOK_SLOT);
                         bb.shrink(1);
                         self.setItem(BLANK_BOOK_SLOT, bb);
 
-                        // push book to output
+                        // push book to output (try inserting into output buffer / connected inventories)
                         FactoryUtil.tryInsertingRegular(self.getOutputContainer(), helper.bookResult);
-                        // set source to modified
-                        self.containers[0].getContainer().set(helper.sourceResult);
+
+                        // if source is now fully disenchanted, move it to the output tool slot (preserve durability)
+                        var outSource = helper.sourceResult;
+                        var remaining = net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(outSource);
+                        if (remaining.isEmpty()) {
+                            if (self.getItem(OUTPUT_TOOL_SLOT).isEmpty()) {
+                                self.setItem(OUTPUT_TOOL_SLOT, outSource);
+                                self.setItem(SOURCE_SLOT, ItemStack.EMPTY);
+                            } else {
+                                // couldn't put into dedicated output slot; leave the disenchanted tool in the source slot
+                                self.setItem(SOURCE_SLOT, outSource);
+                                self.state = Component.literal("Tool output blocked");
+                            }
+                        } else {
+                            // not finished yet, keep the partially-disenchanted tool in the source slot
+                            self.setItem(SOURCE_SLOT, outSource);
+                        }
+
                         self.process = -0.6; // cooldown
                     }
                 }
