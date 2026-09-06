@@ -149,13 +149,6 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
             return;
         }
 
-        self.active = true;
-        self.process += speed / 100;
-
-        if (self.process < 1) {
-            return;
-        }
-
         var maxTransfer = self.multi ? transferableCount : 1;
         var helper = EnchantmentTransferHelper.transferEnchantments(inputStack, maxTransfer, self.multi);
         if (helper.transferred.isEmpty()) {
@@ -168,12 +161,14 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         if (self.getItem(BLANK_BOOK_SLOT).isEmpty()) {
             self.state = NEED_BOOK_TEXT;
             self.process = 0;
+            self.active = false;
             return;
         }
 
         if (!self.canInsertBookResult(helper.bookResult)) {
             self.state = OUTPUT_FULL_TEXT;
             self.process = 0;
+            self.active = false;
             return;
         }
 
@@ -186,6 +181,14 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
         if (top == null || top.type() != FactoryFluids.EXPERIENCE || self.fluidContainer.get(top) < cost) {
             self.state = NEED_XP_FLUID_TEXT;
             self.process = 0;
+            self.active = false;
+            return;
+        }
+
+        self.active = true;
+        self.process += speed / 100;
+
+        if (self.process < 1) {
             return;
         }
 
