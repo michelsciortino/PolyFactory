@@ -17,6 +17,8 @@ import eu.pb4.polyfactory.fluid.FluidContainerUtil;
 import eu.pb4.polyfactory.fluid.FluidInteractionMode;
 import eu.pb4.polyfactory.item.FactoryItemTags;
 import eu.pb4.polyfactory.ui.GuiTextures;
+import eu.pb4.polyfactory.ui.UiResourceCreator;
+import eu.pb4.polyfactory.ui.fluid.FluidTextures;
 import eu.pb4.polyfactory.util.FactoryUtil;
 import eu.pb4.polyfactory.util.inventory.SubContainer;
 import eu.pb4.polyfactory.util.movingitem.SimpleMovingItemContainer;
@@ -395,28 +397,50 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
 
     private class Gui extends SimpleGui {
         private static final Component MODE_LABEL = Component.translatable("text.polyfactory.disenchanter.mode");
+        private int lastFluidUpdate = -1;
+        private int delayTick = -1;
 
         private Gui(ServerPlayer player) {
             super(MenuType.GENERIC_9x3, player, false);
-            this.setTitle(DisenchanterBlockEntity.this.getBlockState().getBlock().getName());
+            this.updateTitleAndFluid();
 
             var fluidSlot = FluidContainerUtil.guiElement(fluidContainer, true);
-            this.setSlot(0, fluidSlot);
-            this.setSlot(9, fluidSlot);
-            this.setSlot(18, fluidSlot);
+            this.setSlot(1, fluidSlot);
+            this.setSlot(10, fluidSlot);
+            this.setSlot(19, fluidSlot);
 
             this.setSlot(11, new Slot(DisenchanterBlockEntity.this, SOURCE_SLOT, 0, 0));
-            this.setSlot(12, new Slot(DisenchanterBlockEntity.this, BLANK_BOOK_SLOT, 1, 0));
-            this.setSlot(13, GuiTextures.PROGRESS_VERTICAL.get(progress()));
-            this.setSlot(14, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_BOOK_SLOT, 2, 0));
-            this.setSlot(15, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_TOOL_SLOT, 3, 0));
+            this.setSlot(20, new Slot(DisenchanterBlockEntity.this, BLANK_BOOK_SLOT, 1, 0));
+            this.setSlot(13, GuiTextures.PROGRESS_HORIZONTAL.get(displayProgress()));
+            this.setSlot(15, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_BOOK_SLOT, 2, 0));
+            this.setSlot(24, new FurnaceResultSlot(player, DisenchanterBlockEntity.this, OUTPUT_TOOL_SLOT, 3, 0));
 
             this.updateModeButton();
             this.open();
         }
 
+        private void updateTitleAndFluid() {
+            var text = GuiTextures.MIXER.apply(
+                    Component.empty()
+                            .append(Component.literal(GuiTextures.MIXER_FLUID_OFFSET + "").setStyle(UiResourceCreator.STYLE))
+                            .append(FluidTextures.MIXER.render(DisenchanterBlockEntity.this.fluidContainer::provideRender))
+                            .append(Component.literal(GuiTextures.MIXER_FLUID_OFFSET_N + "").setStyle(UiResourceCreator.STYLE))
+                            .append(DisenchanterBlockEntity.this.getBlockState().getBlock().getName())
+            );
+
+            if (!text.equals(this.getTitle())) {
+                this.setTitle(text);
+            }
+
+            this.lastFluidUpdate = DisenchanterBlockEntity.this.fluidContainer.updateId();
+        }
+
         private float progress() {
             return (float) Mth.clamp(DisenchanterBlockEntity.this.process, 0, 1);
+        }
+
+        private float displayProgress() {
+            return Math.max(0.07f, progress());
         }
 
         private void updateModeButton() {
@@ -439,7 +463,14 @@ public class DisenchanterBlockEntity extends TallItemMachineBlockEntity implemen
                 return;
             }
 
-            this.setSlot(13, GuiTextures.PROGRESS_VERTICAL.get(progress()));
+            if (DisenchanterBlockEntity.this.fluidContainer.updateId() != this.lastFluidUpdate && delayTick < 0) {
+                delayTick = 3;
+            }
+            if (this.delayTick-- == 0) {
+                this.updateTitleAndFluid();
+            }
+
+            this.setSlot(13, GuiTextures.PROGRESS_HORIZONTAL.get(displayProgress()));
             super.onTick();
         }
     }
